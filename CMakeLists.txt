@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.17)
 project(mySemProject CXX)
 set(CMAKE_CXX_STANDARD 17)
-add_subdirectory(extlibs/gtest)
 
-add_executable(VectorExample src/main.cpp src/DenseVector.cpp)
-target_include_directories(VectorExample PUBLIC ${PROJECT_SOURCE_DIR}/include)
+option(BUILD_TESTS "Build tests" OFF)
 
-add_executable(VectorTest src/main_testing.cpp src/DenseVector.cpp)
-target_link_libraries(VectorTest PUBLIC gtest)
+if (BUILD_TESTS)
+    add_subdirectory(extlibs/gtest)
+else()
+	add_subdirectory(extlibs/pybind11)
+endif()
+ 
