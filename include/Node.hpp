@@ -1,5 +1,5 @@
 #ifndef NODE_HPP
-#define NODe_HPP
+#define NODE_HPP
 
 #include <vector>
 
