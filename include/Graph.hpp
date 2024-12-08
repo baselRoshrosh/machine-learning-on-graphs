@@ -67,8 +67,8 @@ public:
     virtual ~Graph() = default;
 
 private:
-    std::vector<Node> nodes; ///< the feature vector of the nodes
-    std::vector<Edge> edges; ///< the feature vector of the edges
+    std::vector<T> nodes; ///< the feature vector of the nodes
+    std::vector<T> edges; ///< the feature vector of the edges
 
 };
 
