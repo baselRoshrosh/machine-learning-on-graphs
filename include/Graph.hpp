@@ -1,6 +1,9 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 #include <vector>
 #include <string>
 #include <Node.hpp>
@@ -69,7 +72,59 @@ public:
 private:
     std::vector<T> nodes; ///< the feature vector of the nodes
     std::vector<T> edges; ///< the feature vector of the edges
+};
 
+template <typename T>
+class Graph : public Graph<T>
+{
+public:
+    Graph(const std::string &nodesFile, const std::string &edgesFile);
+
+    std::vector<int> getNodes() const override
+    {
+        std::vector<int> nodeIds;
+        for (const auto &node : nodes)
+        {
+            nodeIds.push_back(node.getId());
+        }
+        return nodeIds;
+    }
+
+    std::vector<Edge> getEdges() const override
+    {
+        return edges;
+    }
+
+    std::vector<int> getNeighbors(int nodeId) const override
+    {
+        std::vector<int> neighbors;
+        for (const auto &edge : edges)
+        {
+            if (edge.getSource() == nodeId)
+            {
+                neighbors.push_back(edge.getTarget());
+            }
+            else if (edge.getTarget() == nodeId)
+            {
+                neighbors.push_back(edge.getSource());
+            }
+        }
+        return neighbors;
+    }
+
+    int getNodeCount() const override
+    {
+        return nodes.size();
+    }
+
+    int getEdgeCount() const override
+    {
+        return edges.size();
+    }
+
+private:
+    std::vector<Node> nodes;
+    std::vector<Edge> edges;
 };
 
 #endif

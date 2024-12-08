@@ -53,4 +53,26 @@ private:
     int label;               ///< the label of the node
 };
 
+template <typename T>
+Node<T>::Node(int id, std::vector<T> featureVector, int label)
+    : id(id), features(featureVector), label(label) {}
+
+template <typename T>
+int Node<T>::getId() const
+{
+    return id;
+}
+
+template <typename T>
+std::vector<T> Node<T>::getFeatureVector() const
+{
+    return features;
+}
+
+template <typename T>
+int Node<T>::getLabel() const
+{
+    return label;
+}
+
 #endif
