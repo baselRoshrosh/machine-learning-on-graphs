@@ -19,8 +19,9 @@ public:
      *
      * @param id The unique identifier for the node.
      * @param featureVector The feature vector of the node.
+     * @param label The label of the node.
      */
-    Node(int id, std::vector<T> featureVector);
+    Node(int id, std::vector<T> featureVector, int label);
 
     /**
      * @brief Get the ID of the node.
@@ -36,12 +37,20 @@ public:
      */
     virtual std::vector<T> getFeatureVector() const = 0;
 
+    /**
+     * @brief Get the label of the node.
+     *
+     * @return int The label of the node.
+     */
+    virtual int getLabel() const = 0;
+
     // Virtual destructor to support polymorphism
     virtual ~Node() = default;
 
 private:
     int id;                  ///< unique node identifier
     std::vector<T> features; ///< the feature vector of the nodes
+    int label;               ///< the label of the node
 };
 
 #endif
