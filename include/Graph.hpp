@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <Node.hpp>
+#include <Edge.hpp>
 
 class Edge; // Forward Declaration
 
@@ -14,6 +16,7 @@ class Edge; // Forward Declaration
  * It supports adding and querying nodes and edges, as well as parsing
  * graph data from files.
  */
+template <typename T>
 class Graph
 {
 public:
@@ -62,6 +65,11 @@ public:
 
     // Virtual destructor to support polymorphism
     virtual ~Graph() = default;
+
+private:
+    std::vector<Node> nodes; ///< the feature vector of the nodes
+    std::vector<Edge> edges; ///< the feature vector of the edges
+
 };
 
 #endif
