@@ -6,8 +6,8 @@
  * @brief Represents an edge in an undirected graph.
  *
  * This class models an undirected edge between two nodes in a graph. 
- * The nodes are ordered such that getNode1() always returns the node 
- * with the lower ID, and getNode2() returns the node with the higher ID.
+ * The nodes are ordered such that getsource() always returns the node 
+ * with the lower ID, and getdestination() returns the node with the higher ID.
  */
 class Edge
 {
@@ -15,27 +15,27 @@ public:
     /**
      * @brief Constructs an edge between two nodes.
      *
-     * The constructor ensures that the smaller node ID is stored as `node1`
-     * and the larger node ID as `node2`.
+     * The constructor ensures that the smaller node ID is stored as `source`
+     * and the larger node ID as `destination`.
      *
-     * @param node1 The ID of the first node.
-     * @param node2 The ID of the second node.
+     * @param source The ID of the first node.
+     * @param destination The ID of the second node.
      */
-    Edge(int node1, int node2);
+    Edge(int source, int destination);
 
     /**
      * @brief Gets the first node (smaller ID).
      *
      * @return int The ID of the first node.
      */
-    virtual int getNode1() const = 0;
+    virtual int getsource() const = 0;
 
     /**
      * @brief Gets the second node (larger ID).
      * 
      * @return int The ID of the second node.
      */
-    virtual int getNode2() const = 0;
+    virtual int getdestination() const = 0;
 
     /**
      * @brief Compares equality between two edges.
@@ -53,8 +53,8 @@ public:
     virtual ~Edge() = default;
 
 private:
-    int node1; ///< The ID of the smaller node. 
-    int node2; ///< The ID of the larger node.
+    int source; ///< The ID of the smaller node. 
+    int destination; ///< The ID of the larger node.
 };
 
 #endif
