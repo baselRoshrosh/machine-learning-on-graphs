@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <string>
-#include <Node.hpp>
-#include <Edge.hpp>
+#include <INode.hpp>
+#include <IEdge.hpp>
 
-class Edge; // Forward Declaration
+class IEdge; // Forward Declaration
 
 /**
  * @class Graph
@@ -17,17 +17,9 @@ class Edge; // Forward Declaration
  * graph data from files.
  */
 template <typename T>
-class Graph
+class IGraph
 {
 public:
-    /**
-     * @brief Constructs a graph by parsing from CSV files.
-     *
-     * @param nodesFile The file containing node information.
-     * @param edgesFile The file containing edge information.
-     */
-    Graph(const std::string &nodesFile, const std::string &edgesFile);
-
     /**
      * @brief Retrieves all nodes in the graph.
      *
@@ -40,7 +32,7 @@ public:
      *
      * @return std::vector<Edge> A list of all edges.
      */
-    virtual std::vector<Edge> getEdges() const = 0;
+    virtual std::vector<IEdge> getEdges() const = 0;
 
     /**
      * @brief Retrieves neighbors of a specified node.
@@ -64,12 +56,13 @@ public:
     virtual int getEdgeCount() const = 0;
 
     // Virtual destructor to support polymorphism
-    virtual ~Graph() = default;
+    virtual ~IGraph() = default;
 
 private:
-    std::vector<T> nodes; ///< the feature vector of the nodes
-    std::vector<T> edges; ///< the feature vector of the edges
-
+    std::vector<T> nodes; /// the vector of nodes
+    std::vector<T> edges; /// the vector of edges
 };
+
+#include "../src/Graph.tpp"
 
 #endif
