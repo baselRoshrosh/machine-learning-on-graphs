@@ -1,4 +1,4 @@
-#include <IGraph.hpp>
+#include "../include/IGraph.hpp"
 
 /**
  * @class Graph
@@ -57,5 +57,3 @@ public:
         return this->edges.size();
     }
 };
-
-#endif

@@ -1,4 +1,4 @@
-#include <INode.hpp>
+#include "../include/INode.hpp"
 
 /**
  * @class Node

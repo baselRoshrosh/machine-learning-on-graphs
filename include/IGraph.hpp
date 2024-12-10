@@ -63,4 +63,6 @@ private:
     std::vector<T> edges; /// the vector of edges
 };
 
+#include "../src/Graph.tpp"
+
 #endif

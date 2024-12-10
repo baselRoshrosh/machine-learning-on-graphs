@@ -46,4 +46,6 @@ protected:
     int destination; ///< The ID of the larger node.
 };
 
+#include "../src/Edge.tpp"
+
 #endif

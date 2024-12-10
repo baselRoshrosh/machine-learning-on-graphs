@@ -1,4 +1,4 @@
-#include <IEdge.hpp>
+#include "../include/IEdge.hpp"
 
 /**
  * @class Edge
