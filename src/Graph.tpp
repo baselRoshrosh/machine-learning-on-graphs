@@ -15,17 +15,6 @@ private:
         std::vector<Edge> edges;
         std::vector<Node<T>> nodes;
 
-        // Utility function to check if a string is an integer
-        bool isInteger(const std::string &str)
-        {
-            if (str.empty() || ((!isdigit(str[0])) && (str[0] != '-') && (str[0] != '+')))
-              return false;
-
-            char *end = nullptr;
-            std::strtol(str.c_str(), &end, 10);
-            return (*end == '\0');  // Check if the entire string was parsed
-        }
-
 public:
     /**
      * @brief Constructs a graph by parsing from txt files.
@@ -37,13 +26,13 @@ public:
     {
               
         std::ifstream edgesFileStream(edgesFile);
-        if (!file.is_open()) {
+        if (!edgesFileStream.is_open()) {
             std::cerr << "Failed to open file!" << std::endl;
             return;
         }
 
         std::string line;
-        while (std::getline(file, line)) {
+        while (std::getline(edgesFileStream, line)) {
             std::istringstream iss(line);
             int source, destination;
             if (iss >> source >> destination) {
@@ -54,53 +43,46 @@ public:
               std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
         }
+        edgesFileStream.close();
 
         std::ifstream nodesFileStream(nodesFile);
-        if (!file.is_open()) {
+        if (!nodesFileStream.is_open()) {
             std::cerr << "Failed to open file!" << std::endl;
             return;
         }
+
         std::string line;
-        bool nodeIdKey = false;  // Tracks if Node ID has been processed
-        bool nodeLabelKey = false;  // Tracks if Label is being processed
-        int currentNodeId = -1;
-        std::vector<T> features;
-        int label;
-
         while (std::getline(nodesFileStream, line)) {
-                std::istringstream iss(line);
-                std::string value;
+            std::istringstream iss(line);
 
-            while (std::getline(iss, value, ',')) {
-                    if (isInteger(value)) {
-                        int intValue = std::stoi(value);
+            // Node ID parsing
+            int nodeId;
+            iss >> nodeId;
 
-                        if (!nodeIdKey) {
-                            // This is the Node ID
-                            currentNodeId = intValue;
-                            nodeIdKey = true;
-                        }else if (nodeIdKey && !nodeLabelKey) {
-                            // This is the Label
-                            label = intValue;
-                            nodeLabelKey = true;
-
-                            // Finalize and reset for the next node
-                            nodes.emplace_back(currentNodeId, features, label);
-                            features.clear();
-                            nodeIdKey = false;
-                            nodeLabelKey = false;
-                        }
-                    }else {
-                    // This is a feature
-                        if (value == "#") {
-                            features.push_back(static_cast<T>(-1));  // Replace missing feature
-                        }else {
-                            features.push_back(static_cast<T>(std::stod(value)));  // Convert to T
-                        }   
-                    }
+            // Features parsing
+            std::string featuresString;
+            std::getline(iss, featuresString, '\t');  // Skips free spaces/Tabs and goes to features
+            std::vector<T> features;
+            std::istringstream featuresStream(featuresString);
+            std::string feature;
+            while (std::getline(featuresStream, feature, ',')) {
+                if (feature == "#") {
+                    features.push_back(static_cast<T>(-1));  // Replace missing feature
+                } else {
+                    features.push_back(static_cast<T>(std::stod(feature)));  // Convert to T
+                }
             }
-        }     
+
+            // Label Parsing
+            int label;
+            iss >> label;
+
+            // Add Node to the Graph
+            nodes.emplace_back(nodeId, features, label);
+        }
+        nodesFileStream.close();
     }
+
 
     std::vector<int> getNodes() const override
     {
