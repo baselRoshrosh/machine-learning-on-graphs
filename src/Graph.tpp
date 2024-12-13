@@ -24,7 +24,7 @@ public:
      */
     Graph(const std::string &nodesFile, const std::string &edgesFile)
     {
-              
+        // 1. read edge file
         std::ifstream edgesFileStream(edgesFile);
         if (!edgesFileStream.is_open()) {
             std::cerr << "Failed to open file!" << std::endl;
@@ -36,7 +36,7 @@ public:
             std::istringstream iss(line);
             int source, destination;
             if (iss >> source >> destination) {
-                 //both direction edges? (because it's not directed graph)
+                 //undirected graph
                   edges.emplace_back(source, destination);
                   edges.emplace_back(destination, source);
             }else {
@@ -45,6 +45,7 @@ public:
         }
         edgesFileStream.close();
 
+        // 2. read node file
         std::ifstream nodesFileStream(nodesFile);
         if (!nodesFileStream.is_open()) {
             std::cerr << "Failed to open file!" << std::endl;
@@ -61,13 +62,15 @@ public:
 
             // Features parsing
             std::string featuresString;
-            std::getline(iss, featuresString, '\t');  // Skips free spaces/Tabs and goes to features
+            std::getline(iss, featuresString, '\t');  //jump to start of features
             std::vector<T> features;
             std::istringstream featuresStream(featuresString);
+
+            //parsing feature value
             std::string feature;
             while (std::getline(featuresStream, feature, ',')) {
                 if (feature == "#") {
-                    features.push_back(static_cast<T>(-1));  // Replace missing feature
+                    features.push_back(static_cast<T>(std::numeric_limits<double>::quiet_NaN()));  // Replace missing feature
                 } else {
                     features.push_back(static_cast<T>(std::stod(feature)));  // Convert to T
                 }
