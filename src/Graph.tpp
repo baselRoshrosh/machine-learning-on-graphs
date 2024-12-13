@@ -1,5 +1,9 @@
 #include "../include/IGraph.hpp"
-
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <cctype>
+#include <cstdlib>
 /**
  * @class Graph
  * @brief Concrete implementation of the IGraph interface.
@@ -7,24 +11,81 @@
 template <typename T>
 class Graph : public IGraph<T>
 {
+private:
+        std::vector<Edge> edges;
+        std::vector<Node<T>> nodes;
+
 public:
     /**
-     * @brief Constructs a graph by parsing from CSV files.
+     * @brief Constructs a graph by parsing from txt files.
      *
      * @param nodesFile The file containing node information.
      * @param edgesFile The file containing edge information.
      */
     Graph(const std::string &nodesFile, const std::string &edgesFile)
     {
-        // Placeholder for file parsing logic.
-        // Parse nodes from `nodesFile` and populate the `nodes` vector.
-        // Parse edges from `edgesFile` and populate the `edges` vector.
+        // 1. read edge file
+        std::ifstream edgesFileStream(edgesFile);
+        if (!edgesFileStream.is_open()) {
+            std::cerr << "Failed to open file!" << std::endl;
+            return;
+        }
 
-        // Example:
-        // 1. Open nodesFile and edgesFile.
-        // 2. Read line by line to populate `nodes` and `edges`.
-        // 3. Handle parsing errors gracefully (e.g., invalid format).
+        std::string line;
+        while (std::getline(edgesFileStream, line)) {
+            std::istringstream iss(line);
+            int source, destination;
+            if (iss >> source >> destination) {
+                 //undirected graph
+                  edges.emplace_back(source, destination);
+                  edges.emplace_back(destination, source);
+            }else {
+              std::cerr << "Invalid line in edge file: " << line << std::endl;
+            }
+        }
+        edgesFileStream.close();
+
+        // 2. read node file
+        std::ifstream nodesFileStream(nodesFile);
+        if (!nodesFileStream.is_open()) {
+            std::cerr << "Failed to open file!" << std::endl;
+            return;
+        }
+
+        std::string line;
+        while (std::getline(nodesFileStream, line)) {
+            std::istringstream iss(line);
+
+            // Node ID parsing
+            int nodeId;
+            iss >> nodeId;
+
+            // Features parsing
+            std::string featuresString;
+            std::getline(iss, featuresString, '\t');  //jump to start of features
+            std::vector<T> features;
+            std::istringstream featuresStream(featuresString);
+
+            //parsing feature value
+            std::string feature;
+            while (std::getline(featuresStream, feature, ',')) {
+                if (feature == "#") {
+                    features.push_back(static_cast<T>(std::numeric_limits<double>::quiet_NaN()));  // Replace missing feature
+                } else {
+                    features.push_back(static_cast<T>(std::stod(feature)));  // Convert to T
+                }
+            }
+
+            // Label Parsing
+            int label;
+            iss >> label;
+
+            // Add Node to the Graph
+            nodes.emplace_back(nodeId, features, label);
+        }
+        nodesFileStream.close();
     }
+
 
     std::vector<int> getNodes() const override
     {
