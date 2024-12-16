@@ -3,10 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <utility>
 #include <INode.hpp>
-#include <IEdge.hpp>
-
-class IEdge; // Forward Declaration
 
 /**
  * @class Graph
@@ -30,9 +28,9 @@ public:
     /**
      * @brief Retrieves all edges in the graph.
      *
-     * @return std::vector<Edge> A list of all edges.
+     * @return std::vector<std::pair<int, int>> A list of all edges.
      */
-    virtual std::vector<IEdge> getEdges() const = 0;
+    virtual std::vector<std::pair<int, int>> getEdges() const = 0;
 
     /**
      * @brief Retrieves neighbors of a specified node.
