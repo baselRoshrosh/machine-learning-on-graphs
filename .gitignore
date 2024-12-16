@@ -1,3 +1,26 @@
-.vscode*
+build/
+.vscode/
 
-.build*
+# Ignore build directories
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+
+# Ignore Visual Studio files
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.user
+*.vcxproj.user
+
+# Ignore log and temporary files
+*.log
+*.tlog
+*.obj
+*.bin
+*.yaml
+*.stamp
+
+*.recipe
