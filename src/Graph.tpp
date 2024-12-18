@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cctype>
 #include <cstdlib>
+
 /**
  * @class Graph
  * @brief Concrete implementation of the IGraph interface.
@@ -12,7 +13,7 @@ template <typename T>
 class Graph : public IGraph<T>
 {
 private:
-        std::vector<Edge> edges;
+        std::vector<std::pair<int, int>> edges;
         std::vector<Node<T>> nodes;
 
 public:
@@ -97,7 +98,7 @@ public:
         return nodeIds;
     }
 
-    std::vector<IEdge> getEdges() const override
+    std::vector<std::pair<int, int>> getEdges() const override
     {
         return this->edges;
     }
