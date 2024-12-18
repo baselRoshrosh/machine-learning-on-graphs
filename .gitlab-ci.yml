@@ -5,7 +5,7 @@ stages:
 
 build_job:
   stage: build
-  image: kitware/cmake:latest
+  image: kitware/cmake:3.17
   script:
     - echo "Building project..."
     - mkdir -p build
