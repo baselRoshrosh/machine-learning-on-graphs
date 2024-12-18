@@ -5,8 +5,10 @@ stages:
 
 build_job:
   stage: build
-  image: kitware/cmake:3.17
+  image: ubuntu:20.04
   script:
+    - echo "Installing cmake..."
+    - apt-get update && apt-get install -y cmake build-essential
     - echo "Building project..."
     - mkdir -p build
     - cd build
