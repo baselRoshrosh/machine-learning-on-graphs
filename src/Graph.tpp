@@ -39,7 +39,6 @@ public:
             if (iss >> source >> destination) {
                  //undirected graph
                   edges.emplace_back(source, destination);
-                  edges.emplace_back(destination, source);
             }else {
               std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
