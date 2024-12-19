@@ -5,7 +5,8 @@ BasicEdges::BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
     : edges(initialEdges) {}
 
 // adds edge to edges-vector
-void BasicEdges::addEdge(int source, int destination){
+void BasicEdges::addEdge(int source, int destination)
+{
     edges.emplace_back(source, destination);
 }
 
@@ -44,4 +45,10 @@ bool BasicEdges::isEdge(int source, int destination)
 std::vector<std::pair<int, int>> BasicEdges::getEdges() const
 {
     return edges;
+}
+
+// Retrieves number of edges
+int BasicEdges::size()
+{
+    return edges.size();
 }

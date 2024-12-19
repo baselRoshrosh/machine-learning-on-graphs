@@ -45,6 +45,13 @@ public:
      */
     virtual std::vector<std::pair<int, int>> getEdges() const = 0;
 
+    /**
+     * @brief Returns number of stored edges
+     * 
+     * @return int Number of stored edges 
+     */
+    virtual int size() = 0;
+
     // Virtual destructor to ensure proper cleanup of derived classes
     virtual ~IEdges() = default;
 };

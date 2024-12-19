@@ -60,6 +60,13 @@ public:
      */
     std::vector<std::pair<int, int>> getEdges() const override;
 
+    /**
+     * @brief Returns number of stored edges
+     * 
+     * @return int Number of stored edges 
+     */
+    int size() override;
+
 private:
     std::vector<std::pair<int, int>> edges; ///< Stores all edges as pairs of node IDs.
 };
