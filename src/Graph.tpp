@@ -27,6 +27,7 @@ public:
     {
         // 1. read edge file
         std::ifstream edgesFileStream(edgesFile);
+        edges = std::make_unique<BasicEdges>();
         if (!edgesFileStream.is_open()) {
             std::cerr << "Failed to open file!" << std::endl;
             return;
@@ -38,8 +39,8 @@ public:
             int source, destination;
             if (iss >> source >> destination) {
                  //undirected graph
-                  edges.emplace_back(source, destination);
-                  edges.emplace_back(destination, source);
+                  edges.addEdge(source, destination);
+                  edges.addEdge(destination, source);
             }else {
               std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
@@ -100,13 +101,12 @@ public:
 
     std::vector<std::pair<int, int>> getEdges() const override
     {
-        return this->edges;
+        return edges.getEdges();
     }
 
     std::vector<int> getNeighbors(int nodeId) const override
     {
-        // Implement neighbor retrieval logic.
-        return {};
+        return edges.getNeighbors(nodeId);
     }
 
     int getNodeCount() const override

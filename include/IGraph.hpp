@@ -58,7 +58,7 @@ public:
 
 private:
     std::vector<T> nodes; /// the vector of nodes
-    std::vector<T> edges; /// the vector of edges
+    std::unique_ptr<IEdges> edges; /// object holding the pool of edges
 };
 
 #include "../src/Graph.tpp"
