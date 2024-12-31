@@ -1,4 +1,8 @@
+#ifndef GRAPH_TPP
+#define GRAPH_TPP
+
 #include "../include/IGraph.hpp"
+#include <memory>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -13,7 +17,7 @@ template <typename T>
 class Graph : public IGraph<T>
 {
 private:
-        std::vector<std::pair<int, int>> edges;
+        std::unique_ptr<IEdges> edges;
         std::vector<Node<T>> nodes;
 
 public:
@@ -38,9 +42,10 @@ public:
             std::istringstream iss(line);
             int source, destination;
             if (iss >> source >> destination) {
-                 //undirected graph
-                  edges.addEdge(source, destination);
-                  edges.addEdge(destination, source);
+            // Add edge only if it doesn't already exist
+                if (!edges->isEdge(source, destination) && !edges->isEdge(destination, source)) {
+                    edges->addEdge(source, destination);
+                }
             }else {
               std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
@@ -54,7 +59,7 @@ public:
             return;
         }
 
-        std::string line;
+        
         while (std::getline(nodesFileStream, line)) {
             std::istringstream iss(line);
 
@@ -101,12 +106,12 @@ public:
 
     std::vector<std::pair<int, int>> getEdges() const override
     {
-        return edges.getEdges();
+        return edges->getEdges();
     }
 
     std::vector<int> getNeighbors(int nodeId) const override
     {
-        return edges.getNeighbors(nodeId);
+        return edges->getNeighbors(nodeId);
     }
 
     int getNodeCount() const override
@@ -116,6 +121,9 @@ public:
 
     int getEdgeCount() const override
     {
-        return this->edges.size();
+        return edges->getEdges().size();
     }
+
+
 };
+#endif // GRAPH_TPP
