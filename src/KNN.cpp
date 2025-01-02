@@ -9,7 +9,7 @@
 int main():{
 
 
-    Graph graph("twitch_features.txt","twitch_edges.txt");
+    Graph graph("/input/twitch_features.txt","/input/twitch_edges.txt");
 
 
 }
