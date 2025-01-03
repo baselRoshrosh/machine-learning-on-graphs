@@ -33,6 +33,7 @@ void estimateFeatures(Graph& graph, int nodeId, int k) {
         
         
         float distance = Distance(nodeFeatures, neighborFeatures);  //Distance function needed
+        distances.push_back({distance, neighborId})
         
     }
 
