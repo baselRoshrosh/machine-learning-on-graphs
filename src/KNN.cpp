@@ -14,7 +14,7 @@ float Distance(const std::vector<float>& a, const std::vector<float>& b){
             distance += std::pow(a[i] - b[i], 2);
         }
     }
-    return std::sqrt(distance);
+    return std::sqrt(distance);    //might not need the sqrt to compare distances and save some computing time
 
 }
 
