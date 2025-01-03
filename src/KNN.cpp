@@ -41,7 +41,13 @@ void estimateFeatures(Graph& graph, int nodeId, int k) {
 
 
     //choose k neighbors
+    std::vector<int> knn;
+    for (int i = 0; i < std::min<int>(k, distances.size()); ++i) {
+        knn.push_back(distances[i].second);
+    }
 
+
+    //estimatation
 
 
 int main():{
