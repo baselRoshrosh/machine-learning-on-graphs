@@ -17,8 +17,8 @@ template <typename T>
 class Graph : public IGraph<T>
 {
 private:
-        std::unique_ptr<IEdges> edges;
-        std::vector<Node<T>> nodes;
+    std::unique_ptr<IEdges> edges;
+    std::vector<Node<T>> nodes;
 
 public:
     /**
@@ -43,13 +43,17 @@ public:
         {
             std::istringstream iss(line);
             int source, destination;
-            if (iss >> source >> destination) {
-            // Add edge only if it doesn't already exist
-                if (!edges->isEdge(source, destination) && !edges->isEdge(destination, source)) {
+            if (iss >> source >> destination)
+            {
+                // Add edge only if it doesn't already exist
+                if (!this->hasEdge(source, destination))
+                {
                     edges->addEdge(source, destination);
                 }
-            }else {
-              std::cerr << "Invalid line in edge file: " << line << std::endl;
+            }
+            else
+            {
+                std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
         }
         edgesFileStream.close();
@@ -62,8 +66,8 @@ public:
             return;
         }
 
-        
-        while (std::getline(nodesFileStream, line)) {
+        while (std::getline(nodesFileStream, line))
+        {
             std::istringstream iss(line);
 
             // Node ID parsing
@@ -132,16 +136,7 @@ public:
 
     bool hasEdge(int node1, int node2) const override
     {
-        for (const auto &edge : edges.getEdges())
-        {
-            if ((edge.first == node1 && edge.second == node2) || (edge.first == node2 && edge.second == node1))
-            {
-                return true;
-            }
-        }
-        return false;
+        return edges->isEdge(node1, node2) || edges->isEdge(node2, node1);
     }
-
-
 };
 #endif // GRAPH_TPP
