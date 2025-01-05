@@ -16,28 +16,28 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-image: gcc
+image: gcc:11 
 
 stages:
   - build
   - test
   - deploy
 
-# Build job using CMake
+# Build job
 build:
   stage: build
   script:
     - echo "Configuring project with CMake..."
-    - cmake -S . -B build
-    - echo "Building project with CMake..."
-    - cmake --build build
+    - cmake -S . -B build -DBUILD_TESTS=ON 
+    - echo "Building project..."
+    - cmake --build build --target all 
   artifacts:
     paths:
       - build/ # Save build outputs for later stages
-    expire_in: 1 week # Optional: clean up after a week
+    expire_in: 1 week
   cache:
     paths:
-      - build/ # Cache the build directory to speed up builds
+      - build/ 
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main"
@@ -48,13 +48,13 @@ test:
   dependencies:
     - build # Use artifacts from the build job
   script:
-    - echo "Running tests..."
-    - ./build/tests/test_executable # Replace with actual test binary
+    - echo "Running tests with ctest..."
+    - cd build
+    - ctest --output-on-failure # Run all registered tests
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main"
 
-# Deployment job (optional)
 deploy:
   stage: deploy
   script:
