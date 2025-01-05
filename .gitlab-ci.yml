@@ -19,6 +19,7 @@
 stages:
   - build
   - test
+  - deploy
 
 variables:
   # Set default behavior for merge requests
@@ -53,12 +54,17 @@ test:
       - build/test-reports/
   allow_failure: false
 
-# Enforce Pipeline Completion for Merge Requests
-rules:
-  - if: $CI_MERGE_REQUEST_ID
-    when: always
+# Deploy Stage
+deploy:
+  stage: deploy
+  needs:
+    - test
+  script:
+    - echo "Deploying application..."
+    - ./deploy.sh  # Replace with your deployment script
+  when: manual
 
-# Merge Protection
+# Merge Protection (Updated or Removed Problematic Section)
 only:
   refs:
     - merge_requests
@@ -66,10 +72,4 @@ only:
     - src/**/*
     - include/**/*
     - tests/**/*
-
-# Include Directories and Dependencies
-include_directories:
-  - include
-link_directories:
-  - extlibs
 
