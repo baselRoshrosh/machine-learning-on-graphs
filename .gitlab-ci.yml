@@ -23,53 +23,47 @@ stages:
   - test
   - deploy
 
-# Build job
+# Build job using CMake
 build:
   stage: build
   script:
-    - echo "Building the application..."
-    - g++ helloworld.cpp -o mybinary
+    - echo "Configuring project with CMake..."
+    - cmake -S . -B build
+    - echo "Building project with CMake..."
+    - cmake --build build
   artifacts:
     paths:
-      - mybinary
-    expire_in: 1 week # Optional: Clean up old artifacts after a week
+      - build/ # Save build outputs for later stages
+    expire_in: 1 week # Optional: clean up after a week
   cache:
     paths:
-      - "*.o" # Cache object files to speed up builds
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Build on merge requests
-    - if: $CI_COMMIT_BRANCH == "main" # Build on the main branch
-
-# Test job
-test:
-  stage: test
-  script:
-    - echo "Running tests..."
-    - ./runmytests.sh
-  dependencies:
-    - build # Use artifacts from the build job
+      - build/ # Cache the build directory to speed up builds
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main"
 
-# Deploy job
+# Test job
+test:
+  stage: test
+  dependencies:
+    - build # Use artifacts from the build job
+  script:
+    - echo "Running tests..."
+    - ./build/tests/test_executable # Replace with actual test binary
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# Deployment job (optional)
 deploy:
   stage: deploy
   script:
-    - echo "Deploying to production..."
-    - echo "Define your deployment script here!"
+    - echo "Deploying project..."
+    - echo "Define your deployment steps here"
   environment:
     name: production
   rules:
-    - if: $CI_COMMIT_BRANCH == "main" # Deploy only on the main branch
-
-# Ensure pipeline success before merging
-default:
-  interruptible: true # Allow cancellation of jobs
-  before_script:
-    - echo "Setting up environment..."
-  after_script:
-    - echo "Cleaning up..."
+    - if: $CI_COMMIT_BRANCH == "main"
 
 
 
