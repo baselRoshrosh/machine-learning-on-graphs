@@ -18,32 +18,58 @@
 
 image: gcc
 
+stages:
+  - build
+  - test
+  - deploy
+
+# Build job
 build:
   stage: build
-  # instead of calling g++ directly you can also use some build toolkit like make
-  # install the necessary build tools when needed
-  # before_script:
-  #   - apt update && apt -y install make autoconf
   script:
+    - echo "Building the application..."
     - g++ helloworld.cpp -o mybinary
   artifacts:
     paths:
       - mybinary
-      # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
-      # cache:
-      #   paths:
-      #     - "*.o"
+    expire_in: 1 week # Optional: Clean up old artifacts after a week
+  cache:
+    paths:
+      - "*.o" # Cache object files to speed up builds
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Build on merge requests
+    - if: $CI_COMMIT_BRANCH == "main" # Build on the main branch
 
-# run tests using the binary built before
+# Test job
 test:
   stage: test
   script:
+    - echo "Running tests..."
     - ./runmytests.sh
+  dependencies:
+    - build # Use artifacts from the build job
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
 
+# Deploy job
 deploy:
   stage: deploy
-  script: echo "Define your deployment script!"
-  environment: production
+  script:
+    - echo "Deploying to production..."
+    - echo "Define your deployment script here!"
+  environment:
+    name: production
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" # Deploy only on the main branch
+
+# Ensure pipeline success before merging
+default:
+  interruptible: true # Allow cancellation of jobs
+  before_script:
+    - echo "Setting up environment..."
+  after_script:
+    - echo "Cleaning up..."
 
 
 
