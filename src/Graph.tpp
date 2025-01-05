@@ -29,7 +29,7 @@ public:
      */
     Graph(const std::string &nodesFile, const std::string &edgesFile)
     {
-        // 1. read edge file
+        // read edge file
         std::ifstream edgesFileStream(edgesFile);
         edges = std::make_unique<BasicEdges>();
         if (!edgesFileStream.is_open()) {
@@ -52,7 +52,7 @@ public:
         }
         edgesFileStream.close();
 
-        // 2. read node file
+        // read node file
         std::ifstream nodesFileStream(nodesFile);
         if (!nodesFileStream.is_open()) {
             std::cerr << "Failed to open file!" << std::endl;
