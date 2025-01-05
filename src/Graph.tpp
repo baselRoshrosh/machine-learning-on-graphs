@@ -13,8 +13,8 @@ template <typename T>
 class Graph : public IGraph<T>
 {
 private:
-        std::vector<std::pair<int, int>> edges;
-        std::vector<Node<T>> nodes;
+    std::vector<std::pair<int, int>> edges;
+    std::vector<Node<T>> nodes;
 
 public:
     /**
@@ -28,34 +28,41 @@ public:
         // 1. read edge file
         std::ifstream edgesFileStream(edgesFile);
         edges = std::make_unique<BasicEdges>();
-        if (!edgesFileStream.is_open()) {
+        if (!edgesFileStream.is_open())
+        {
             std::cerr << "Failed to open file!" << std::endl;
             return;
         }
 
         std::string line;
-        while (std::getline(edgesFileStream, line)) {
+        while (std::getline(edgesFileStream, line))
+        {
             std::istringstream iss(line);
             int source, destination;
-            if (iss >> source >> destination) {
-                 //undirected graph
-                  edges.addEdge(source, destination);
-                  edges.addEdge(destination, source);
-            }else {
-              std::cerr << "Invalid line in edge file: " << line << std::endl;
+            if (iss >> source >> destination)
+            {
+                // undirected graph
+                edges.addEdge(source, destination);
+                edges.addEdge(destination, source);
+            }
+            else
+            {
+                std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
         }
         edgesFileStream.close();
 
         // 2. read node file
         std::ifstream nodesFileStream(nodesFile);
-        if (!nodesFileStream.is_open()) {
+        if (!nodesFileStream.is_open())
+        {
             std::cerr << "Failed to open file!" << std::endl;
             return;
         }
 
         std::string line;
-        while (std::getline(nodesFileStream, line)) {
+        while (std::getline(nodesFileStream, line))
+        {
             std::istringstream iss(line);
 
             // Node ID parsing
@@ -64,17 +71,21 @@ public:
 
             // Features parsing
             std::string featuresString;
-            std::getline(iss, featuresString, '\t');  //jump to start of features
+            std::getline(iss, featuresString, '\t'); // jump to start of features
             std::vector<T> features;
             std::istringstream featuresStream(featuresString);
 
-            //parsing feature value
+            // parsing feature value
             std::string feature;
-            while (std::getline(featuresStream, feature, ',')) {
-                if (feature == "#") {
-                    features.push_back(static_cast<T>(std::numeric_limits<double>::quiet_NaN()));  // Replace missing feature
-                } else {
-                    features.push_back(static_cast<T>(std::stod(feature)));  // Convert to T
+            while (std::getline(featuresStream, feature, ','))
+            {
+                if (feature == "#")
+                {
+                    features.push_back(static_cast<T>(std::numeric_limits<double>::quiet_NaN())); // Replace missing feature
+                }
+                else
+                {
+                    features.push_back(static_cast<T>(std::stod(feature))); // Convert to T
                 }
             }
 
@@ -87,7 +98,6 @@ public:
         }
         nodesFileStream.close();
     }
-
 
     std::vector<int> getNodes() const override
     {
@@ -117,5 +127,17 @@ public:
     int getEdgeCount() const override
     {
         return this->edges.size();
+    }
+
+    bool hasEdge(int node1, int node2) const override
+    {
+        for (const auto &edge : edges.getEdges())
+        {
+            if ((edge.first == node1 && edge.second == node2) || (edge.first == node2 && edge.second == node1))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 };

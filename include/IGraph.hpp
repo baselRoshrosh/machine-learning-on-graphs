@@ -53,6 +53,15 @@ public:
      */
     virtual int getEdgeCount() const = 0;
 
+    /**
+     * @brief Checks if there is an undirected edge between two nodes.
+     *
+     * @param node1 The ID of the first node.
+     * @param node2 The ID of the second node.
+     * @return bool True if there is an edge between node1 and node2, false otherwise.
+     */
+    virtual bool hasEdge(int node1, int node2) const = 0;
+
     // Virtual destructor to support polymorphism
     virtual ~IGraph() = default;
 
@@ -60,7 +69,5 @@ private:
     std::vector<T> nodes; /// the vector of nodes
     std::unique_ptr<IEdges> edges; /// object holding the pool of edges
 };
-
-#include "../src/Graph.tpp"
 
 #endif
