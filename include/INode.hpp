@@ -15,13 +15,19 @@ class INode
 {
 public:
     /**
+     * @brief Default constructor for INode.
+     */
+    INode() = default;
+
+    /**
      * @brief Constructs a new Node object.
      *
      * @param id The unique identifier for the node.
      * @param featureVector The feature vector of the node.
      * @param label The label of the node.
      */
-    INode(int id, std::vector<T> featureVector, int label);
+    INode(int id, std::vector<T> featureVector, int label) 
+        : id(id), features(featureVector), label(label) {}
 
     /**
      * @brief Get the ID of the node.
@@ -47,7 +53,7 @@ public:
     // Virtual destructor to support polymorphism
     virtual ~INode() = default;
 
-private:
+protected:
     int id;                  ///< unique node identifier
     std::vector<T> features; ///< the feature vector of the nodes
     int label;               ///< the label of the node

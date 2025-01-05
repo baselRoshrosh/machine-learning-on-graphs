@@ -4,7 +4,11 @@
 #include <vector>
 #include <string>
 #include <utility>
-#include <INode.hpp>
+#include "IEdges.hpp"
+#include "BasicEdges.hpp"
+#include "INode.hpp"
+
+
 
 /**
  * @class Graph

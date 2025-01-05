@@ -1,3 +1,5 @@
+#ifndef NODE_TPP
+#define NODE_TPP
 #include "../include/INode.hpp"
 
 /**
@@ -8,6 +10,7 @@ template <typename T>
 class Node : public INode<T>
 {
 public:
+    Node() = default;
     /**
      * @brief Constructs a new Node object.
      *
@@ -26,3 +29,4 @@ public:
     std::vector<T> getFeatureVector() const override { return this->features; }
     int getLabel() const override { return this->label; }
 };
+#endif // NODE_TPP

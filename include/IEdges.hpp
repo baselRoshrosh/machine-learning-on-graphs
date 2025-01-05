@@ -52,6 +52,14 @@ public:
      */
     virtual int size() = 0;
 
+    /**
+    * @brief Adds a new edge to the edge list.
+    *
+    * @param source The ID of the source node.
+    * @param destination The ID of the destination node.
+    */
+    virtual void addEdge(int source, int destination) = 0;
+
     // Virtual destructor to ensure proper cleanup of derived classes
     virtual ~IEdges() = default;
 };

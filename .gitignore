@@ -24,3 +24,6 @@ CTestTestfile.cmake
 *.stamp
 
 *.recipe
+
+# Ignore diff files
+*.diff
