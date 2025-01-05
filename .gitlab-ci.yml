@@ -15,8 +15,7 @@
 # https://docs.gitlab.com/ee/development/cicd/templates.html
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
-
-image: gcc:11
+image: gcc:11 
 
 stages:
   - build
@@ -28,34 +27,33 @@ build:
   stage: build
   script:
     - echo "Configuring project with CMake..."
-    - cmake -S . -B build -DBUILD_TESTS=ON
+    - cmake -S . -B build -DBUILD_TESTS=ON 
     - echo "Building project..."
-    - cmake --build build --target all
+    - cmake --build build --target all 
   artifacts:
     paths:
-      - build/
+      - build/ # Save build outputs for later stages
     expire_in: 1 week
   cache:
     paths:
-      - build/
+      - build/ 
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Run on MRs
-    - if: $CI_COMMIT_BRANCH # Run on any branch
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
 
 # Test job
 test:
   stage: test
   dependencies:
-    - build
+    - build # Use artifacts from the build job
   script:
     - echo "Running tests with ctest..."
     - cd build
-    - ctest --output-on-failure
+    - ctest --output-on-failure # Run all registered tests
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Run on MRs
-    - if: $CI_COMMIT_BRANCH # Run on any branch
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
 
-# Deploy job
 deploy:
   stage: deploy
   script:
@@ -64,7 +62,7 @@ deploy:
   environment:
     name: production
   rules:
-    - if: $CI_COMMIT_BRANCH == "main" # Only deploy on main
+    - if: $CI_COMMIT_BRANCH == "main"
 
 
 
