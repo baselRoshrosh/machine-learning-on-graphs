@@ -34,7 +34,7 @@ public:
      * @param source The ID of the source node.
      * @param destination The ID of the destination node.
      */
-    void addEdge(int source, int destination);
+    void addEdge(int source, int destination) override;
 
     /**
      * @brief Retrieves the neighbors of a given node.

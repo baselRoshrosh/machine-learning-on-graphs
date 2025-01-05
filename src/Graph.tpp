@@ -1,4 +1,8 @@
+#ifndef GRAPH_TPP
+#define GRAPH_TPP
+
 #include "../include/IGraph.hpp"
+#include <memory>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -13,8 +17,8 @@ template <typename T>
 class Graph : public IGraph<T>
 {
 private:
-    std::vector<std::pair<int, int>> edges;
-    std::vector<Node<T>> nodes;
+        std::unique_ptr<IEdges> edges;
+        std::vector<Node<T>> nodes;
 
 public:
     /**
@@ -25,7 +29,7 @@ public:
      */
     Graph(const std::string &nodesFile, const std::string &edgesFile)
     {
-        // 1. read edge file
+        // read edge file
         std::ifstream edgesFileStream(edgesFile);
         edges = std::make_unique<BasicEdges>();
         if (!edgesFileStream.is_open())
@@ -39,20 +43,18 @@ public:
         {
             std::istringstream iss(line);
             int source, destination;
-            if (iss >> source >> destination)
-            {
-                // undirected graph
-                edges.addEdge(source, destination);
-                edges.addEdge(destination, source);
-            }
-            else
-            {
-                std::cerr << "Invalid line in edge file: " << line << std::endl;
+            if (iss >> source >> destination) {
+            // Add edge only if it doesn't already exist
+                if (!edges->isEdge(source, destination) && !edges->isEdge(destination, source)) {
+                    edges->addEdge(source, destination);
+                }
+            }else {
+              std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
         }
         edgesFileStream.close();
 
-        // 2. read node file
+        // read node file
         std::ifstream nodesFileStream(nodesFile);
         if (!nodesFileStream.is_open())
         {
@@ -60,9 +62,8 @@ public:
             return;
         }
 
-        std::string line;
-        while (std::getline(nodesFileStream, line))
-        {
+        
+        while (std::getline(nodesFileStream, line)) {
             std::istringstream iss(line);
 
             // Node ID parsing
@@ -111,12 +112,12 @@ public:
 
     std::vector<std::pair<int, int>> getEdges() const override
     {
-        return edges.getEdges();
+        return edges->getEdges();
     }
 
     std::vector<int> getNeighbors(int nodeId) const override
     {
-        return edges.getNeighbors(nodeId);
+        return edges->getNeighbors(nodeId);
     }
 
     int getNodeCount() const override
@@ -126,7 +127,7 @@ public:
 
     int getEdgeCount() const override
     {
-        return this->edges.size();
+        return edges->getEdges().size();
     }
 
     bool hasEdge(int node1, int node2) const override
@@ -140,4 +141,7 @@ public:
         }
         return false;
     }
+
+
 };
+#endif // GRAPH_TPP

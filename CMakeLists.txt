@@ -1,12 +1,3 @@
-cmake_minimum_required(VERSION 3.17)
-project(mySemProject CXX)
-set(CMAKE_CXX_STANDARD 17)
-
-option(BUILD_TESTS "Build tests" OFF)
-
-if (BUILD_TESTS)
-    add_subdirectory(extlibs/gtest)
-else()
-	add_subdirectory(extlibs/pybind11)
-endif()
- 
+version https://git-lfs.github.com/spec/v1
+oid sha256:82732dc24691fd6a14044044bb2ce2e4085e58bf9ef4f042e68413f16bcada4a
+size 1095
