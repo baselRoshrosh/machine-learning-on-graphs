@@ -64,12 +64,6 @@ deploy:
     - ./deploy.sh  # Replace with your deployment script
   when: manual
 
-# Merge Protection (Updated or Removed Problematic Section)
-only:
-  refs:
-    - merge_requests
-  changes:
-    - src/**/*
-    - include/**/*
-    - tests/**/*
+
+
 
