@@ -16,53 +16,34 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-stages:
-  - build
-  - test
-  - deploy
+image: gcc
 
-variables:
-  # Set default behavior for merge requests
-  ALLOW_FAILURE: false
-
-default:
-  interruptible: true
-  retry:
-    max: 1
-
-# Build Stage
 build:
   stage: build
+  # instead of calling g++ directly you can also use some build toolkit like make
+  # install the necessary build tools when needed
+  # before_script:
+  #   - apt update && apt -y install make autoconf
   script:
-    - echo "Configuring the build environment..."
-    - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-    - cmake --build build
+    - g++ helloworld.cpp -o mybinary
   artifacts:
     paths:
-      - build/
+      - mybinary
+      # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
+      # cache:
+      #   paths:
+      #     - "*.o"
 
-# Test Stage
+# run tests using the binary built before
 test:
   stage: test
-  needs:
-    - build
   script:
-    - echo "Running tests..."
-    - cd build && ctest --output-on-failure
-  artifacts:
-    paths:
-      - build/test-reports/
-  allow_failure: false
+    - ./runmytests.sh
 
-# Deploy Stage
 deploy:
   stage: deploy
-  needs:
-    - test
-  script:
-    - echo "Deploying application..."
-    - ./deploy.sh  # Replace with your deployment script
-  when: manual
+  script: echo "Define your deployment script!"
+  environment: production
 
 
 
