@@ -1,61 +1,122 @@
-#include "../include/BasicEdges.hpp"
+#ifndef BASICEDGES_HPP
+#define BASICEDGES_HPP
 
-// Constructor: Initializes the BasicEdges with a set of edges.
-BasicEdges::BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
-    : edges(initialEdges) {}
+#include "IBasicEdges.hpp"
+#include <vector>
 
-// adds edge to edges-vector
-void BasicEdges::addEdge(int source, int destination)
+
+class BasicEdges : public IBasicEdges
 {
-    edges.emplace_back(source, destination);
-}
+private:
+    // Store edges as (row, col, value) with value (weight) 1
+    std::vector<std::tuple<int, int, int>> edges;
 
-
-
-// Retrieves the neighbors of a given node.
-std::vector<int> BasicEdges::getNeighbors(int nodeID)
-{
-    std::vector<int> neighbors;
-
-    for (const auto &edge : edges)
+public:
+    // Constructor
+    BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
     {
-        if (edge.first == nodeID)
+        for (const auto &edge : initialEdges)
         {
-            neighbors.push_back(edge.second);
+            addEdge(edge.first, edge.second);
         }
-        else if (edge.second == nodeID)
+    };
+
+    // Adds a new edge to the edge list
+    void addEdge(int source, int destination) override
+    {
+        edges.emplace_back(source, destination, 1);
+    };
+
+    // Get neighbors of a given node
+    std::vector<int> getNeighbors(int nodeID) override
+    {
+        std::vector<int> neighbors;
+        for (const auto &[row, col, value] : edges)
         {
-            neighbors.push_back(edge.first);
+            if (row == nodeID)
+            {
+                neighbors.push_back(col);
+            }
+            else if (col == nodeID)
+            {
+                neighbors.push_back(row);
+            }
         }
+        return neighbors;
     }
 
-    return neighbors;
-}
-
-
-// Checks if an edge exists between two nodes.
-bool BasicEdges::isEdge(int source, int destination)
-{
-    for (const auto &edge : edges)
+    // Check if an edge exists
+    bool isEdge(int source, int destination) override
     {
-        if ((edge.first == source && edge.second == destination) ||
-            (edge.second == source && edge.first == destination))
+        for (const auto &[row, col, value] : edges)
         {
-            return true;
+            if ((row == source && col == destination) ||
+                (row == destination && col == source))
+            {
+                return true;
+            }
         }
+        return false;
     }
-    return false; // Only return false after checking all edges
-}
 
-// Retrieves all edges in the graph.
-std::vector<std::pair<int, int>> BasicEdges::getEdges() const
-{
-    return edges;
-}
+    // Retrieves all edges in the graph
+    std::vector<std::pair<int, int, int>> getEdges() override
+    {
+        return edges;
+    }
 
+    // Returns the number of edges
+    int size() override
+    {
+        return edges.size();
+    }
 
-// Retrieves number of edges
-int BasicEdges::size()
-{
-    return edges.size();
-}
+    // Get neighbors of a given node
+    std::vector<int> getNeighbors(int nodeID) override
+    {
+        std::vector<int> neighbors;
+        for (const auto &[row, col, value] : edges)
+        {
+            if (row == nodeID)
+            {
+                neighbors.push_back(col);
+            }
+            else if (col == nodeID)
+            {
+                neighbors.push_back(row);
+            }
+        }
+        return neighbors;
+    }
+
+    // Check if an edge exists
+    bool isEdge(int source, int destination) override
+    {
+        for (const auto &[row, col, value] : edges)
+        {
+            if ((row == source && col == destination) ||
+                (row == destination && col == source))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::vector < std::vector<int> getAdjancencyMatrix(int numNodes) const override
+    {
+        // initialize adjacency matrix, filled with 0
+        std::vector<std::vector<int>> matrix(numNodes, std::vector<int>(numNodes, 0));
+
+        for (const auto &[row, col, value] : edges)
+        {
+            // undirected
+            matrix[row][col] = value; // from row to col
+            matrix[col][row] = value; // from col to row
+        }
+
+        return matrix;
+    }
+};
+
+#endif // BASICEDGES_HPP
