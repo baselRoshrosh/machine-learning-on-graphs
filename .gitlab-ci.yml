@@ -19,9 +19,9 @@
 stages:
   - build
   - test
-  - deploy
 
 variables:
+  # Set default behavior for merge requests
   ALLOW_FAILURE: false
 
 default:
@@ -33,8 +33,9 @@ default:
 build:
   stage: build
   script:
-    - echo "Building the application..."
-    - ./build.sh  # Replace with your actual build command
+    - echo "Configuring the build environment..."
+    - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+    - cmake --build build
   artifacts:
     paths:
       - build/
@@ -46,31 +47,29 @@ test:
     - build
   script:
     - echo "Running tests..."
-    - ./run-tests.sh  # Replace with your actual test command
+    - cd build && ctest --output-on-failure
   artifacts:
     paths:
-      - test-reports/
+      - build/test-reports/
   allow_failure: false
 
-# Optional Deploy Stage
-deploy:
-  stage: deploy
-  needs:
-    - test
-  script:
-    - echo "Deploying application..."
-    - ./deploy.sh  # Replace with your actual deployment command
-  when: manual
-
-# Merge Request Validation
+# Enforce Pipeline Completion for Merge Requests
 rules:
   - if: $CI_MERGE_REQUEST_ID
     when: always
 
-# Enforce Pipeline Completion for Merge Requests
+# Merge Protection
 only:
   refs:
     - merge_requests
   changes:
-    - **/*.py  # Specify your code or file types to trigger pipeline
+    - src/**/*
+    - include/**/*
+    - tests/**/*
+
+# Include Directories and Dependencies
+include_directories:
+  - include
+link_directories:
+  - extlibs
 
