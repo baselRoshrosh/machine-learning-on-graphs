@@ -7,7 +7,7 @@
 #include "Node.tpp"
 
 // Distance of Nodes a and b   using l2 distance
-float l2Distance(const std::vector<float>& a, const std::vector<float>& b){
+float l2Distance(const std::vector<double>& a, const std::vector<double>& b){
     float distance = 0.0;
     for (size_t i = 0; i < a.size(); ++i) {
         if (a[i] != "#" && b[i] != "#") { // 
