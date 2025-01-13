@@ -1,9 +1,5 @@
-#ifndef BASICEDGES_HPP
-#define BASICEDGES_HPP
-
-#include "IBasicEdges.hpp"
+#include "../include/BasicEdges.hpp"
 #include <vector>
-
 
 class BasicEdges : public IBasicEdges
 {
