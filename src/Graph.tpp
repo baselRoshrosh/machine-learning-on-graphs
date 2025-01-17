@@ -9,6 +9,7 @@
 #include <cctype>
 #include <cstdlib>
 
+
 /**
  * @class Graph
  * @brief Concrete implementation of the IGraph interface.
@@ -51,7 +52,6 @@ public:
             }
         }
         edgesFileStream.close();
-
         // read node file
         std::ifstream nodesFileStream(nodesFile);
         if (!nodesFileStream.is_open()) {
@@ -61,38 +61,49 @@ public:
 
         
         while (std::getline(nodesFileStream, line)) {
-            std::istringstream iss(line);
 
+            std::istringstream iss(line);
             // Node ID parsing
             int nodeId;
             iss >> nodeId;
-
             // Features parsing
             std::string featuresString;
-            std::getline(iss, featuresString, '\t');  //jump to start of features
+            std::getline(iss, featuresString);  //jump to start of features
+
+
+            //remove \t after nodeId
+            if (!featuresString.empty() && featuresString[0] == '\t') {
+                featuresString.erase(0, 1); // Remove the first character
+            }
+
             std::vector<T> features;
             std::istringstream featuresStream(featuresString);
 
             //parsing feature value
+            int label;
             std::string feature;
             while (std::getline(featuresStream, feature, ',')) {
-                if (feature == "#") {
+                if (feature[0] == ' '){
+                    feature.erase(0, 1);
+                }
+                size_t tmp = feature.find('\t');
+                if (tmp != std::string::npos){
+                    label = std::stoi(feature.substr(tmp + 1));
+                    feature = feature.substr(0, tmp);
+                }
+                if (feature == "'#'" || feature == "#") {
                     features.push_back(static_cast<T>(std::numeric_limits<double>::quiet_NaN()));  // Replace missing feature
                 } else {
                     features.push_back(static_cast<T>(std::stod(feature)));  // Convert to T
                 }
             }
 
-            // Label Parsing
-            int label;
-            iss >> label;
-
             // Add Node to the Graph
             nodes.emplace_back(nodeId, features, label);
         }
         nodesFileStream.close();
-    }
 
+    }
 
     std::vector<int> getNodes() const override
     {
@@ -122,6 +133,26 @@ public:
     int getEdgeCount() const override
     {
         return edges->getEdges().size();
+    }
+    
+    
+    std::vector<T> getFeatureById(int nodeId) const override {
+        for (const auto& node : nodes) {
+            if (node.getId() == nodeId) {
+                return node.getFeatureVector();
+            }
+        }
+        return {};
+    }
+    
+    void updateFeatureById(int nodeId, const std::vector<T>& newFeatures) override {
+        for (auto& node : nodes) { 
+            if (node.getId() == nodeId) { 
+                node.setFeatureVector(newFeatures); 
+                return; 
+            }
+        }
+        throw std::invalid_argument("Node ID not found"); 
     }
 
 
