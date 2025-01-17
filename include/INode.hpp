@@ -44,6 +44,13 @@ public:
     virtual std::vector<T> getFeatureVector() const = 0;
 
     /**
+     * @brief Sets the feature vector.
+     *
+     * @param updatedFeatures The new feature vector to be set.
+     */
+    virtual void setFeatureVector(const std::vector<T>& updatedFeatures) = 0;
+
+    /**
      * @brief Get the label of the node.
      *
      * @return int The label of the node.
