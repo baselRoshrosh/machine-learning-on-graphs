@@ -57,6 +57,24 @@ public:
      */
     virtual int getEdgeCount() const = 0;
 
+
+    
+    /**
+     * @brief Retrieves the feature vector of a node by its ID.
+     *
+     * @param nodeId The ID of the node.
+     * @return std::vector<T> The feature vector of the node or an empty vector if the node is not found.
+     */
+    virtual std::vector<T> getFeatureById(int nodeId) const = 0;
+
+    /**
+     * @brief Update the entire feature vector of a node by its ID.
+     * @param nodeId The ID of the node whose feature vector is to be updated.
+     * @param newFeatures The new feature vector to set for the node.
+     */
+    virtual void updateFeatureById(int nodeId, const std::vector<T>& newFeatures) = 0;
+    
+
     // Virtual destructor to support polymorphism
     virtual ~IGraph() = default;
 
