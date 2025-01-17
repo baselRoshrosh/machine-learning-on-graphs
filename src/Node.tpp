@@ -28,5 +28,8 @@ public:
     int getId() const override { return this->id; }
     std::vector<T> getFeatureVector() const override { return this->features; }
     int getLabel() const override { return this->label; }
+    void setFeatureVector(const std::vector<T>& updatedFeatures) { this->features = updatedFeatures; }
+
+    
 };
 #endif // NODE_TPP
