@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/Node.tpp"
+#include "../include/INode.hpp"
 
 TEST(NodeTest, Constructor) {
     Node<float> node(1, {0.5, 1.5, 2.5}, 42);
