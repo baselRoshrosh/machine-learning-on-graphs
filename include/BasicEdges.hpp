@@ -1,27 +1,30 @@
 #ifndef BASICEDGES_HPP
 #define BASICEDGES_HPP
 
-#include "IEdges.hpp"
 #include <vector>
 #include <utility>
 
 /**
  * @class IBasicEdges
- * @brief A concrete implementation of the IEdges interface.
  *
  * This class stores and manages graph edges using a simple
- * `std::vector<std::pair<int, int>>` data structure. It provides methods
+ * `std::vector<std::tuple<int, int, int>>` data structure. It provides methods
  * for retrieving neighbors, checking edge existence, and accessing all edges.
  */
-class IBasicEdges : public IEdges
+class IBasicEdges
 {
 public:
+    /**
+     * @brief Default constructor for INode.
+     */
+    IBasicEdges() = default;
+
     /**
      * @brief Constructor to initialize edges with a predefined set of edges.
      *
      * @param initialEdges A vector of edges to initialize the graph.
      */
-    IBasicEdges(const std::vector<std::pair<int, int>> &initialEdges);
+    IBasicEdges(const std::vector<std::tuple<int, int, int>> &initialEdges);
 
     /**
      * @brief Adds a new edge to the edge list.
@@ -53,7 +56,7 @@ public:
      *
      * @return std::vector<std::pair<int, int>> A list of all edges as node ID pairs.
      */
-    std::vector<std::pair<int, int>> getEdges() const;
+    std::vector<std::tuple<int, int, int>> getEdges() const;
 
     /**
      * @brief Returns number of stored edges
@@ -69,6 +72,9 @@ public:
      * @return std::vector<std::vector<int>> The adjacency matrix.
      */
     virtual std::vector<std::vector<int>> getMatrix(int numNodes) const = 0;
+
+    // Virtual destructor to support polymorphism
+    virtual ~IBasicEdges() = default;
 
 private:
     std::vector<std::pair<int, int>> edges; ///< Stores all edges as pairs of node IDs.

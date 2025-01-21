@@ -9,22 +9,22 @@ private:
 
 public:
     // Constructor
-    BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
+    BasicEdges(const std::vector<std::tuple<int, int>> &initialEdges)
     {
         for (const auto &edge : initialEdges)
         {
-            addEdge(edge.first, edge.second);
+            addEdge(std::get<0>(edge), std::get<1>(edge));
         }
     };
 
     // Adds a new edge to the edge list
-    void addEdge(int source, int destination) override
+    void addEdge(int source, int destination)
     {
         edges.emplace_back(source, destination, 1);
     };
 
     // Get neighbors of a given node
-    std::vector<int> getNeighbors(int nodeID) override
+    std::vector<int> getNeighbors(int nodeID) const
     {
         std::vector<int> neighbors;
         for (const auto &[row, col, value] : edges)
@@ -42,7 +42,7 @@ public:
     }
 
     // Check if an edge exists
-    bool isEdge(int source, int destination) override
+    bool isEdge(int source, int destination) const
     {
         for (const auto &[row, col, value] : edges)
         {
@@ -56,19 +56,19 @@ public:
     }
 
     // Retrieves all edges in the graph
-    std::vector<std::pair<int, int, int>> getEdges() override
+    std::vector<std::tuple<int, int, int>> getEdges() const
     {
         return edges;
     }
 
     // Returns the number of edges
-    int size() override
+    int size() const
     {
         return edges.size();
     }
 
     // Get neighbors of a given node
-    std::vector<int> getNeighbors(int nodeID) override
+    std::vector<int> getNeighbors(int nodeID) const
     {
         std::vector<int> neighbors;
         for (const auto &[row, col, value] : edges)
@@ -85,21 +85,7 @@ public:
         return neighbors;
     }
 
-    // Check if an edge exists
-    bool isEdge(int source, int destination) override
-    {
-        for (const auto &[row, col, value] : edges)
-        {
-            if ((row == source && col == destination) ||
-                (row == destination && col == source))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    std::vector < std::vector<int> getAdjancencyMatrix(int numNodes) const override
+    std::vector<std::vector<int>> getAdjacencyMatrix(int numNodes) const
     {
         // initialize adjacency matrix, filled with 0
         std::vector<std::vector<int>> matrix(numNodes, std::vector<int>(numNodes, 0));
@@ -114,5 +100,3 @@ public:
         return matrix;
     }
 };
-
-#endif // BASICEDGES_HPP
