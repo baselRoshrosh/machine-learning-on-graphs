@@ -8,7 +8,11 @@ private:
     std::vector<std::tuple<int, int, int>> edges;
 
 public:
-    // Constructor
+    /**
+     * @brief Constructor to initialize edges with a predefined set of edges.
+     *
+     * @param initialEdges A vector of edges to initialize the graph.
+     */
     BasicEdges(const std::vector<std::tuple<int, int>> &initialEdges)
     {
         for (const auto &edge : initialEdges)
@@ -17,14 +21,12 @@ public:
         }
     };
 
-    // Adds a new edge to the edge list
-    void addEdge(int source, int destination)
+    void addEdge(int source, int destination) override
     {
         edges.emplace_back(source, destination, 1);
     };
 
-    // Get neighbors of a given node
-    std::vector<int> getNeighbors(int nodeID) const
+    std::vector<int> getNeighbors(int nodeID) const override
     {
         std::vector<int> neighbors;
         for (const auto &[row, col, value] : edges)
@@ -41,8 +43,7 @@ public:
         return neighbors;
     }
 
-    // Check if an edge exists
-    bool isEdge(int source, int destination) const
+    bool isEdge(int source, int destination) const override
     {
         for (const auto &[row, col, value] : edges)
         {
@@ -55,20 +56,17 @@ public:
         return false;
     }
 
-    // Retrieves all edges in the graph
-    std::vector<std::tuple<int, int, int>> getEdges() const
+    std::vector<std::tuple<int, int, int>> getEdges() const override
     {
         return edges;
     }
 
-    // Returns the number of edges
-    int size() const
+    int size() const override
     {
         return edges.size();
     }
 
-    // Get neighbors of a given node
-    std::vector<int> getNeighbors(int nodeID) const
+    std::vector<int> getNeighbors(int nodeID) const override
     {
         std::vector<int> neighbors;
         for (const auto &[row, col, value] : edges)
@@ -85,7 +83,7 @@ public:
         return neighbors;
     }
 
-    std::vector<std::vector<int>> getAdjacencyMatrix(int numNodes) const
+    std::vector<std::vector<int>> getAdjacencyMatrix(int numNodes) const override
     {
         // initialize adjacency matrix, filled with 0
         std::vector<std::vector<int>> matrix(numNodes, std::vector<int>(numNodes, 0));
