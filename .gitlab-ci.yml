@@ -13,7 +13,10 @@ workflow:
 # Build stage
 build:
   stage: build
-  image: docker.io/conanio/gcc12:1.72.0
+  image: ubuntu:22.04 # Use a base image
+  before_script:
+    - apt-get update
+    - apt-get install -y cmake build-essential
   script:
     - echo "Starting build process..."
     - mkdir -p $BUILD_DIR
