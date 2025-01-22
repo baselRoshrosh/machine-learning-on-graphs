@@ -1,72 +1,34 @@
-# This file is a template, and might need editing before it works on your project.
-# This is a sample GitLab CI/CD configuration file that should run without any modifications.
-# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
-# it uses echo commands to simulate the pipeline execution.
-#
-# A pipeline is composed of independent jobs that run scripts, grouped into stages.
-# Stages run in sequential order, but jobs within stages run in parallel.
-#
-# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
-#
-# You can copy and paste this template into a new `.gitlab-ci.yml` file.
-# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
-#
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
-image: gcc:11
-
-services:
-  - name: cmake:3.21.3
-
 stages:
   - build
   - test
-  - deploy
 
-# Build job
+variables:
+  BUILD_DIR: build
+
+# Trigger pipeline for merge requests
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Build stage
 build:
   stage: build
   script:
-    - echo "Configuring project with CMake..."
-    - cmake -S . -B build -DBUILD_TESTS=ON 
-    - echo "Building project..."
-    - cmake --build build 
+    - echo "Starting build process..."
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+    - cmake ..
+    - cmake --build .
   artifacts:
     paths:
-      - build/ # Save build outputs for later stages
-    expire_in: 1 week
-  cache:
-    paths:
-      - build/ 
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
+      - $BUILD_DIR # Save the build artifacts for later stages
 
-# Test job
+# Test stage
 test:
   stage: test
+  script:
+    - echo "Running tests..."
+    - cd $BUILD_DIR
+    - ctest --output-on-failure # Execute tests with detailed output
   dependencies:
-    - build # Use artifacts from the build job
-  script:
-    - echo "Running tests with ctest..."
-    - cd build
-    - ctest --output-on-failure # Run all registered tests
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
-
-deploy:
-  stage: deploy
-  script:
-    - echo "Deploying project..."
-    - echo "Define your deployment steps here"
-  environment:
-    name: production
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-
-
-
-
+    - build # Ensure the build stage is completed before running tests
