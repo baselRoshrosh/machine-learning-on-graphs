@@ -1,7 +1,7 @@
-#include "../include/BasicEdges.hpp"
+#include "../include/IComplexEdges.hpp"
 #include <unordered_map>
 
-class SparseMatrixEdges : public BasicEdges
+class SparseMatrixEdges : public IComplexEdges
 {
 private:
     // Sparse matrix to store edges as adjacency list with weights
@@ -9,7 +9,7 @@ private:
 
 public:
     // Constructor
-    BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
+    SparseMatrixEdges(const std::vector<std::pair<int, int>> &initialEdges)
     {
         for (const auto &edge : initialEdges)
         {
@@ -25,12 +25,12 @@ public:
     }
 
     // Retrieves the neighbors of a given node
-    std::vector<int> getNeighbors(int nodeID) override
+    std::vector<int> getNeighbors(int nodeID) const override
     {
         std::vector<int> neighbors;
         if (sparseMatrix.find(nodeID) != sparseMatrix.end())
         {
-            for (const auto &[neighbor, weight] : sparseMatrix[nodeID])
+            for (const auto &[neighbor, weight] : sparseMatrix.at(nodeID))
             {
                 neighbors.push_back(neighbor);
             }
@@ -39,15 +39,15 @@ public:
     }
 
     // Checks if an edge exists between two nodes
-    bool isEdge(int source, int destination) override
+    bool isEdge(int source, int destination) const override
     {
-        return sparseMatrix[source].find(destination) != sparseMatrix[source].end();
+        return sparseMatrix.at(source).find(destination) != sparseMatrix.at(source).end();
     }
 
     // Retrieves all edges in the graph
-    std::vector<std::pair<int, int, int>> getEdges() override
+    std::vector<std::tuple<int, int, int>> getEdges() const override
     {
-        std::vector<std::pair<int, int, int>> edges;
+        std::vector<std::tuple<int, int, int>> edges;
         for (const auto &[source, neighbors] : sparseMatrix)
         {
             for (const auto &[destination, weight] : neighbors)
@@ -62,7 +62,7 @@ public:
     }
 
     // Returns the number of edges
-    int size() override
+    int size() const override
     {
         int edgeCount = 0;
         for (const auto &[source, neighbors] : sparseMatrix)
@@ -86,4 +86,3 @@ public:
         return matrix;
     }
 };
-

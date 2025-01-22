@@ -1,7 +1,7 @@
-#include "../include/BasicEdges.hpp"
+#include "../include/IComplexEdges.hpp"
 #include <vector>
 
-class BasicEdges : public IBasicEdges
+class BasicEdges : public IComplexEdges
 {
 private:
     // Store edges as (row, col, value) with value (weight) 1
