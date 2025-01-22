@@ -13,6 +13,7 @@ workflow:
 # Build stage
 build:
   stage: build
+  image: docker.io/conanio/gcc12:1.72.0
   script:
     - echo "Starting build process..."
     - mkdir -p $BUILD_DIR
