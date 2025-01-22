@@ -29,7 +29,7 @@ build:
     - echo "Configuring project with CMake..."
     - cmake -S . -B build -DBUILD_TESTS=ON 
     - echo "Building project..."
-    - cmake --build build --target all 
+    - cmake --build build 
   artifacts:
     paths:
       - build/ # Save build outputs for later stages
