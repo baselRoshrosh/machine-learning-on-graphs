@@ -12,13 +12,13 @@
  * `std::vector<std::tuple<int, int, int>>` data structure. It provides methods
  * for retrieving neighbors, checking edge existence, and accessing all edges.
  */
-class IBasicEdges : public IEdges
+class IComplexEdges : public IEdges
 {
 public:
     /**
      * @brief Default constructor for INode.
      */
-    IBasicEdges() = default;
+    IComplexEdges() = default;
 
     /**
      * @brief Constructs and returns the adjacency matrix representation of the graph.
