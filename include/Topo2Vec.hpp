@@ -53,7 +53,7 @@ private:
     /**
      * @brief finds the k-most similar nodes by comparing embedding distances
      * @param embeddings the embeddings of a set of nodes
-     * @param kSimilarNodes the number of similar nodes retreived
+     * @param kSimilarNodes the number of similar nodes retrieved
      * @return a set of the k most similar nodes of the given embeddings
      */
     std::vector<std::vector<double>> getSimilarNodes(std::vector<std::vector<double>> embeddings, int kSimilarNodes);
