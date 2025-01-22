@@ -41,6 +41,7 @@ public:
 
 private:
     std::shared_ptr<Graph<double>> graph; ///< The input graph for the strategy.
+    double tau; ///< configurable variable for embedding creation
 
     /**
      * @brief creates a sample of a set of vectors
