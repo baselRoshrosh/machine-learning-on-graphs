@@ -15,8 +15,8 @@ build:
   stage: build
   image: ubuntu:22.04 # Use a base image
   before_script:
-    - apt-get update
-    - apt-get install -y cmake build-essential
+    - apt-get update && apt-get install -y cmake make g++
+    - git submodule update --init --recursive # Fetch submodules
   script:
     - echo "Starting build process..."
     - mkdir -p $BUILD_DIR
