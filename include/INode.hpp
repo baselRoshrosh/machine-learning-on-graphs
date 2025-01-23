@@ -10,9 +10,7 @@
  * This class is used to store the features of a node and provide an interface
  * for accessing node-specific information, such as its ID and feature vector.
  */
-template <typename T>
-class INode
-{
+class INode {
 public:
     /**
      * @brief Default constructor for INode.
@@ -26,7 +24,7 @@ public:
      * @param featureVector The feature vector of the node.
      * @param label The label of the node.
      */
-    INode(int id, std::vector<T> featureVector, int label) 
+    INode(int id, std::vector<double> featureVector, int label)
         : id(id), features(featureVector), label(label) {}
 
     /**
@@ -39,16 +37,16 @@ public:
     /**
      * @brief Get the feature vector of the node.
      *
-     * @return std::vector<T> The feature vector associated with the node.
+     * @return std::vector<double> The feature vector associated with the node.
      */
-    virtual std::vector<T> getFeatureVector() const = 0;
+    virtual std::vector<double> getFeatureVector() const = 0;
 
     /**
      * @brief Sets the feature vector.
      *
      * @param updatedFeatures The new feature vector to be set.
      */
-    virtual void setFeatureVector(const std::vector<T>& updatedFeatures) = 0;
+    virtual void setFeatureVector(const std::vector<double>& updatedFeatures) = 0;
 
     /**
      * @brief Get the label of the node.
@@ -62,7 +60,7 @@ public:
 
 protected:
     int id;                  ///< unique node identifier
-    std::vector<T> features; ///< the feature vector of the nodes
+    std::vector<double> features; ///< the feature vector of the nodes
     int label;               ///< the label of the node
 };
 
