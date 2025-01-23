@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "../src/Graph.tpp"
-#include "../include/INode.hpp"
-#include "../include/IEdges.hpp"
-#include "../include/BasicEdges.hpp"
+#include "Graph.tpp"
+#include "INode.hpp"
+#include "IEdges.hpp"
+#include "BasicEdges.hpp"
 #include <fstream>
 #include <cstdio>
 

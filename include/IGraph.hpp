@@ -65,6 +65,6 @@ private:
     std::unique_ptr<IEdges> edges; /// object holding the pool of edges
 };
 
-#include "../src/Graph.tpp"
+#include "Graph.tpp"
 
 #endif

@@ -1,6 +1,6 @@
 #ifndef NODE_TPP
 #define NODE_TPP
-#include "../include/INode.hpp"
+#include "INode.hpp"
 
 /**
  * @class Node

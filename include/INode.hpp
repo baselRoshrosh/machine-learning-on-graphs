@@ -59,6 +59,6 @@ protected:
     int label;               ///< the label of the node
 };
 
-#include "../src/Node.tpp"
+#include "Node.tpp"
 
 #endif
