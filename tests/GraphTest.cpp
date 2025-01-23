@@ -4,6 +4,7 @@
 #include "../include/IEdges.hpp"
 #include "../include/BasicEdges.hpp"
 #include <fstream>
+#include <cstdio>
 
 // Helper function to create temporary test files
 void createTempFile(const std::string &filename, const std::string &content)
@@ -35,8 +36,8 @@ protected:
     void TearDown() override
     {
         delete graph;
-        std::remove(NODES_FILE);
-        std::remove(EDGE_FILE);
+        std::remove(NODES_FILE.c_str());
+        std::remove(EDGE_FILE.c_str());
     }
 
     Graph<double> *graph;
