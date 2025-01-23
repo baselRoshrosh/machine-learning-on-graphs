@@ -1,19 +1,20 @@
 #ifndef KNN_TPP
 #define KNN_TPP
 
-#include "../include/knn.hpp"
+#include "../include/KNN.hpp"
 
-
-template <typename T>
-void KNN<T>::cacheNeighbors(const Graph<T>& graph) {
+/**
+ * @class KNN
+ * @brief Concrete implementation of the KNN interface.
+ */
+void KNN::cacheNeighbors(const Graph& graph) {
     for (const auto& node : graph.getNodes()) {
         cachedNeighbors[node] = graph.getNeighbors(node);
     }
 }
 
 //BFS and precompute all the path 
-template <typename T>
-void KNN<T>::calcPaths(const Graph<T>& graph) {
+void KNN::calcPaths(const Graph& graph) {
     for (const auto& node : graph.getNodes()) {
         std::unordered_map<int, int> distances;
         std::queue<std::pair<int, int>> toVisit;
@@ -42,8 +43,7 @@ void KNN<T>::calcPaths(const Graph<T>& graph) {
 }
 
 //Estimate features for nodes in a graph using k-nearest neighbors
-template <typename T>
-void KNN<T>::estimateFeatures(Graph<T>& graph, int k) {
+void KNN::estimateFeatures(Graph& graph, int k) {
     cacheNeighbors(graph);
     calcPaths(graph);
 
@@ -64,10 +64,6 @@ void KNN<T>::estimateFeatures(Graph<T>& graph, int k) {
             const auto& topoDistance = precomputedPaths[node];
 
             //filter and sort neighbors based on their distances
-
-            for (const auto& [neighbor, distance] : topoDistance) {
-                std::cout << "Neighbor: " << neighbor << ", Distance: " << distance << "\n";
-            }
 
             std::vector<std::pair<int, int>> distances;
             for (const auto& [neighbor, distance] : topoDistance) {
@@ -94,9 +90,7 @@ void KNN<T>::estimateFeatures(Graph<T>& graph, int k) {
                 nearestNeighbors.pop();
             }
 
-
-
-            std::vector<T> nodeFeatures = graph.getFeatureById(node);
+            std::vector<double> nodeFeatures = graph.getFeatureById(node);
             bool featureIsMissing = false;
             bool featuresUpdated = false;
 
