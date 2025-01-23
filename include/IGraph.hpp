@@ -8,8 +8,6 @@
 #include "BasicEdges.hpp"
 #include "INode.hpp"
 
-
-
 /**
  * @class Graph
  * @brief Represents an undirected, sparse graph.
@@ -18,9 +16,7 @@
  * It supports adding and querying nodes and edges, as well as parsing
  * graph data from files.
  */
-template <typename T>
-class IGraph
-{
+class IGraph {
 public:
     /**
      * @brief Retrieves all nodes in the graph.
@@ -57,29 +53,26 @@ public:
      */
     virtual int getEdgeCount() const = 0;
 
-
-    
     /**
      * @brief Retrieves the feature vector of a node by its ID.
      *
      * @param nodeId The ID of the node.
-     * @return std::vector<T> The feature vector of the node or an empty vector if the node is not found.
+     * @return std::vector<double> The feature vector of the node or an empty vector if the node is not found.
      */
-    virtual std::vector<T> getFeatureById(int nodeId) const = 0;
+    virtual std::vector<double> getFeatureById(int nodeId) const = 0;
 
     /**
      * @brief Update the entire feature vector of a node by its ID.
      * @param nodeId The ID of the node whose feature vector is to be updated.
      * @param newFeatures The new feature vector to set for the node.
      */
-    virtual void updateFeatureById(int nodeId, const std::vector<T>& newFeatures) = 0;
-    
+    virtual void updateFeatureById(int nodeId, const std::vector<double>& newFeatures) = 0;
 
     // Virtual destructor to support polymorphism
     virtual ~IGraph() = default;
 
 private:
-    std::vector<T> nodes; /// the vector of nodes
+    std::vector<double> nodes; /// the vector of nodes
     std::unique_ptr<IEdges> edges; /// object holding the pool of edges
 };
 
