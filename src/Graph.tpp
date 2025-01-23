@@ -9,17 +9,14 @@
 #include <cctype>
 #include <cstdlib>
 
-
 /**
  * @class Graph
  * @brief Concrete implementation of the IGraph interface.
  */
-template <typename T>
-class Graph : public IGraph<T>
-{
+class Graph : public IGraph {
 private:
-        std::unique_ptr<IEdges> edges;
-        std::vector<Node<T>> nodes;
+    std::unique_ptr<IEdges> edges;
+    std::vector<Node> nodes;
 
 public:
     /**
@@ -28,8 +25,7 @@ public:
      * @param nodesFile The file containing node information.
      * @param edgesFile The file containing edge information.
      */
-    Graph(const std::string &nodesFile, const std::string &edgesFile)
-    {
+    Graph(const std::string& nodesFile, const std::string& edgesFile) {
         // read edge file
         std::ifstream edgesFileStream(edgesFile);
         edges = std::make_unique<BasicEdges>();
@@ -43,15 +39,16 @@ public:
             std::istringstream iss(line);
             int source, destination;
             if (iss >> source >> destination) {
-            // Add edge only if it doesn't already exist
+                // Add edge only if it doesn't already exist
                 if (!edges->isEdge(source, destination) && !edges->isEdge(destination, source)) {
                     edges->addEdge(source, destination);
                 }
-            }else {
-              std::cerr << "Invalid line in edge file: " << line << std::endl;
+            } else {
+                std::cerr << "Invalid line in edge file: " << line << std::endl;
             }
         }
         edgesFileStream.close();
+
         // read node file
         std::ifstream nodesFileStream(nodesFile);
         if (!nodesFileStream.is_open()) {
@@ -59,9 +56,7 @@ public:
             return;
         }
 
-        
         while (std::getline(nodesFileStream, line)) {
-
             std::istringstream iss(line);
             // Node ID parsing
             int nodeId;
@@ -70,31 +65,30 @@ public:
             std::string featuresString;
             std::getline(iss, featuresString);  //jump to start of features
 
-
             //remove \t after nodeId
             if (!featuresString.empty() && featuresString[0] == '\t') {
                 featuresString.erase(0, 1); // Remove the first character
             }
 
-            std::vector<T> features;
+            std::vector<double> features;
             std::istringstream featuresStream(featuresString);
 
             //parsing feature value
             int label;
             std::string feature;
             while (std::getline(featuresStream, feature, ',')) {
-                if (feature[0] == ' '){
+                if (feature[0] == ' ') {
                     feature.erase(0, 1);
                 }
                 size_t tmp = feature.find('\t');
-                if (tmp != std::string::npos){
+                if (tmp != std::string::npos) {
                     label = std::stoi(feature.substr(tmp + 1));
                     feature = feature.substr(0, tmp);
                 }
                 if (feature == "'#'" || feature == "#") {
-                    features.push_back(static_cast<T>(std::numeric_limits<double>::quiet_NaN()));  // Replace missing feature
+                    features.push_back(std::numeric_limits<double>::quiet_NaN());  // Replace missing feature
                 } else {
-                    features.push_back(static_cast<T>(std::stod(feature)));  // Convert to T
+                    features.push_back(std::stod(feature));  // Convert to double
                 }
             }
 
@@ -102,41 +96,33 @@ public:
             nodes.emplace_back(nodeId, features, label);
         }
         nodesFileStream.close();
-
     }
 
-    std::vector<int> getNodes() const override
-    {
+    std::vector<int> getNodes() const override {
         std::vector<int> nodeIds;
-        for (const auto &node : this->nodes)
-        {
+        for (const auto& node : this->nodes) {
             nodeIds.push_back(node.getId());
         }
         return nodeIds;
     }
 
-    std::vector<std::pair<int, int>> getEdges() const override
-    {
+    std::vector<std::pair<int, int>> getEdges() const override {
         return edges->getEdges();
     }
 
-    std::vector<int> getNeighbors(int nodeId) const override
-    {
+    std::vector<int> getNeighbors(int nodeId) const override {
         return edges->getNeighbors(nodeId);
     }
 
-    int getNodeCount() const override
-    {
+    int getNodeCount() const override {
         return this->nodes.size();
     }
 
-    int getEdgeCount() const override
-    {
+    int getEdgeCount() const override {
         return edges->getEdges().size();
     }
-    
-    
-    std::vector<T> getFeatureById(int nodeId) const override {
+
+    std::vector<double> getFeatureById(int nodeId) const override {
         for (const auto& node : nodes) {
             if (node.getId() == nodeId) {
                 return node.getFeatureVector();
@@ -144,17 +130,16 @@ public:
         }
         return {};
     }
-    
-    void updateFeatureById(int nodeId, const std::vector<T>& newFeatures) override {
-        for (auto& node : nodes) { 
-            if (node.getId() == nodeId) { 
-                node.setFeatureVector(newFeatures); 
-                return; 
+
+    void updateFeatureById(int nodeId, const std::vector<double>& newFeatures) override {
+        for (auto& node : nodes) {
+            if (node.getId() == nodeId) {
+                node.setFeatureVector(newFeatures);
+                return;
             }
         }
-        throw std::invalid_argument("Node ID not found"); 
+        throw std::invalid_argument("Node ID not found");
     }
-
-
 };
+
 #endif // GRAPH_TPP
