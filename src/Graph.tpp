@@ -1,7 +1,7 @@
 #ifndef GRAPH_TPP
 #define GRAPH_TPP
 
-#include "../include/IGraph.hpp"
+#include "IGraph.hpp"
 #include <memory>
 #include <fstream>
 #include <iostream>

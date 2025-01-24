@@ -1,4 +1,4 @@
-#include "../include/BasicEdges.hpp"
+#include "BasicEdges.hpp"
 
 // Constructor: Initializes the BasicEdges with a set of edges.
 BasicEdges::BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
