@@ -19,17 +19,6 @@ class IStrategies
 {
 public:
     /**
-     * @brief Constructor to initialize the strategy with a graph.
-     * @param graph A shared pointer to the graph object.
-     */
-    IStrategies(std::shared_ptr<Graph<double>> graph) : graph(graph) {}
-
-    /**
-     * @brief Virtual destructor to support polymorphism.
-     */
-    virtual ~IStrategies() = default;
-
-    /**
      * @brief Runs the strategy on the graph.
      */
     virtual void run() = 0;
