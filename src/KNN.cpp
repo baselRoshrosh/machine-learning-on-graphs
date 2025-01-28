@@ -70,8 +70,8 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     //if a node still has a missing feature it gets revisited
     std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
-    //avoid infinite loops, maxIterations is arbitrary and can be changed
-    int maxIterations = 10;
+    //avoid infinite loops, the maxIterations is arbitrary and can be changed
+    int maxIterations = 5;
     int currentIteration = 0;
 
     while (!nodesToProcess.empty() && currentIteration < maxIterations) {
@@ -83,29 +83,18 @@ void KNN::estimateFeatures(Graph& graph, int k) {
 
             //filter and sort neighbors based on their distances
 
-            std::vector<std::pair<int, int>> distances;
+            std::vector<std::pair<int, int>> neighborsSorted;
             for (const auto& [neighbor, distance] : topoDistance) {
                 if (neighbor != node && distance <= k) {
-                    distances.emplace_back(distance, neighbor);
+                    neighborsSorted.emplace_back(distance, neighbor);
                 }
             }
 
-            std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> nearestNeighbors;
+            std::sort(neighborsSorted.begin(), neighborsSorted.end());
 
-            for (const auto& [neighbor, distance] : topoDistance) {
-                if (neighbor != node && distance <= k) {
-                    nearestNeighbors.push({distance, neighbor});
-                    if (nearestNeighbors.size() > k) {
-                        nearestNeighbors.pop();  // Remove the farthest neighbor if there are more than k
-                    }
-                }
-            }
-
-            // Collect the k-nearest neighbors from the priority queue
             std::vector<int> knn;
-            while (!nearestNeighbors.empty()) {
-                knn.push_back(nearestNeighbors.top().second);
-                nearestNeighbors.pop();
+            for (size_t i = 0; i < std::min(k, static_cast<int>(neighborsSorted.size())); ++i) {
+                knn.push_back(neighborsSorted[i].second);
             }
 
             std::vector<double> nodeFeatures = graph.getFeatureById(node);
@@ -154,4 +143,3 @@ void KNN::estimateFeatures(Graph& graph, int k) {
         std::cerr << "Max iteration depth reached. Could not fill all features." << std::endl;
     }
 }
-
