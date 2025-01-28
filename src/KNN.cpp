@@ -70,7 +70,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     //if a node still has a missing feature it gets revisited
     std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
-    //avoid infinite loops, the nax iterations is arbitrary and can be changed
+    //avoid infinite loops, maxIterations is arbitrary and can be changed
     int maxIterations = 10;
     int currentIteration = 0;
 
