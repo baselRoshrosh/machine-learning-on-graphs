@@ -62,7 +62,7 @@ protected:
     /**
      * @brief creates embeddings for the nodes following the topo2vec algorithm
      * @param graph the graph on which the embeddings should be created
-     * @return an embedding for each of the nodes of the graph holding [nodeID, value1, value2, ...]
+     * @return an embedding for each of the nodes of the graph holding
      */
     std::vector<std::vector<double>> createEmbeddings(std::shared_ptr<Graph> graph);
 };
