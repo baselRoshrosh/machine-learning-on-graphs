@@ -5,17 +5,16 @@
 
 /**
  * @class Node
- * @brief Represents a graph node.
+ * @brief Represents a graph node with features and labels.
  *
- * This class is used to store the features of a node and provide an interface
- * for accessing node-specific information, such as its ID and feature vector.
+ * This class stores information about a node, including its ID, feature vector, and label.
  */
-class INode {
+class Node {
 public:
     /**
-     * @brief Default constructor for INode.
+     * @brief Default constructor for Node.
      */
-    INode() = default;
+    Node() = default;
 
     /**
      * @brief Constructs a new Node object.
@@ -24,39 +23,36 @@ public:
      * @param featureVector The feature vector of the node.
      * @param label The label of the node.
      */
-    INode(int id, std::vector<double> featureVector, int label)
-        : id(id), features(featureVector), label(label) {}
+    Node(int id, const std::vector<double>& featureVector, int label);
 
     /**
      * @brief Get the ID of the node.
      *
      * @return int The unique identifier of the node.
      */
-    virtual int getId() const = 0;
+    int getId() const;
 
     /**
      * @brief Get the feature vector of the node.
      *
      * @return std::vector<double> The feature vector associated with the node.
      */
-    virtual std::vector<double> getFeatureVector() const = 0;
+    std::vector<double> getFeatureVector() const;
 
     /**
      * @brief Sets the feature vector.
      *
      * @param updatedFeatures The new feature vector to be set.
      */
-    virtual void setFeatureVector(const std::vector<double>& updatedFeatures) = 0;
+    void setFeatureVector(const std::vector<double>& updatedFeatures);
 
     /**
      * @brief Get the label of the node.
      *
      * @return int The label of the node.
      */
-    virtual int getLabel() const = 0;
+    int getLabel() const;
 
-    // Virtual destructor to support polymorphism
-    virtual ~INode() = default;
 
 protected:
     int id;                  ///< unique node identifier
@@ -64,6 +60,5 @@ protected:
     int label;               ///< the label of the node
 };
 
-#include "../src/Node.tpp"
 
 #endif
