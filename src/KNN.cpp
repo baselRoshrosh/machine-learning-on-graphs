@@ -1,11 +1,9 @@
-#ifndef KNN_TPP
-#define KNN_TPP
-
 #include "../include/KNN.hpp"
 
 /**
- * @class KNN
- * @brief Concrete implementation of the KNN interface.
+ * @brief Cache the neighbors of all nodes in the graph.
+ *
+ * @param graph The graph to process.
  */
 void KNN::cacheNeighbors(const Graph& graph) {
     for (const auto& node : graph.getNodes()) {
@@ -13,12 +11,20 @@ void KNN::cacheNeighbors(const Graph& graph) {
     }
 }
 
-//BFS and precompute all the path 
-void KNN::calcPaths(const Graph& graph) {
+/**
+ * @brief Calculate the shortest paths for all nodes up to a distance of k.
+ *
+ * @param graph The graph to process.
+ * @param k The number of nearest neighbors to consider.
+ */
+void KNN::calcPaths(const Graph& graph, int k) {
     for (const auto& node : graph.getNodes()) {
         std::unordered_map<int, int> distances;
         std::queue<std::pair<int, int>> toVisit;
+        //tracks how many nodes have been updated with shortest paths
+        int shortestFound = 0; 
 
+        //prepare bfs
         for (const auto& otherNode : graph.getNodes()) {
             distances[otherNode] = std::numeric_limits<int>::max();
         }
@@ -26,33 +32,45 @@ void KNN::calcPaths(const Graph& graph) {
         distances[node] = 0;
         toVisit.push({node, 0});
 
-        while (!toVisit.empty()) {
+        //Perform BFS, but stop if k nearest nodes are found
+        while (!toVisit.empty() && shortestFound < k) {
             auto [current, depth] = toVisit.front();
             toVisit.pop();
 
             for (int neighbor : cachedNeighbors[current]) {
-                if (distances[neighbor] == std::numeric_limits<int>::max()) {
+                if (depth + 1 < distances[neighbor]) {
                     distances[neighbor] = depth + 1;
                     toVisit.push({neighbor, depth + 1});
+                    ++shortestFound; 
+
+                    if (shortestFound >= k) {
+                        break;
+                    }
                 }
             }
         }
 
+        //Store the limited precomputed paths for this node
         precomputedPaths[node] = std::move(distances);
     }
 }
 
-//Estimate features for nodes in a graph using k-nearest neighbors
+/**
+ * @brief Estimate missing features for nodes in the graph using k-nearest neighbors.
+ *
+ * @param graph The graph to process.
+ * @param k The number of neighbors to consider.
+ */
 void KNN::estimateFeatures(Graph& graph, int k) {
     cacheNeighbors(graph);
-    calcPaths(graph);
+    calcPaths(graph, k);
 
     //Initialize the set of nodes to process
     std::vector<int> nodes = graph.getNodes();
-    //if a node still has a missing feature it gets revisted
+    //if a node still has a missing feature it gets revisited
     std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
-    //avoid infin loobs
+    //avoid infinite loops, the nax iterations is arbitrary and can be changed
     int maxIterations = 10;
     int currentIteration = 0;
 
@@ -137,4 +155,3 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     }
 }
 
-#endif // KNN_TPP
