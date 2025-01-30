@@ -16,6 +16,8 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
+image: debian:latest  # Use Debian which includes Git by default
+
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
@@ -26,6 +28,7 @@ build-job:       # This job runs in the build stage, which runs first.
   before_script:
     - apt-get update && apt-get install -y cmake g++
   script:
+    - git --version  # Optional: Verify Git is installed
     - git submodule update --init --recursive
     - mkdir -p build && cd build
     - cmake .. && make #compiles the project
