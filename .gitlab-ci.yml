@@ -38,7 +38,7 @@ unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - cd build
-    - ctest --output-on-failure #runs the tests
+    - ctest --output-on-failure #run the tests
   only:
     - merge_requests #Runs only on merge requests
 
