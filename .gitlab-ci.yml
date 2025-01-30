@@ -26,12 +26,14 @@ stages:          # List of stages for jobs, and their order of execution
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   before_script:
-    - apt-get update && apt-get install -y git cmake g++
+    - apt-get update && apt-get install -y git cmake g++ python3 python3-pip
   script:
     - git --version  # Check if Git is installed
+    - python3 --version  # Check if Python3 is installed
     - git submodule update --init --recursive  # Ensure submodules are initialized
     - mkdir -p build && cd build
-    - cmake .. && make  # Compiles the project
+    - cmake .. -DPYTHON_EXECUTABLE=/usr/bin/python3  # Explicitly specify Python3
+    - make  # Compiles the project
   artifacts:
     paths:
       - build
