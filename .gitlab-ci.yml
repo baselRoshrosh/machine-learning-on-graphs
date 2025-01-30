@@ -23,6 +23,8 @@ stages:          # List of stages for jobs, and their order of execution
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
+  before_script:
+    - apt-get update && apt-get install -y cmake g++
   script:
     - mkdir -p build && cd build
     - cmake .. && make #compiles the project
