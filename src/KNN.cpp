@@ -1,5 +1,43 @@
 #include "../include/KNN.hpp"
 
+
+/**
+ * @brief Runs the KNN strategy.
+ */
+void KNN::run() {
+    if (!graph) {
+        std::cerr << "Error: Graph is not set in KNN strategy." << std::endl;
+        return;
+    }
+    estimateFeatures(*graph, k);
+}
+
+/**
+ * @brief Extracts the results after running the strategy.
+ * @return A modified graph with missing features filled.
+ */
+std::shared_ptr<Graph> KNN::extractResults() const {
+    return graph;
+}
+
+/**
+ * @brief Configures strategy-specific parameters.
+ * @param params A map of parameter names and their values.
+ */
+void KNN::configure(const std::map<std::string, double>& params) {
+    if (params.find("k") != params.end()) {
+        k = static_cast<int>(params.at("k"));
+    }
+}
+
+/**
+ * @brief Resets the strategy to its initial state.
+ */
+void KNN::reset() {
+    cachedNeighbors.clear();
+    precomputedPaths.clear();
+}
+
 /**
  * @brief Cache the neighbors of all nodes in the graph.
  *
@@ -70,7 +108,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     //if a node still has a missing feature it gets revisited
     std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
-    //avoid infinite loops, the maxIterations is arbitrary and can be changed
+    //avoid infinite loops, the nax iterations is arbitrary and can be changed
     int maxIterations = 5;
     int currentIteration = 0;
 
@@ -143,3 +181,4 @@ void KNN::estimateFeatures(Graph& graph, int k) {
         std::cerr << "Max iteration depth reached. Could not fill all features." << std::endl;
     }
 }
+
