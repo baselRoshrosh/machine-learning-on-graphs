@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <fstream>
 #include "../include/Graph.hpp"
-#include "../src/BasicEdges.cpp"
+#include "BasicEdges.cpp"
 
 /**
  * @class KNN
