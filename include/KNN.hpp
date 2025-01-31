@@ -12,7 +12,7 @@
 #include <limits>
 #include <iomanip>
 #include <fstream>
-#include "../include/Graph.hpp"
+#include "Graph.hpp"
 #include "BasicEdges.cpp"
 
 /**
