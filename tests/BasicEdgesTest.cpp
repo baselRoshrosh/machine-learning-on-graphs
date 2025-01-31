@@ -1,5 +1,5 @@
-#include "../../extlibs/gtest/googletest/include/gtest/gtest.h"
-#include "../../include/BasicEdges.hpp"
+#include <gtest/gtest.h>
+#include "BasicEdges.hpp"
 
 // Test fixture for BasicEdges
 class BasicEdgesTest : public ::testing::Test
