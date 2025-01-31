@@ -70,3 +70,4 @@ deploy-job:      # This job runs in the deploy stage.
       - /artifacts
   only:
     - main
+    - merge_requests
