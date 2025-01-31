@@ -64,7 +64,7 @@ deploy-job:      # This job runs in the deploy stage.
     - echo "Saving compiled binary..."
     - ls -la build/  # List all files to see what was compiled
     - mkdir -p artifacts
-    - cp build/* artifacts/  # Copy all built files to artifacts
+    - cp -r build/* artifacts/  # Copy all built files to artifacts
   artifacts:
     paths:
       - /artifacts
