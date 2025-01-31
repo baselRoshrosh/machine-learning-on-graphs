@@ -62,10 +62,11 @@ deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
     - echo "Saving compiled binary..."
+    - ls -la build/  # List all files to see what was compiled
     - mkdir -p artifacts
-    - cp build/my_project_binary artifacts/
+    - cp build/* artifacts/  # Copy all built files to artifacts
   artifacts:
     paths:
-      - /artifacts/my_project_binary
+      - /artifacts
   only:
     - main
