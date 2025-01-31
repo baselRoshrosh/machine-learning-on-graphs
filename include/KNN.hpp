@@ -40,7 +40,6 @@ private:
      */
     void calcPaths(const Graph& graph, int k);
 
-public:
     /**
      * @brief Estimate missing features for nodes in the graph using k-nearest neighbors.
      *
