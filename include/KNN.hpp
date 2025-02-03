@@ -1,6 +1,7 @@
 #ifndef KNN_HPP
 #define KNN_HPP
 
+#include "../include/IStrategies.hpp"
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -8,19 +9,43 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
-#include <algorithm>
-#include <limits>
-#include <iomanip>
-#include <fstream>
-#include "Graph.hpp"
-#include "BasicEdges.cpp"
-
+#include "../include/Graph.hpp"
+#include "../src/BasicEdges.cpp"
 /**
  * @class KNN
  * @brief Implementation of the K-Nearest Neighbors algorithm for feature estimation.
  */
-class KNN {
+class KNN : public IStrategies {
+public:
+    /**
+     * @brief Default constructor.
+     */
+    KNN(std::shared_ptr<Graph> g) { graph = g; }
+
+    /**
+     * @brief Runs the KNN strategy.
+     */
+    void run() override;
+
+    /**
+     * @brief Extracts the results after running the strategy.
+     * @return A modified graph with missing features filled.
+     */
+    std::shared_ptr<Graph> extractResults() const override;
+
+    /**
+     * @brief Configures strategy-specific parameters.
+     * @param params A map of parameter names and their values.
+     */
+    void configure(const std::map<std::string, double>& params) override;
+
+    /**
+     * @brief Resets the strategy to its initial state.
+     */
+    void reset() override;
+
 private:
+    int k;
     //Cache for neighbors and path to avoid repeatedly calculating them
     std::unordered_map<int, std::vector<int>> cachedNeighbors;          
     std::unordered_map<int, std::unordered_map<int, int>> precomputedPaths;
