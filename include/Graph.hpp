@@ -5,9 +5,9 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include "../include/IEdges.hpp"
-#include "../include/BasicEdges.hpp"
-#include "../include/Node.hpp"
+#include "IEdges.hpp"
+#include "BasicEdges.hpp"
+#include "Node.hpp"
 
 /**
  * @class Graph
