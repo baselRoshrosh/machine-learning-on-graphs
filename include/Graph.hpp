@@ -1,80 +1,86 @@
-#ifndef KNN_HPP
-#define KNN_HPP
+#ifndef GRAPH_HPP
+#define GRAPH_HPP
 
-#include "../include/IStrategies.hpp"
-#include <iostream>
-#include <cmath>
 #include <vector>
 #include <memory>
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include "../include/Graph.hpp"
-#include "../src/BasicEdges.cpp"
+#include <string>
+#include <utility>
+#include "../include/IEdges.hpp"
+#include "../include/BasicEdges.hpp"
+#include "../include/Node.hpp"
+
 /**
- * @class KNN
- * @brief Implementation of the K-Nearest Neighbors algorithm for feature estimation.
+ * @class Graph
+ * @brief Represents an undirected, sparse graph.
+ *
+ * This class provides an interface for working with a graph structure.
+ * It supports adding and querying nodes and edges, as well as parsing
+ * graph data from files.
  */
-class KNN : public IStrategies {
-public:
-    /**
-     * @brief Default constructor.
-     */
-    KNN(std::shared_ptr<Graph> g) { graph = g; }
-
-    /**
-     * @brief Runs the KNN strategy.
-     */
-    void run() override;
-
-    /**
-     * @brief Extracts the results after running the strategy.
-     * @return A modified graph with missing features filled.
-     */
-    std::shared_ptr<Graph> extractResults() const override;
-
-    /**
-     * @brief Configures strategy-specific parameters.
-     * @param params A map of parameter names and their values.
-     */
-    void configure(const std::map<std::string, double>& params) override;
-
-    /**
-     * @brief Resets the strategy to its initial state.
-     */
-    void reset() override;
-
+class Graph {
 private:
-    int k;
-    //Cache for neighbors and path to avoid repeatedly calculating them
-    std::unordered_map<int, std::vector<int>> cachedNeighbors;          
-    std::unordered_map<int, std::unordered_map<int, int>> precomputedPaths;
-
-    /**
-     * @brief Cache the neighbors of all nodes in the graph.
-     *
-     * @param graph The graph to process.
-     */
-    void cacheNeighbors(const Graph& graph);
-
-    /**
-     * @brief Calculate the shortest paths for all nodes up to a distance of k.
-     *
-     * @param graph The graph to process.
-     * @param k The number of nearest neighbors to consider.
-     */
-    void calcPaths(const Graph& graph, int k);
+    std::vector<Node> nodes; /// the vector of nodes
+    std::unique_ptr<BasicEdges> edges; /// object holding the pool of edges
 
 public:
     /**
-     * @brief Estimate missing features for nodes in the graph using k-nearest neighbors.
+     * @brief Constructs a graph by parsing from txt files.
      *
-     * @param graph The graph to process.
-     * @param k The number of neighbors to consider.
+     * @param nodesFile The file containing node information.
+     * @param edgesFile The file containing edge information.
      */
-    void estimateFeatures(Graph& graph, int k);
+    Graph(const std::string& nodesFile, const std::string& edgesFile);
+
+    /**
+     * @brief Retrieves all nodes in the graph.
+     *
+     * @return std::vector<int> A list of all node IDs.
+     */
+    std::vector<int> getNodes() const;
+
+    /**
+     * @brief Retrieves all edges in the graph.
+     *
+     * @return std::vector<std::pair<int, int>> A list of all edges.
+     */
+    std::vector<std::pair<int, int>> getEdges() const;
+
+    /**
+     * @brief Retrieves neighbors of a specified node.
+     *
+     * @return std::vector<int> A list of all neighbor node IDs.
+     */
+    std::vector<int> getNeighbors(int nodeId) const;
+
+    /**
+     * @brief Retrieves node count of graph.
+     *
+     * @return int Number of all the nodes in the graph.
+     */
+    int getNodeCount() const;
+
+    /**
+     * @brief Retrieves edge count of graph.
+     *
+     * @return int Number of all the edges in the graph.
+     */
+    int getEdgeCount() const;
+
+    /**
+     * @brief Retrieves the feature vector of a node by its ID.
+     *
+     * @param nodeId The ID of the node.
+     * @return std::vector<double> The feature vector of the node or an empty vector if the node is not found.
+     */
+    std::vector<double> getFeatureById(int nodeId) const;
+
+    /**
+     * @brief Update the entire feature vector of a node by its ID.
+     * @param nodeId The ID of the node whose feature vector is to be updated.
+     * @param newFeatures The new feature vector to set for the node.
+     */
+    void updateFeatureById(int nodeId, const std::vector<double>& newFeatures);
 };
 
 
-#endif // KNN_HPP
-
+#endif
