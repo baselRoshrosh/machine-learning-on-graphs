@@ -1,4 +1,4 @@
-#include "../include/KNN.hpp"
+#include "KNN.hpp"
 
 
 /**
