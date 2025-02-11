@@ -39,7 +39,7 @@ public:
      */
     void reset() override;
 
-private:
+protected:
     std::shared_ptr<Graph<double>> graph; ///< The input graph for the strategy.
     double tau; ///< configurable variable for embedding creation
 

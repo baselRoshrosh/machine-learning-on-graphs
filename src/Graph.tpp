@@ -8,6 +8,7 @@
 #include <sstream>
 #include <cctype>
 #include <cstdlib>
+#include <limits>
 
 /**
  * @class Graph
