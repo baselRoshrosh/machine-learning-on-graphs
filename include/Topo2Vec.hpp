@@ -44,6 +44,8 @@ public:
      */
     void reset() override;
 
+    virtual ~Topo2Vec() = default;
+    
 protected:
     std::shared_ptr<Graph> graph; ///< the input graph for the strategy
     /*

@@ -5,56 +5,30 @@
 #include <random>
 
 /*
- * ====== Interface Methods ============
+ * ======= Declaration of local helper functions ===================
  */
 
-// Stub implementations for pure virtual functions
-void Topo2Vec::run()
-{
-    // Placeholder implementation
-}
-
-std::shared_ptr<Graph> Topo2Vec::extractResults() const
-{
-    // Providing dummy file paths (adjust as needed)
-    return std::make_shared<Graph>("dummy_nodes.txt", "dummy_edges.txt");
-}
-
-void Topo2Vec::configure(const std::map<std::string, double> &params)
-{
-    // Placeholder implementation
-}
-
-void Topo2Vec::reset()
-{
-    // Placeholder implementation
-}
+double getCandidateParticipation(std::shared_ptr<Graph>, const std::vector<int> &, int);
+void initializeEmbeddings(std::shared_ptr<Graph>, std::unordered_map<int, std::vector<double>> &, int);
+void updateEmbeddings(std::unordered_map<int, std::vector<double>> &, int, int, int, double, double);
+std::vector<int> getNegativeSamples(std::shared_ptr<Graph>, int, int);
+int getAverageDegree(std::shared_ptr<Graph>);
+void filterAndSort(std::vector<int> &, std::vector<double> &, double);
+double dotProduct(const std::vector<double> &, const std::vector<double> &);
+double sigmoid(double);
 
 /*
- * ======== getSample() ===========
-*/
-
-std::vector<std::vector<double>> Topo2Vec::getSample(const std::vector<std::vector<double>> &setOfVectors, int sampleSize)
+ * ======= Implementation of IStrategy Interface methods =============
+ */
+void Topo2Vec::run() {}
+std::shared_ptr<Graph> Topo2Vec::extractResults() const
 {
-    std::vector<std::vector<double>> sample;
-    if (setOfVectors.empty() || sampleSize <= 0)
-    { // Out-of-bounds check
-        return sample;
-    }
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, setOfVectors.size() - 1);
-
-    for (int i = 0; i < sampleSize; i++)
-    {
-        sample.push_back(setOfVectors[dis(gen)]);
-    }
-
-    return sample;
+    return graph;
 }
+void Topo2Vec::configure(const std::map<std::string, double> &params) {}
+void Topo2Vec::reset() {}
 
-
-/**
+/*
  * ======= createEmbeddings() with helper functions ======================
  */
 
@@ -75,6 +49,8 @@ std::unordered_map<int, std::vector<double>> Topo2Vec::createEmbeddings(int dime
 
 std::vector<std::vector<int>> Topo2Vec::getContextSubgraphs()
 {
+    std::vector<std::vector<int>> contextSubgraphs;
+
     std::vector<int> nodeIDs = graph->getNodes();
     int nodeCount = graph->getNodeCount();
     int avgDegree = getAverageDegree(graph);
@@ -91,8 +67,9 @@ std::vector<std::vector<int>> Topo2Vec::getContextSubgraphs()
 
     for (int currentNodeID : nodeIDs)
     {
-        // for each node reset
-        std::fill(visited.begin(), visited.end(), 0);
+        // reset variables
+        std::for_each(visited.begin(), visited.end(), [](auto &pair)
+                      { pair.second = false; });
         visited[currentNodeID] = true;
         subgraphNodes.clear();
         edgesInSubgraphCount = 0;
@@ -130,7 +107,11 @@ std::vector<std::vector<int>> Topo2Vec::getContextSubgraphs()
         {
             expandSubgraph(templist, visited, subgraphNodes, edgesInSubgraphCount);
         }
+
+        contextSubgraphs.push_back(templist);
     }
+
+    return contextSubgraphs;
 }
 
 void Topo2Vec::expandSubgraph(std::vector<int> &templist, std::unordered_map<int, bool> &visited, std::unordered_set<int> &subgraphNodes, int &edgesInSubgraphCount)
