@@ -74,6 +74,9 @@ TEST_F(Topo2VecTest, ExpandSubgraphTest)
     std::unordered_set<int> subgraphNodes({1, 2});
     int edgesCount = 0;
 
+    std::unordered_set<int> subgraphNodes({1, 2});
+    int edgesCount = 0;
+
     topo2vec->expandSubgraph(templist, visited, subgraphNodes, edgesCount);
 
     EXPECT_GT(edgesCount, 0); // Ensure edges are added
