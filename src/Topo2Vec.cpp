@@ -1,4 +1,5 @@
 #include <random>
+
 #include "Topo2Vec.hpp"
 
 std::vector<std::vector<double>> Topo2Vec::getSample(std::vector<std::vector<double>> setOfVectors, int sampleSize)
