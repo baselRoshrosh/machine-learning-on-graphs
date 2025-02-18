@@ -15,7 +15,7 @@ public:
      * @brief Constructor to initialize the strategy with a graph.
      * @param graph A shared pointer to the graph object.
      */
-    Topo2Vec(std::shared_ptr<Graph<double>> graph) : graph(graph) {};
+    Topo2Vec(std::shared_ptr<Graph> graph) : graph(graph) {};
 
     /**
      * @brief Runs the strategy on the graph.
@@ -26,7 +26,7 @@ public:
      * @brief Extracts the results after running the strategy.
      * @return A modified graph with missing features filled.
      */
-    std::shared_ptr<Graph<double>> extractResults() const override;
+    std::shared_ptr<Graph> extractResults() const override;
 
     /**
      * @brief Configures strategy-specific parameters.
@@ -40,7 +40,7 @@ public:
     void reset() override;
 
 protected:
-    std::shared_ptr<Graph<double>> graph; ///< The input graph for the strategy.
+    std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
     double tau; ///< configurable variable for embedding creation
 
     /**
@@ -64,7 +64,7 @@ protected:
      * @param graph the graph on which the embeddings should be created
      * @return an embedding for each of the nodes of the graph holding [nodeID, value1, value2, ...]
      */
-    std::vector<std::vector<double>> createEmbeddings(std::shared_ptr<Graph<double>> graph);
+    std::vector<std::vector<double>> createEmbeddings(std::shared_ptr<Graph> graph);
 };
 
 #endif

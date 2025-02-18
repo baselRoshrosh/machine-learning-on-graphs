@@ -1,7 +1,7 @@
 #ifndef ISTRATEGIES_HPP
 #define ISTRATEGIES_HPP
 
-#include "IGraph.hpp"
+#include "Graph.hpp"
 
 #include <memory>
 #include <map>
@@ -27,7 +27,7 @@ public:
      * @brief Extracts the results after running the strategy.
      * @return A modified graph with missing features filled.
      */
-    virtual std::shared_ptr<Graph<double>> extractResults() const = 0;
+    virtual std::shared_ptr<Graph> extractResults() const = 0;
 
     /**
      * @brief Configures strategy-specific parameters.
@@ -41,7 +41,8 @@ public:
     virtual void reset() = 0;
 
 protected:
-    std::shared_ptr<Graph<double>> graph; ///< The input graph for the strategy.
+    std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
 };
+
 
 #endif // ISTRATEGIES_HPP

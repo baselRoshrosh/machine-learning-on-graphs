@@ -4,9 +4,8 @@
 // Public Wrapper Class for Testing
 class TestableTopo2Vec : public Topo2Vec {
 public:
-    using Topo2Vec::getSample;  // Expose the private method
+    using Topo2Vec::getSample;  // Expose the protected method
 };
-
 
 // Test 1: Basic Sampling Test
 TEST(Topo2VecTest, BasicSampling) {
