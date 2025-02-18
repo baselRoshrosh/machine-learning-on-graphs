@@ -51,7 +51,6 @@ TEST_F(KNNTest, EstimateFeaturesFillsMissingValuesThroughRun) {
 
     // Ensure missing values are replaced (adjust conditions based on KNN logic)
     for (double feature : features1) {
-        std::cerr << "feature " << feature << std::endl;
         ASSERT_FALSE(std::isnan(feature)); // No NaNs should remain
     }
     for (double feature : features4) {
