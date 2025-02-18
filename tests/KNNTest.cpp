@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "../include/KNN.hpp"
-#include "../include/Graph.hpp"
-#include "../include/BasicEdges.hpp"
+#include "KNN.hpp"
+#include "Graph.hpp"
+#include "BasicEdges.hpp"
 
 class KNNTest : public ::testing::Test {
 protected:
