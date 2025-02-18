@@ -1,6 +1,7 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
+#include <memory>
 #include <vector>
 #include <string>
 #include <utility>
