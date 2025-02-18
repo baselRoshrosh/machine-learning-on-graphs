@@ -106,9 +106,10 @@ int Graph::getNodeCount() const {
 }
 
 int Graph::getEdgeCount() const {
-    auto nonConstEdges = const_cast<BasicEdges*>(edges.get());
+    auto nonConstEdges = const_cast<BasicEdges*>(this->edges.get());
     return nonConstEdges->size();
 }
+
 
 std::vector<double> Graph::getFeatureById(int nodeId) const {
     for (const auto& node : nodes) {
