@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
-#include "Graph.tpp"
-#include "INode.hpp"
-#include "IEdges.hpp"
+#include "Graph.hpp"
+#include "Node.hpp"
 #include "BasicEdges.hpp"
 #include <fstream>
 #include <cstdio>
@@ -30,7 +29,7 @@ protected:
         createTempFile(EDGE_FILE, EDGE_FILE_INPUT);
 
         // Initialize Graph
-        graph = new Graph<double>(NODES_FILE, EDGE_FILE);
+        graph = new Graph(NODES_FILE, EDGE_FILE);
     }
 
     void TearDown() override
@@ -40,7 +39,7 @@ protected:
         std::remove(EDGE_FILE.c_str());
     }
 
-    Graph<double> *graph;
+    Graph *graph;
 };
 
 // Test Graph Initialization
