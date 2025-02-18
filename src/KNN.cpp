@@ -1,4 +1,5 @@
-#include "../include/KNN.hpp"
+#include "KNN.hpp"
+
 
 /**
  * @brief Runs the KNN strategy.
@@ -114,15 +115,13 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     while (!nodesToProcess.empty() && currentIteration < maxIterations) {
         std::unordered_set<int> nextIterationNodes;
         currentIteration++;
-        
+
         for (const int& node : nodesToProcess) {
-            std::cerr << "node: " << node << ", iteration" << currentIteration << std::endl;
             const auto& topoDistance = precomputedPaths[node];
 
             //filter and sort neighbors based on their distances
 
             std::vector<std::pair<int, int>> neighborsSorted;
-            std::cerr << "topoDistanzes" << topoDistance.size() << std::endl;
             for (const auto& [neighbor, distance] : topoDistance) {
                 if (neighbor != node && distance <= k) {
                     neighborsSorted.emplace_back(distance, neighbor);
@@ -132,7 +131,6 @@ void KNN::estimateFeatures(Graph& graph, int k) {
             std::sort(neighborsSorted.begin(), neighborsSorted.end());
 
             std::vector<int> knn;
-            std::cerr << "k: " << k << " neiSorted " << static_cast<int>(neighborsSorted.size()) << std::endl;
             for (size_t i = 0; i < std::min(k, static_cast<int>(neighborsSorted.size())); ++i) {
                 knn.push_back(neighborsSorted[i].second);
             }
@@ -141,31 +139,21 @@ void KNN::estimateFeatures(Graph& graph, int k) {
             bool featureIsMissing = false;
             bool featuresUpdated = false;
 
-            for (auto feat : nodeFeatures){
-                std::cerr << "feature: " << feat << " ,size: " << nodeFeatures.size() << std::endl;
-            }
-            std::cerr << "test: " << knn.size() << std::endl;
-            for (auto neighbor : knn){
-                std::cerr << "neigh: " << neighbor << std::endl;
-            }
             //estimate missing features and skip the feature if it is not missing      
             for (size_t i = 0; i < nodeFeatures.size(); ++i) {
                 if (std::isnan(nodeFeatures[i])) {
                     double sum = 0.0;
                     int count = 0;
-                    std::cerr << "reached this point" << std::endl;
 
                     //gather all neighbors and replace the missing features with the average of the neighbors
                     for (int neighborId : knn) {
-                        std::cerr << "the neighbor" << neighborId << std::endl;
                         const auto& neighborFeatures = graph.getFeatureById(neighborId);
                         if (!std::isnan(neighborFeatures[i])) {
-                            std::cerr << "neighbor has features and we are here" << std::endl;
                             sum += neighborFeatures[i];
                             ++count;
                         }
                     }
-                    std::cerr << "count: " << count << std::endl;
+
                     //only update features if valid neighbors exist that have that feature
                     if (count > 0) {
                         nodeFeatures[i] = sum / count;
