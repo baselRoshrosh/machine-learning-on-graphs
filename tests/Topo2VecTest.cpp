@@ -63,18 +63,13 @@ TEST_F(Topo2VecTest, GetContextSubgraphsTest)
 // Test `expandSubgraph`
 TEST_F(Topo2VecTest, ExpandSubgraphTest)
 {   
-    std::vector<int> templist = {1, 2};
+    std::vector<int> templist = {104, 121};
     std::unordered_map<int, bool> visited;
     for (int nodeID : graph->getNodes()) {
         visited[nodeID] = false;
     }
-    visited[1] = true;
-    visited[2] = true;
 
-    std::unordered_set<int> subgraphNodes({1, 2});
-    int edgesCount = 0;
-
-    std::unordered_set<int> subgraphNodes({1, 2});
+    std::unordered_set<int> subgraphNodes({104, 121});
     int edgesCount = 0;
 
     topo2vec->expandSubgraph(templist, visited, subgraphNodes, edgesCount);
