@@ -114,8 +114,9 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     while (!nodesToProcess.empty() && currentIteration < maxIterations) {
         std::unordered_set<int> nextIterationNodes;
         currentIteration++;
-
+        
         for (const int& node : nodesToProcess) {
+            std::cerr << "node: " << node << ", iteration" << currentIteration << std::endl;
             const auto& topoDistance = precomputedPaths[node];
 
             //filter and sort neighbors based on their distances
@@ -138,6 +139,12 @@ void KNN::estimateFeatures(Graph& graph, int k) {
             bool featureIsMissing = false;
             bool featuresUpdated = false;
 
+            for (auto feat : nodeFeatures){
+                std::cerr << "feature: " << feat << " ,size: " << nodeFeatures.size() << std::endl;
+            }
+            for (auto neighbor : knn){
+                std::cerr << "neigh: " << neighbor << std::endl;
+            }
             //estimate missing features and skip the feature if it is not missing      
             for (size_t i = 0; i < nodeFeatures.size(); ++i) {
                 if (std::isnan(nodeFeatures[i])) {
