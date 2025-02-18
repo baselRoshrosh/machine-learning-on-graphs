@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
+#include <fstream>
+#include <cstdio>
+
 #include "Graph.hpp"
 #include "Node.hpp"
 #include "BasicEdges.hpp"
-#include <fstream>
-#include <cstdio>
 
 // Helper function to create temporary test files
 void createTempFile(const std::string &filename, const std::string &content)
