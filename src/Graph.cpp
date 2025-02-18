@@ -1,4 +1,3 @@
-#include "Graph.hpp"
 #include <memory>
 #include <fstream>
 #include <iostream>
@@ -6,6 +5,8 @@
 #include <cctype>
 #include <cstdlib>
 #include <limits>
+
+#include "Graph.hpp"
 
 /**
  * @brief Constructs a graph by parsing from txt files.
