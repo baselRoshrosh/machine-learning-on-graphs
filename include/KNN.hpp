@@ -47,7 +47,7 @@ public:
     void reset() override;
 
 private:
-    int k = 15; // Standartwert siehe https://www.mdpi.com/2227-7390/9/8/830
+    int k = 15; 
     //Cache for neighbors and path to avoid repeatedly calculating them
     std::unordered_map<int, std::vector<int>> cachedNeighbors;          
     std::unordered_map<int, std::unordered_map<int, int>> precomputedPaths;
