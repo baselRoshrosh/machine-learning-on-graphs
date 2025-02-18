@@ -1,7 +1,6 @@
 #ifndef KNN_HPP
 #define KNN_HPP
 
-#include "IStrategies.hpp"
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -9,8 +8,11 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
+
+#include "IStrategies.hpp"
 #include "Graph.hpp"
-//#include "BasicEdges.cpp"
+
+
 /**
  * @class KNN
  * @brief Implementation of the K-Nearest Neighbors algorithm for feature estimation.
