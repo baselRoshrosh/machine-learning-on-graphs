@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <cstdio>
+#include <memory>
 
 #include "Graph.hpp"
 #include "KNN.hpp"
@@ -27,22 +28,23 @@ protected:
         createTempFile(EDGE_FILE, EDGE_FILE_INPUT);
 
         // Initialize Graph using test files
-        graph = new Graph(NODES_FILE, EDGE_FILE);
+        graph = std::make_shared<Graph>(NODES_FILE, EDGE_FILE);
     }
 
     void TearDown() override {
-        delete graph;
+        graph.reset();
         std::remove(NODES_FILE.c_str());
         std::remove(EDGE_FILE.c_str());
     }
 
-    Graph *graph;
+    std::shared_ptr<Graph> graph;
 };
 
 // Test if KNN can estimate missing features
 TEST_F(KNNTest, EstimateFeaturesFillsMissingValuesThroughRun) {
-    KNN knn;
-    knn.run(*graph);  // Assuming `run()` modifies the graph and fills missing values
+    KNN knn(graph);  
+
+    knn.run();  
 
     // Check if missing values were estimated
     std::vector<double> features1 = graph->getFeatureById(1);
