@@ -109,7 +109,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
     //avoid infinite loops, the nax iterations is arbitrary and can be changed
-    int maxIterations = 5;
+    int maxIterations = 20;
     int currentIteration = 0;
 
     while (!nodesToProcess.empty() && currentIteration < maxIterations) {
