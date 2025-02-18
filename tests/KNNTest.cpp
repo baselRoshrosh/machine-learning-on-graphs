@@ -49,12 +49,9 @@ TEST_F(KNNTest, EstimateFeaturesFillsMissingValuesThroughRun) {
     std::vector<double> features1 = graph->getFeatureById(1);
     std::vector<double> features4 = graph->getFeatureById(4);
 
-    for (auto feature : feature1s) {
-        std::cerr << "feature " << feature << std::endl;
-    }
-
     // Ensure missing values are replaced (adjust conditions based on KNN logic)
     for (double feature : features1) {
+        std::cerr << "feature " << feature << std::endl;
         ASSERT_FALSE(std::isnan(feature)); // No NaNs should remain
     }
     for (double feature : features4) {
