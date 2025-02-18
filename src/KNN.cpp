@@ -28,6 +28,15 @@ void KNN::configure(const std::map<std::string, double>& params) {
     if (params.find("k") != params.end()) {
         k = static_cast<int>(params.at("k"));
     }
+    if (params.find("maxIterations") != params.end()) {
+        int newMaxIterations = static_cast<int>(params.at("maxIterations"));
+        if (newMaxIterations > 0) {
+            maxIterations = newMaxIterations;
+        } else {
+            std::cerr << "Warning: maxIterations must be positive. Keeping the previous value: " 
+                      << maxIterations << std::endl;
+        }
+    }
 }
 
 /**
@@ -108,8 +117,6 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     //if a node still has a missing feature it gets revisited
     std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
-    //avoid infinite loops, the nax iterations is arbitrary and can be changed
-    int maxIterations = 5;
     int currentIteration = 0;
 
     while (!nodesToProcess.empty() && currentIteration < maxIterations) {
