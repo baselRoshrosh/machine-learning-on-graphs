@@ -142,6 +142,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
             for (auto feat : nodeFeatures){
                 std::cerr << "feature: " << feat << " ,size: " << nodeFeatures.size() << std::endl;
             }
+            std::cerr << "test: " << knn.size() << std::endl;
             for (auto neighbor : knn){
                 std::cerr << "neigh: " << neighbor << std::endl;
             }
@@ -162,7 +163,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
                             ++count;
                         }
                     }
-                    std::cerr << "cpunt: " << count << std::endl;
+                    std::cerr << "count: " << count << std::endl;
                     //only update features if valid neighbors exist that have that feature
                     if (count > 0) {
                         nodeFeatures[i] = sum / count;
