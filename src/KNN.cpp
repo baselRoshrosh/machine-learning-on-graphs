@@ -1,5 +1,4 @@
-#include "KNN.hpp"
-
+#include "../include/KNN.hpp"
 
 /**
  * @brief Runs the KNN strategy.
@@ -109,7 +108,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
     std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
     //avoid infinite loops, the nax iterations is arbitrary and can be changed
-    int maxIterations = 20;
+    int maxIterations = 5;
     int currentIteration = 0;
 
     while (!nodesToProcess.empty() && currentIteration < maxIterations) {
@@ -181,4 +180,3 @@ void KNN::estimateFeatures(Graph& graph, int k) {
         std::cerr << "Max iteration depth reached. Could not fill all features." << std::endl;
     }
 }
-
