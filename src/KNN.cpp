@@ -150,16 +150,19 @@ void KNN::estimateFeatures(Graph& graph, int k) {
                 if (std::isnan(nodeFeatures[i])) {
                     double sum = 0.0;
                     int count = 0;
+                    std::cerr << "reached this point" << std::endl;
 
                     //gather all neighbors and replace the missing features with the average of the neighbors
                     for (int neighborId : knn) {
+                        std::cerr << "the neighbor" << neighborId << std::endl;
                         const auto& neighborFeatures = graph.getFeatureById(neighborId);
                         if (!std::isnan(neighborFeatures[i])) {
+                            std::cerr << "neighbor has features and we are here" << std::endl;
                             sum += neighborFeatures[i];
                             ++count;
                         }
                     }
-
+                    std::cerr << "cpunt: " << count << std::endl;
                     //only update features if valid neighbors exist that have that feature
                     if (count > 0) {
                         nodeFeatures[i] = sum / count;
