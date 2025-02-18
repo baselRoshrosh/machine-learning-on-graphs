@@ -78,6 +78,28 @@ TEST_F(GraphTest, NodeEdgeCount)
     EXPECT_EQ(graph->getEdgeCount(), 1); // undirected graph
 }
 
+// Test Getting Features by Node ID
+TEST_F(GraphTest, GetFeatureById)
+{
+    std::vector<double> expectedFeatures = {1.0, 2.0, 3.0};
+    EXPECT_EQ(graph->getFeatureById(1), expectedFeatures);
+}
+
+// Test Updating Features by Node ID
+TEST_F(GraphTest, UpdateFeatureById)
+{
+    std::vector<double> newFeatures = {7.0, 8.0, 9.0};
+    graph->updateFeatureById(1, newFeatures);
+    EXPECT_EQ(graph->getFeatureById(1), newFeatures);
+}
+
+// Test Updating Features for Invalid Node ID
+TEST_F(GraphTest, UpdateFeatureInvalidId)
+{
+    std::vector<double> newFeatures = {7.0, 8.0, 9.0};
+    EXPECT_THROW(graph->updateFeatureById(99, newFeatures), std::invalid_argument);
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
