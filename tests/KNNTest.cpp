@@ -42,7 +42,8 @@ protected:
 
 // Test if KNN can estimate missing features
 TEST_F(KNNTest, EstimateFeaturesFillsMissingValuesThroughRun) {
-    KNN knn(graph);  
+    KNN knn(graph); 
+    knn.configure({{"k", 3}});   
     knn.run();  
 
     // Check if missing values were estimated
