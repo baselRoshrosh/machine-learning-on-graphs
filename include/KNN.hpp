@@ -48,6 +48,7 @@ public:
 
 private:
     int k = 15; 
+    int maxIterations = 10;     //avoid infinite loops, the nax iterations is arbitrary and can be changed
     //Cache for neighbors and path to avoid repeatedly calculating them
     std::unordered_map<int, std::vector<int>> cachedNeighbors;          
     std::unordered_map<int, std::unordered_map<int, int>> precomputedPaths;
