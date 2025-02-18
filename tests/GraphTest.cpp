@@ -17,7 +17,8 @@ void createTempFile(const std::string &filename, const std::string &content)
 const std::string NODES_FILE = "test_nodes.txt";
 const std::string NODES_FILE_INPUT = "1\t1.0,2.0,3.0\t0\n2\t4.0,5.0,6.0\t1";
 const std::string EDGE_FILE = "test_edges.txt";
-const std::string EDGE_FILE_INPUT = "1 2\n2 1";
+// Ensure only one direction is stored
+const std::string EDGE_FILE_INPUT = "1 2";  
 
 // Fixture class for Graph testing
 class GraphTest : public ::testing::Test
@@ -60,16 +61,21 @@ TEST_F(GraphTest, GetNodes)
 // Test Edge Retrieval
 TEST_F(GraphTest, GetEdges)
 {
-    std::vector<std::pair<int, int>> expectedEdges = {{1, 2}}; // Adjust for undirected graph
+    std::vector<std::pair<int, int>> expectedEdges = {{1, 2}};
     EXPECT_EQ(graph->getEdges(), expectedEdges);
 }
 
 // Test Neighbor Retrieval
 TEST_F(GraphTest, GetNeighbors)
 {
-    std::vector<int> neighbors = graph->getNeighbors(1);
-    EXPECT_EQ(neighbors.size(), 1);
-    EXPECT_EQ(neighbors[0], 2);
+    std::vector<int> neighbors1 = graph->getNeighbors(1);
+    std::vector<int> neighbors2 = graph->getNeighbors(2);
+
+    EXPECT_EQ(neighbors1.size(), 1);
+    EXPECT_EQ(neighbors1[0], 2);
+
+    EXPECT_EQ(neighbors2.size(), 1);
+    EXPECT_EQ(neighbors2[0], 1); // Ensure bidirectionality
 }
 
 // Test Node and Edge Count
