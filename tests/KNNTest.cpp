@@ -29,6 +29,15 @@ protected:
 
         // Initialize Graph using test files
         graph = std::make_shared<Graph>(NODES_FILE, EDGE_FILE);
+
+        std::cerr << "Graph Loaded: " << std::endl;
+        for (int node : graph->getNodes()) {
+            std::cerr << "Node " << node << " -> Features: ";
+            for (double f : graph->getFeatureById(node)) {
+                std::cerr << f << " ";
+            }
+            std::cerr << std::endl;
+        }
     }
 
     void TearDown() override {
