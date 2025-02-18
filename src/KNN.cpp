@@ -122,6 +122,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
             //filter and sort neighbors based on their distances
 
             std::vector<std::pair<int, int>> neighborsSorted;
+            std::cerr << "topoDistanzes" << topoDistance.size() << std::endl;
             for (const auto& [neighbor, distance] : topoDistance) {
                 if (neighbor != node && distance <= k) {
                     neighborsSorted.emplace_back(distance, neighbor);
@@ -131,6 +132,7 @@ void KNN::estimateFeatures(Graph& graph, int k) {
             std::sort(neighborsSorted.begin(), neighborsSorted.end());
 
             std::vector<int> knn;
+            std::cerr << "k: " << k << " neiSorted " << static_cast<int>(neighborsSorted.size()) << std::endl;
             for (size_t i = 0; i < std::min(k, static_cast<int>(neighborsSorted.size())); ++i) {
                 knn.push_back(neighborsSorted[i].second);
             }
