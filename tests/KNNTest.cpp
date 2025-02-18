@@ -29,15 +29,6 @@ protected:
 
         // Initialize Graph using test files
         graph = std::make_shared<Graph>(NODES_FILE, EDGE_FILE);
-
-        std::cerr << "Graph Loaded: " << std::endl;
-        for (int node : graph->getNodes()) {
-            std::cerr << "Node " << node << " -> Features: ";
-            for (double f : graph->getFeatureById(node)) {
-                std::cerr << f << " ";
-            }
-            std::cerr << std::endl;
-        }
     }
 
     void TearDown() override {
@@ -57,6 +48,10 @@ TEST_F(KNNTest, EstimateFeaturesFillsMissingValuesThroughRun) {
     // Check if missing values were estimated
     std::vector<double> features1 = graph->getFeatureById(1);
     std::vector<double> features4 = graph->getFeatureById(4);
+
+    for (auto feature : feature1s) {
+        std::cerr << "feature " << feature << std::endl;
+    }
 
     // Ensure missing values are replaced (adjust conditions based on KNN logic)
     for (double feature : features1) {
