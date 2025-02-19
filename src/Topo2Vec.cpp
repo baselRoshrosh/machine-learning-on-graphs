@@ -35,7 +35,8 @@ void Topo2Vec::reset() {}
 std::vector<std::vector<double>> Topo2Vec::getSample(const std::vector<std::vector<double>> &setOfVectors, int sampleSize)
 {
     std::vector<std::vector<double>> sample;
-    if (setOfVectors.empty() || sampleSize <= 0){ //Out-of-bounds check
+    if (setOfVectors.empty() || sampleSize <= 0)
+    { // Out-of-bounds check
         return sample;
     }
     std::random_device rd;
@@ -49,7 +50,6 @@ std::vector<std::vector<double>> Topo2Vec::getSample(const std::vector<std::vect
 
     return sample;
 }
-
 
 /*
  * ======= createEmbeddings() with helper functions ======================
@@ -66,6 +66,7 @@ std::unordered_map<int, std::vector<double>> Topo2Vec::createEmbeddings(int dime
 
     // 3: optimize embeddings based on subgraphs
     skipGram(embeddings, contextSubgraphs);
+    l2normalize(embeddings);
 
     return embeddings;
 }
@@ -334,6 +335,35 @@ std::vector<int> getNegativeSamples(std::shared_ptr<Graph> graph, int excludeNod
     }
 
     return negativeSamples;
+}
+
+/**
+ * performs l2 normalization in place on the vectors inside an int-vector map.
+ * 
+ * @param embeddings[in, out] a map <int, vector<double>> containing embeddings for nodes
+ */
+void l2normalize(std::unordered_map<int, std::vector<double>> &embeddings)
+{
+    for (auto &[nodeID, embedding] : embeddings)
+    {
+        double norm = 0.0;
+
+        // caculating norm factor
+        for (double value : embedding)
+        {
+            norm += std::pow(value, 2);
+        }
+        norm = std::sqrt(norm);
+
+        // normalize
+        if (norm > 0)
+        {
+            for (double &value : embedding)
+            {
+                value /= norm;
+            }
+        }
+    }
 }
 
 /**
