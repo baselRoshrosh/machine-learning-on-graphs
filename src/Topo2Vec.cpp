@@ -12,6 +12,7 @@ double getCandidateParticipation(std::shared_ptr<Graph>, const std::vector<int> 
 void initializeEmbeddings(std::shared_ptr<Graph>, std::unordered_map<int, std::vector<double>> &, int);
 void updateEmbeddings(std::unordered_map<int, std::vector<double>> &, int, int, int, double, double);
 std::vector<int> getNegativeSamples(std::shared_ptr<Graph>, int, int);
+void l2normalize(std::unordered_map<int, std::vector<double>> &);
 int getAverageDegree(std::shared_ptr<Graph>);
 void filterAndSort(std::vector<int> &, std::vector<double> &, double);
 double dotProduct(const std::vector<double> &, const std::vector<double> &);
@@ -339,7 +340,7 @@ std::vector<int> getNegativeSamples(std::shared_ptr<Graph> graph, int excludeNod
 
 /**
  * performs l2 normalization in place on the vectors inside an int-vector map.
- * 
+ *
  * @param embeddings[in, out] a map <int, vector<double>> containing embeddings for nodes
  */
 void l2normalize(std::unordered_map<int, std::vector<double>> &embeddings)
