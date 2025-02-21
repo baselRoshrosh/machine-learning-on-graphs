@@ -47,37 +47,37 @@ protected:
     int walksPerNode = 10; ///< how many random walks per node should be performed. Default taken from ADW paper
 
     /**
-     * Creates an embedding for each node following the ADW algorithm
+     * Performs the "Combination of Structural and Attributed DeepWalk" Algorithm.
+     * Creates an embedding for each node.
      * 
      * @see Attributed Deepwalk Paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
      * 
-     * @param dimensions The size of an embedding
      * @return the embeddings <nodeID, nodeEmbedding> of the nodes
      */
-    std::unordered_map<int, std::vector<double>> createEmbeddings(int dimensions);
+    std::vector<std::vector<int>> csadw();
 
     /**
      * Calculates the ADW weight matrix for a given graph.
      * Edge weights between nodes correspond to the strucural and feature similarity between the nodes
-     * 
+     *
      * @see The methods for calculating edge weights are listed in the ADW paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
      */
     void calculateWeightMatrix();
 
     /**
      * Calculates an Alias Table for each node given the edge weights of neigbors.
-     * 
+     *
      * @see Probability calculation in ADW paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
      * @see Alias Method: https://en.wikipedia.org/wiki/Alias_method
      * @see Implementation of Alias Table in c++: https://gist.github.com/Liam0205/0b5786e9bfc73e75eb8180b5400cd1f8
-     * 
+     *
      * @return a map of nodeIDs to their respective alias table
      */
     std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables();
 
     /**
      * Performs a random walk starting at a given Node
-     * 
+     *
      * @param startNodeID the node from where to start the random walk
      * @return a list of nodeIDs that were passed on the random walk
      */
