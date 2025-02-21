@@ -73,7 +73,7 @@ protected:
      * 
      * @return a map of nodeIDs to their respective alias table
      */
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> calculateTransitionMatrices();
+    std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables();
 
     /**
      * Performs a random walk starting at a given Node
