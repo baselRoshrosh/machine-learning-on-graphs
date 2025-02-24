@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "BasicEdges.hpp"
 
+#include <cmath>  // for std::isnan
+
 // Test fixture for BasicEdges
 class BasicEdgesTest : public ::testing::Test
 {
@@ -84,3 +86,18 @@ TEST_F(BasicEdgesTest, AddEdge) {
     EXPECT_NE(std::find(currentEdges.begin(), currentEdges.end(), std::make_pair(3, 4)), currentEdges.end());
 }
 
+// Test: getting Edge Weight
+TEST_F(BasicEdgesTest, GetEdgeWeight){
+    double weight = edges.getWeight(1, 2);
+    
+    EXPECT_TRUE(std::isnan(weight)); // This will pass if weight is NaN
+}
+
+//Test: setting Edge Weight
+TEST_F(BasicEdgesTest, SetEdgeWeight){
+    double weight = 0.5;
+
+    edges.setWeight(1, 2, weight);
+
+    EXPECT_EQ(edges.getWeight(1, 2), weight);
+}
