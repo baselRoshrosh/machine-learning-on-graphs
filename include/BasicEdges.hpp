@@ -9,9 +9,9 @@
  * @class BasicEdges
  * @brief A concrete implementation of the IEdges interface.
  *
- * This class stores and manages graph edges using a simple 
- * `std::vector<std::pair<int, int>>` data structure. It provides methods 
- * for retrieving neighbors, checking edge existence, and accessing all edges.
+ * This class stores and manages graph edges using a simple
+ * `std::vector<std::tuple<int, int, double>>` data structure. It provides methods
+ * for retrieving neighbors and weights, checking edge existence, and accessing all edges.
  */
 class BasicEdges : public IEdges
 {
