@@ -19,6 +19,7 @@ public:
     using Topo2Vec::getContextSubgraphs;
     using Topo2Vec::getSample;
     using Topo2Vec::skipGram;
+    using Topo2Vec::getSimilarNodes;
 };
 
 class Topo2VecTest : public ::testing::Test
@@ -105,6 +106,33 @@ TEST_F(Topo2VecTest, SkipGramTest)
         EXPECT_EQ(embedding.size(), dimensions); // Ensure embedding size remains consistent
     }
 }
+
+//Test 'getsimilarNodes'
+TEST_F(Topo2VecTest, GetSimilarNodes)
+{
+    std::unordered_map<int, std::vector<double>> embeddings = {
+        {1, {0.1, 0.2, 0.3}},
+        {2, {0.2, 0.1, 0.4}},
+        {3, {0.3, 0.2, 0.1}},
+        {4, {0.1, 0.0, 0.3}}
+    };
+
+    // Use the embedding of node 1 as the query vector.
+    std::vector<double> queryVector = {0.1, 0.2, 0.3};
+
+    // Call getSimilarNodes; expect 2 similar nodes.
+    auto similarNodes = topo2vec->getSimilarNodes(embeddings, queryVector, 2);
+
+    // Verify that none of the returned embeddings match the query vector.
+    for (const auto &vec : similarNodes)
+    {
+        EXPECT_NE(vec, queryVector);
+    }
+
+    // Optionally, you can print or check the size of similarNodes.
+    EXPECT_EQ(similarNodes.size(), 2);
+}
+
 
 /*
  * ========= getSample() Tests ==================
