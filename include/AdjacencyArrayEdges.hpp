@@ -3,7 +3,10 @@
 
 #include "IEdges.hpp"
 
-class AdjacencyArrayEdges : public IEdges {
+#include <unordered_map>
+
+class AdjacencyArrayEdges : public IEdges
+{
 public:
     /**
      * Default Constructor for AdjacencyArrayEdges
@@ -12,7 +15,7 @@ public:
 
     /**
      * Constructor from a List of Edges
-     * 
+     *
      * @param initialEdges Pointer to the List of Edges
      */
     AdjacencyArrayEdges(const std::vector<std::pair<int, int>> &initialEdges);
@@ -74,7 +77,9 @@ public:
     int size() override;
 
 private:
-    std::vector
+    std::vector<int> adjacencyOffsets;                       ///< tracks beginning of adjacency list of node in adjacencyArray
+    std::vector<int> adjacencyArray;                         ///< concatenated adjacency lists
+    std::unordered_map<std::pair<int, int>, double> weights; ///< keeps track of edge weights
 };
 
 #endif
