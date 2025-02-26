@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+
 #include "BasicEdges.hpp"
 #include "Node.hpp"
 
@@ -81,6 +82,23 @@ public:
      * @param newFeatures The new feature vector to set for the node.
      */
     void updateFeatureById(int nodeId, const std::vector<double>& newFeatures);
+
+    /**
+     * Allows to set a weight of a specified edge
+     *
+     * @param source The ID of the source node.
+     * @param destination The ID of the destination node.
+     */
+    void setEdgeWeight(int source, int destination, double weight);
+
+    /**
+     * Gets the weight of a specified edge.
+     *
+     * @param source The ID of the source node.
+     * @param destination The ID of the destination node.
+     * @return the Weight of the specified edge
+     */
+    double getEdgeWeight(int source, int destination) const;
 };
 
 
