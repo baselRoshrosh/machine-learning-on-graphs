@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <iterator>
 #include <random>
+#include <queue>
+#include <cmath>
+
 
 /*
  * ======= Declaration of local helper functions ===================
@@ -230,6 +233,84 @@ void Topo2Vec::skipGram(std::unordered_map<int, std::vector<double>> &embeddings
             }
         }
     }
+}
+
+std::vector<std::vector<double>> Topo2Vec::getSimilarNodes(
+    const std::unordered_map<int, std::vector<double>> &embeddings, 
+    const std::vector<double> &queryVector, 
+    int kSimilarNodes)
+{
+    if (embeddings.empty() || queryVector.empty() || kSimilarNodes <= 0)
+    {
+        return {};
+    }
+
+    // Calculate the L2 norm (Euclidean norm) of the query vector.
+    double sumQuery = 0.0;
+    for (double value : queryVector)
+    {
+        sumQuery += value * value;
+    }
+    double normQuery = std::sqrt(sumQuery);
+    if (normQuery == 0)
+    {
+        return {};
+    }
+
+    // Define a min-heap (priority queue) to store pairs of (cosine similarity, nodeID)
+    using SimilarityPair = std::pair<double, int>;
+    std::priority_queue<SimilarityPair, std::vector<SimilarityPair>, std::greater<>> minHeap;
+
+    // Iterate over all embeddings.
+    for (const auto &[nodeID, embedding] : embeddings)
+    {
+        // Skip if dimensions do not match.
+        if (embedding.size() != queryVector.size())
+            continue;
+
+        // Skip if this embedding is exactly the same as the query vector.
+        if (embedding == queryVector)
+            continue;
+        
+        // Compute dot product and the norm for the candidate embedding.
+        double dot = 0.0, sumCandidate = 0.0;
+        for (size_t i = 0; i < embedding.size(); i++)
+        {
+            dot += queryVector[i] * embedding[i];
+            sumCandidate += embedding[i] * embedding[i];
+        }
+        double normCandidate = std::sqrt(sumCandidate);
+        if (normCandidate == 0)
+            continue;
+
+        // Calculate cosine similarity.
+        double cosineSimilarity = dot / (normQuery * normCandidate);
+
+        // Maintain the top-k similar nodes using the min-heap.
+        if (minHeap.size() < static_cast<size_t>(kSimilarNodes))
+        {
+            minHeap.emplace(cosineSimilarity, nodeID);
+        }
+        else if (cosineSimilarity > minHeap.top().first)
+        {
+            minHeap.pop();
+            minHeap.emplace(cosineSimilarity, nodeID);
+        }
+    }
+
+    // Extract the embeddings of the top-k similar nodes.
+    std::vector<std::vector<double>> topKSimilar;
+    while (!minHeap.empty())
+    {
+        int nodeID = minHeap.top().second;
+        minHeap.pop();
+        topKSimilar.push_back(embeddings.at(nodeID));
+    }
+
+    // Reverse so that the highest similarity comes first.
+    std::reverse(topKSimilar.begin(), topKSimilar.end());
+
+    return topKSimilar;
 }
 
 /**

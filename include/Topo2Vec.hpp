@@ -72,13 +72,17 @@ protected:
     std::vector<std::vector<double>> getSample(const std::vector<std::vector<double>> &setOfVectors, int sampleSize);
 
     /**
-     * finds the k-most similar nodes by comparing embedding distances
+     * finds the k-most similar nodes to a given query vector by comparing cosine similarities.
      *
-     * @param embeddings the embeddings <nodeID, embeddingVector> of a set of nodes
-     * @param kSimilarNodes the number of similar nodes retrieved
-     * @return a set of the k most similar nodes of the given embeddings
+     * @param embeddings the embeddings <nodeID, embeddingVector> of a set of nodes.
+     * @param queryVector the embedding vector against which the similarities are computed.
+     * @param kSimilarNodes the number of similar nodes to retrieve.
+     * @return a vector of embedding vectors corresponding to the top-k most similar nodes.
      */
-    std::vector<std::vector<double>> getSimilarNodes(const std::unordered_map<int, std::vector<double>> &embeddings, int kSimilarNodes);
+    std::vector<std::vector<double>> getSimilarNodes(
+        const std::unordered_map<int, std::vector<double>> &embeddings, 
+        const std::vector<double> &queryVector, 
+        int kSimilarNodes);
 
     /**
      * creates embeddings for the nodes following the topo2vec algorithm
