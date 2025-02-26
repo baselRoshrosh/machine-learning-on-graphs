@@ -14,6 +14,11 @@ BasicEdges::BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
 // adds edge to edges-vector
 void BasicEdges::addEdge(int source, int destination)
 {
+    if (destination < source)
+    {
+        std::swap(source, destination);
+    }
+
     edges.emplace_back(source, destination, std::numeric_limits<double>::quiet_NaN());
 }
 
@@ -44,19 +49,19 @@ std::vector<int> BasicEdges::getNeighbors(int nodeID)
 // Checks if an edge exists between two nodes.
 bool BasicEdges::isEdge(int source, int destination)
 {
-    int start, dest;
+    if (destination < source)
+    {
+        std::swap(source, destination);
+    }
 
     for (const auto &edge : edges)
     {
-        start = std::get<0>(edge);
-        dest = std::get<1>(edge);
-
-        if ((start == source && dest == destination) ||
-            (dest == source && start == destination))
+        if (std::get<0>(edge) == source && std::get<1>(edge) == destination)
         {
-            return true;
+            return true; // edge is found
         }
     }
+
     return false; // Only return false after checking all edges
 }
 
@@ -76,19 +81,13 @@ std::vector<std::pair<int, int>> BasicEdges::getEdges() const
 // sets weight of an edge
 void BasicEdges::setWeight(int source, int destination, double weight)
 {
-    auto it = std::find_if(edges.begin(), edges.end(),
-                           [&](const std::tuple<int, int, double> &edge)
-                           { return std::get<0>(edge) == source && std::get<1>(edge) == destination; });
-
-    if (it != edges.end())
+    if (destination < source)
     {
-        std::get<2>(*it) = weight;
+        std::swap(source, destination);
     }
 
-    // because of way of the edges being stored
-    it = std::find_if(edges.begin(), edges.end(),
-                      [&](const std::tuple<int, int, double> &edge)
-                      { return std::get<1>(edge) == source && std::get<0>(edge) == destination; });
+    auto it = std::find_if(edges.begin(), edges.end(), [&](const std::tuple<int, int, double> &edge)
+                           { return std::get<0>(edge) == source && std::get<1>(edge) == destination; });
 
     if (it != edges.end())
     {
@@ -98,7 +97,12 @@ void BasicEdges::setWeight(int source, int destination, double weight)
 
 // gets weight of an edge in graph
 double BasicEdges::getWeight(int source, int destination) const
-{
+{   
+    if (destination < source)
+    {
+        std::swap(source, destination);
+    }
+    
     auto it = std::find_if(edges.begin(), edges.end(),
                            [&](const std::tuple<int, int, double> &edge)
                            { return std::get<0>(edge) == source && std::get<1>(edge) == destination; });
