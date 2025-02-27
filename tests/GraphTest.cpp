@@ -18,7 +18,7 @@ const std::string NODES_FILE = "test_nodes.txt";
 const std::string NODES_FILE_INPUT = "1\t1.0,2.0,3.0\t0\n2\t4.0,5.0,6.0\t1";
 const std::string EDGE_FILE = "test_edges.txt";
 // Ensure only one direction is stored
-const std::string EDGE_FILE_INPUT = "1 2";  
+const std::string EDGE_FILE_INPUT = "1 2";
 
 // Fixture class for Graph testing
 class GraphTest : public ::testing::Test

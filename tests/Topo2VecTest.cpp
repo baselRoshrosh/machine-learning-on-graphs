@@ -18,8 +18,8 @@ public:
     using Topo2Vec::expandSubgraph;
     using Topo2Vec::getContextSubgraphs;
     using Topo2Vec::getSample;
-    using Topo2Vec::skipGram;
     using Topo2Vec::getSimilarNodes;
+    using Topo2Vec::skipGram;
 };
 
 class Topo2VecTest : public ::testing::Test
@@ -63,10 +63,11 @@ TEST_F(Topo2VecTest, GetContextSubgraphsTest)
 
 // Test `expandSubgraph`
 TEST_F(Topo2VecTest, ExpandSubgraphTest)
-{   
+{
     std::vector<int> templist = {104, 121};
     std::unordered_map<int, bool> visited;
-    for (int nodeID : graph->getNodes()) {
+    for (int nodeID : graph->getNodes())
+    {
         visited[nodeID] = false;
     }
 
@@ -80,14 +81,15 @@ TEST_F(Topo2VecTest, ExpandSubgraphTest)
 
 // Test `skipGram`
 TEST_F(Topo2VecTest, SkipGramTest)
-{   
+{
     int dimensions = 128;
 
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dist(-0.5 / dimensions, 0.5 / dimensions);
     std::unordered_map<int, std::vector<double>> embeddings;
-    for (int nodeID : graph->getNodes()) {
+    for (int nodeID : graph->getNodes())
+    {
         std::vector<double> vec(dimensions);
         for (double &val : vec)
         {
@@ -107,15 +109,14 @@ TEST_F(Topo2VecTest, SkipGramTest)
     }
 }
 
-//Test 'getsimilarNodes'
+// Test 'getsimilarNodes'
 TEST_F(Topo2VecTest, GetSimilarNodes)
 {
     std::unordered_map<int, std::vector<double>> embeddings = {
         {1, {0.1, 0.2, 0.3}},
         {2, {0.2, 0.1, 0.4}},
         {3, {0.3, 0.2, 0.1}},
-        {4, {0.1, 0.0, 0.3}}
-    };
+        {4, {0.1, 0.0, 0.3}}};
 
     // Use the embedding of node 1 as the query vector.
     std::vector<double> queryVector = {0.1, 0.2, 0.3};
@@ -132,7 +133,6 @@ TEST_F(Topo2VecTest, GetSimilarNodes)
     // Optionally, you can print or check the size of similarNodes.
     EXPECT_EQ(similarNodes.size(), 2);
 }
-
 
 /*
  * ========= getSample() Tests ==================
