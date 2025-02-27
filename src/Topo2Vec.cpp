@@ -23,14 +23,53 @@ double sigmoid(double);
 /*
  * ======= Implementation of IStrategy Interface methods =============
  */
-void Topo2Vec::run() {}
+void Topo2Vec::run()
+{
+    auto embeddings = createEmbeddings(embeddingDimensions);
+}
+
 std::shared_ptr<Graph> Topo2Vec::extractResults() const
 {
     return graph;
 }
-void Topo2Vec::configure(const std::map<std::string, double> &params) {}
-void Topo2Vec::reset() {}
-void Topo2Vec::saveFeatures(const std::string &fileName) {}
+
+void Topo2Vec::configure(const std::map<std::string, double> &params)
+{
+    if (params.find("tau") != params.end())
+    {
+        tau = params.at("tau");
+    }
+    if (params.find("embeddingDimensions") != params.end())
+    {
+        embeddingDimensions = static_cast<int>(params.at("embeddingDimensions"));
+    }
+    if (params.find("numEpochs") != params.end())
+    {
+        numEpochs = static_cast<int>(params.at("numEpochs"));
+    }
+    if (params.find("windowSize") != params.end())
+    {
+        windowSize = static_cast<int>(params.at("windowSize"));
+    }
+    if (params.find("numNegativeSamples") != params.end())
+    {
+        numNegativeSamples = static_cast<int>(params.at("numNegativeSamples"));
+    }
+    if (params.find("learningRate") != params.end())
+    {
+        learningRate = params.at("learningRate");
+    }
+}
+
+void Topo2Vec::reset()
+{
+    tau = 0.5;
+    embeddingDimensions = 128;
+    numEpochs = 5;
+    windowSize = 5;
+    numNegativeSamples = 5;
+    learningRate = 0.025;
+}
 
 /*
  * ======= getSample() ===============
