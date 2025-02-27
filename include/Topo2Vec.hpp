@@ -44,6 +44,16 @@ public:
      */
     void reset() override;
 
+    /**
+     * @brief Saves the interpreted features to a .txt file.
+     *
+     * This function takes the original node file and processes it to interpret the features.
+     * The interpreted features replace the placeholder '#' in the original file.
+     *
+     * @param fileName The name of the file where the interpreted features will be saved.
+     */
+    void saveFeatures(const std::string &fileName) override;
+
     virtual ~Topo2Vec() = default;
 
 protected:

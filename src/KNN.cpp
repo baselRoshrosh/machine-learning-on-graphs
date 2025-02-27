@@ -56,6 +56,8 @@ void KNN::reset()
     precomputedPaths.clear();
 }
 
+void KNN::saveFeatures(const std::string &fileName) {}
+
 /**
  * @brief Cache the neighbors of all nodes in the graph.
  *

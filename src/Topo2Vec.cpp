@@ -30,6 +30,7 @@ std::shared_ptr<Graph> Topo2Vec::extractResults() const
 }
 void Topo2Vec::configure(const std::map<std::string, double> &params) {}
 void Topo2Vec::reset() {}
+void Topo2Vec::saveFeatures(const std::string &fileName) {}
 
 /*
  * ======= getSample() ===============
