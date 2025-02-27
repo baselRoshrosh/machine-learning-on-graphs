@@ -4,6 +4,7 @@
 #include "Graph.hpp"
 
 #include "interfaces/IStrategies.hpp"
+#include <fstream>
 
 /**
  * @brief Interface for graph-based strategies to fill missing features.
@@ -23,12 +24,14 @@
  * ```
  */
 template <typename Strategy>
-class StrategyRunner : public Strategies
+class StrategyRunner
 {
 private:
     Strategy strategy; // No heap allocation
 
 public:
+    StrategyRunner(const std::shared_ptr<Graph> graph) : strategy(graph) {}
+
     void configure(const std::map<std::string, double> &params)
     {
         strategy.configure(params);
