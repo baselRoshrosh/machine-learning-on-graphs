@@ -40,16 +40,6 @@ public:
      */
     virtual void reset() = 0;
 
-    /**
-     * @brief Saves the interpreted features to a .txt file.
-     *
-     * This function takes the original node file and processes it to interpret the features.
-     * The interpreted features replace the placeholder '#' in the original file.
-     *
-     * @param fileName The name of the file where the interpreted features will be saved.
-     */
-    virtual void saveFeatures(const std::string &fileName) = 0;
-
 protected:
     std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
 };
