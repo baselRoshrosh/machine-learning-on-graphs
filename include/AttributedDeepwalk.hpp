@@ -49,9 +49,9 @@ protected:
     /**
      * Performs the "Combination of Structural and Attributed DeepWalk" Algorithm.
      * Creates an embedding for each node.
-     * 
+     *
      * @see Attributed Deepwalk Paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
-     * 
+     *
      * @return the embeddings <nodeID, nodeEmbedding> of the nodes
      */
     std::vector<std::vector<int>> csadw();
@@ -82,6 +82,20 @@ protected:
      * @return a list of nodeIDs that were passed on the random walk
      */
     std::vector<int> randomWalk(int startNodeID);
+
+    /*
+     *  ========= helper functions ==========
+     */
+
+    /**
+     *
+     */
+    double measuring_attribute_similarity(int node1, int node2) const;
+
+    /**
+     *
+     */
+    double measuring_structural_similarity(int node1, int node2) const;
 };
 
 #endif
