@@ -1,7 +1,7 @@
 #ifndef ATTRIBUTED_DEEPWALK_HPP
 #define ATTRIBUTED_DEEPWALK_HPP
 
-#include "IStrategies.hpp"
+#include "interfaces/IStrategies.hpp"
 
 #include <vector>
 #include <unordered_map>
@@ -49,9 +49,9 @@ protected:
     /**
      * Performs the "Combination of Structural and Attributed DeepWalk" Algorithm.
      * Creates an embedding for each node.
-     * 
+     *
      * @see Attributed Deepwalk Paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
-     * 
+     *
      * @return the embeddings <nodeID, nodeEmbedding> of the nodes
      */
     std::vector<std::vector<int>> csadw();

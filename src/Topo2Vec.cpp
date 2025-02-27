@@ -6,7 +6,6 @@
 #include <queue>
 #include <cmath>
 
-
 /*
  * ======= Declaration of local helper functions ===================
  */
@@ -236,8 +235,8 @@ void Topo2Vec::skipGram(std::unordered_map<int, std::vector<double>> &embeddings
 }
 
 std::vector<std::vector<double>> Topo2Vec::getSimilarNodes(
-    const std::unordered_map<int, std::vector<double>> &embeddings, 
-    const std::vector<double> &queryVector, 
+    const std::unordered_map<int, std::vector<double>> &embeddings,
+    const std::vector<double> &queryVector,
     int kSimilarNodes)
 {
     if (embeddings.empty() || queryVector.empty() || kSimilarNodes <= 0)
@@ -271,7 +270,7 @@ std::vector<std::vector<double>> Topo2Vec::getSimilarNodes(
         // Skip if this embedding is exactly the same as the query vector.
         if (embedding == queryVector)
             continue;
-        
+
         // Compute dot product and the norm for the candidate embedding.
         double dot = 0.0, sumCandidate = 0.0;
         for (size_t i = 0; i < embedding.size(); i++)

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "BasicEdges.hpp"
 
-#include <cmath>  // for std::isnan
+#include <cmath> // for std::isnan
 
 // Test fixture for BasicEdges
 class BasicEdgesTest : public ::testing::Test
@@ -67,7 +67,8 @@ TEST_F(BasicEdgesTest, GetEdges)
 }
 
 // Test case: Test adding an edge to the BasicEdges object
-TEST_F(BasicEdgesTest, AddEdge) {
+TEST_F(BasicEdgesTest, AddEdge)
+{
     // Initial edges before adding the new edge
     std::vector<std::pair<int, int>> initialEdges = edges.getEdges();
     size_t initialSize = initialEdges.size();
@@ -87,14 +88,16 @@ TEST_F(BasicEdgesTest, AddEdge) {
 }
 
 // Test: getting Edge Weight
-TEST_F(BasicEdgesTest, GetEdgeWeight){
+TEST_F(BasicEdgesTest, GetEdgeWeight)
+{
     double weight = edges.getWeight(1, 2);
-    
+
     EXPECT_TRUE(std::isnan(weight)); // This will pass if weight is NaN
 }
 
-//Test: setting Edge Weight
-TEST_F(BasicEdgesTest, SetEdgeWeight){
+// Test: setting Edge Weight
+TEST_F(BasicEdgesTest, SetEdgeWeight)
+{
     double weight = 0.5;
 
     edges.setWeight(1, 2, weight);

@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "IStrategies.hpp"
+#include "interfaces/IStrategies.hpp"
 #include "Graph.hpp"
 
 class Topo2Vec : public IStrategies
@@ -45,7 +45,7 @@ public:
     void reset() override;
 
     virtual ~Topo2Vec() = default;
-    
+
 protected:
     std::shared_ptr<Graph> graph; ///< the input graph for the strategy
     /*
@@ -54,7 +54,7 @@ protected:
      * lower values of tau result in slightly better quality of evaluation,
      * higher values in smaller subgraphs, meaning less memory and time needed
      */
-    double tau = 0.5;              ///< configurable variable for filtering important structural nodes
+    double tau = 0.5; ///< configurable variable for filtering important structural nodes
 
     int embeddingDimensions = 128; ///< size of the embedding vector of each node. Default taken from node2vec
     int numEpochs = 5;             ///< number of gradient descent iterations. Default taken from word2vec
@@ -80,8 +80,8 @@ protected:
      * @return a vector of embedding vectors corresponding to the top-k most similar nodes.
      */
     std::vector<std::vector<double>> getSimilarNodes(
-        const std::unordered_map<int, std::vector<double>> &embeddings, 
-        const std::vector<double> &queryVector, 
+        const std::unordered_map<int, std::vector<double>> &embeddings,
+        const std::vector<double> &queryVector,
         int kSimilarNodes);
 
     /**
@@ -102,9 +102,9 @@ protected:
      * Equals Algorithm 1 of the topo2vec paper.
      * It uses neighborhood affinity (NA) and subgraph affinity (SA) passing the thresshold tau
      * to create a context subgraph for each node.
-     * 
+     *
      * @see Topo2Vec paper. DOI:https://doi.org/10.1109/TCSS.2019.2950589
-     * 
+     *
      * @return a vector containing the nodeIDs of context-subgraphs generated for each node in the graph
      */
     std::vector<std::vector<int>> getContextSubgraphs();
@@ -113,7 +113,7 @@ protected:
      * Equals Algorithm 2 if the topo2vec paper, also called SEARCH-procedure. Named differently for clarity
      *
      * @see Topo2Vec paper. DOI:https://doi.org/10.1109/TCSS.2019.2950589
-     * 
+     *
      * @param[in, out] templist
      * @param[in, out] visited <nodeID, hasBeenVisited>, stores whether a given node has already been considered
      * @param[in, out] edgesInSubgraphCount how many edges are in the given subgraph as it is used to calculate the SA-score

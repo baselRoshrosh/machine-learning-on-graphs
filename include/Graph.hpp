@@ -9,8 +9,6 @@
 #include "BasicEdges.hpp"
 #include "Node.hpp"
 
-
-
 /**
  * @class Graph
  * @brief Represents an undirected, sparse graph.
@@ -19,9 +17,10 @@
  * It supports adding and querying nodes and edges, as well as parsing
  * graph data from files.
  */
-class Graph {
+class Graph
+{
 private:
-    std::vector<Node> nodes; /// the vector of nodes
+    std::vector<Node> nodes;           /// the vector of nodes
     std::unique_ptr<BasicEdges> edges; /// object holding the pool of edges
 
 public:
@@ -31,7 +30,7 @@ public:
      * @param nodesFile The file containing node information.
      * @param edgesFile The file containing edge information.
      */
-    Graph(const std::string& nodesFile, const std::string& edgesFile);
+    Graph(const std::string &nodesFile, const std::string &edgesFile);
 
     /**
      * @brief Retrieves all nodes in the graph.
@@ -81,7 +80,7 @@ public:
      * @param nodeId The ID of the node whose feature vector is to be updated.
      * @param newFeatures The new feature vector to set for the node.
      */
-    void updateFeatureById(int nodeId, const std::vector<double>& newFeatures);
+    void updateFeatureById(int nodeId, const std::vector<double> &newFeatures);
 
     /**
      * Allows to set a weight of a specified edge
@@ -100,6 +99,5 @@ public:
      */
     double getEdgeWeight(int source, int destination) const;
 };
-
 
 #endif
