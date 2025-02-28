@@ -73,7 +73,7 @@ protected:
      *
      * @return a map of nodeIDs to their respective alias table
      */
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables();
+    std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables() const;
 
     /**
      * Performs a random walk starting at a given Node
@@ -88,12 +88,21 @@ protected:
      */
 
     /**
+     * Calculates Attribute Similarity. The paper uses Jaccard-coefficient which can't be used for numerical values.
+     * Thus we are using Cosine-Similarity and potentially try Pearson-Coefficient-Similarity
      *
+     * @param node1
+     * @param node2
+     * @return the cosine similarity of the features of the nodes
      */
     double measuring_attribute_similarity(int node1, int node2) const;
 
     /**
+     * Calculates Structural Similarity by calculating the overlap coefficient of the respective nodes
      *
+     * @param node1
+     * @param node2
+     * @return the overlap coefficient of the two nodes
      */
     double measuring_structural_similarity(int node1, int node2) const;
 };
