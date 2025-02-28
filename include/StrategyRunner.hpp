@@ -3,16 +3,17 @@
 
 #include "Graph.hpp"
 
-#include "interfaces/IStrategies.hpp"
 #include <fstream>
+#include <map>
 
 /**
- * @brief Interface for graph-based strategies to fill missing features.
+ * @brief A class to run a strategy on a given graph.
  *
- * This interface ensures consistency among various strategies like KNN,
- * Topo2Vec, Node2Vec, and GCN. Each strategy operates on a given graph
- * and outputs a modified graph with missing features filled.
+ * This is a wrapper around a strategy that runs any strategy 
+ * (KNN, Topo2Vec, or Attributed Deepwalk) on a graph.
  *
+ * @tparam Strategy The strategy to run on the graph.
+ * 
  * Example usage:
  * ```cpp
  * StrategieRunner<KNN> knn;
@@ -22,12 +23,16 @@
  * knn.saveFeatures(graphResult, "knn_results.txt");
  * knn.reset();
  * ```
+ * 
+ * @note This template avoids runtime polymorphism for performance and ensures
+ * strategy operations are optimized at compile time. Therefore it adheres to the
+ * IStrategies interface
  */
 template <typename Strategy>
 class StrategyRunner
 {
 private:
-    Strategy strategy; // No heap allocation
+    Strategy strategy;
 
 public:
     StrategyRunner(const std::shared_ptr<Graph> graph) : strategy(graph) {}
