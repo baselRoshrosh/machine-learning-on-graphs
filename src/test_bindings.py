@@ -2,8 +2,8 @@ import simProject
 import os
 
 # Define input file paths
-edges_file = os.path.join("input", "edges.txt")  # Replace with actual file name
-nodes_file = os.path.join("input", "nodes.txt")  # Replace with actual file name
+edges_file = os.path.join("input", "twitch_edges.txt")  # Replace with actual file name
+nodes_file = os.path.join("input", "twitch_nodes.txt")  # Replace with actual file name
 
 # Check if files exist
 if not (os.path.exists(edges_file) and os.path.exists(nodes_file)):
