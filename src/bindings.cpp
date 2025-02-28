@@ -7,7 +7,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(mein_modul, m) {
+PYBIND11_MODULE(simProject, m) {
     m.doc() = "Python Bindings für Attributed DeepWalk, kNN und Topo2Vec";
 
     // Klasse AttributedDeepwalk
