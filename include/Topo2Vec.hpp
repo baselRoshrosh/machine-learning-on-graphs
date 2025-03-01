@@ -57,6 +57,8 @@ protected:
     double tau = 0.5; ///< configurable variable for filtering important structural nodes
 
     int embeddingDimensions = 128; ///< size of the embedding vector of each node. Default taken from node2vec
+    int sampleSize = 256;          ///< number of samples to be taken for each node. Default taken from word2vec
+    int k = 5;                     ///< number of similar nodes to be retrieved. Default taken from word2vec
     int numEpochs = 5;             ///< number of gradient descent iterations. Default taken from word2vec
     int windowSize = 5;            ///< how many context nodes aroung a given node should be considered. Default taken from word2vec
     int numNegativeSamples = 5;    ///< number of randomly chosen negative samples for each positive sample. Default taken from word2vec

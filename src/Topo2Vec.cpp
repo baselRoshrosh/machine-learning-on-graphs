@@ -26,6 +26,16 @@ double sigmoid(double);
 void Topo2Vec::run()
 {
     auto embeddings = createEmbeddings(embeddingDimensions);
+
+    for (auto node : graph->getNodes())
+    {
+        std::vector<std::vector<double>> embeddingsVector;
+        for (const auto& pair : embeddings) {
+            embeddingsVector.push_back(pair.second);
+        }
+        auto nodesSample = getSample(embeddingsVector, sampleSize);
+        std::vector<std::vector<double>> similarNodes = getSimilarNodes(embeddings, embeddings[node], k);
+    }
 }
 
 std::shared_ptr<Graph> Topo2Vec::extractResults() const
