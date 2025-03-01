@@ -10,7 +10,7 @@ if not (os.path.exists(edges_file) and os.path.exists(nodes_file)):
     print("Error: Input files not found!")
     exit(1)
 
-# Load graph (Assuming you have a Graph class or method to read files)
+# Load graph 
 graph = semProject.Graph()
 graph.load_from_files(edges_file, nodes_file)  # Replace with actual method
 
