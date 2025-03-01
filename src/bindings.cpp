@@ -1,5 +1,5 @@
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>  // Falls STL-Container wie std::vector oder std::unordered_map genutzt werden
+#include <pybind11/stl.h>  
 
 #include "AttributedDeepwalk.hpp"
 #include "KNN.hpp"
@@ -7,10 +7,9 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(simProject, m) {
+PYBIND11_MODULE(semProject, m) {
     m.doc() = "Python Bindings for Attributed DeepWalk, kNN and Topo2Vec";
 
-    // Klasse AttributedDeepwalk
     py::class_<AttributedDeepwalk>(m, "AttributedDeepwalk")
         .def(py::init<std::shared_ptr<Graph>>())
         .def("run", &AttributedDeepwalk::run, "runsAttributed DeepWalk")
@@ -18,17 +17,15 @@ PYBIND11_MODULE(simProject, m) {
         .def("configure", &AttributedDeepwalk::configure, "configure parameters")
         .def("reset", &AttributedDeepwalk::reset, "resets all configurations");
 
-    // Klasse KNN
     py::class_<KNN>(m, "KNN")
-        .def(py::init<std::shared_ptr<Graph>>())  // Falls du einen Konstruktor mit Graph nutzt
+        .def(py::init<std::shared_ptr<Graph>>())  
         .def("run", &KNN::run, "runs kNN")
         .def("extract_results", &KNN::extractResults, "extracs results")
         .def("configure", &KNN::configure, "configure kNN-parameters")
         .def("reset", &KNN::reset, "resets all configurations");
 
-    // Klasse Topo2Vec
     py::class_<Topo2Vec>(m, "Topo2Vec")
-        .def(py::init<std::shared_ptr<Graph>>())  // Falls du einen Konstruktor mit Graph nutzt
+        .def(py::init<std::shared_ptr<Graph>>())  
         .def("run", &Topo2Vec::run, "Führt Topo2Vec aus")
         .def("extract_results", &Topo2Vec::extractResults, "extracs results")
         .def("configure", &Topo2Vec::configure, "configure parameters")
