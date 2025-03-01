@@ -17,9 +17,6 @@
  */
 class BasicEdges : public IEdges
 {
-private:
-    std::vector<std::tuple<int, int, double>> edges; ///< Stores all edges as pairs of node IDs.
-
 public:
     /**
      * @brief Default constructor for BasicEdges.
