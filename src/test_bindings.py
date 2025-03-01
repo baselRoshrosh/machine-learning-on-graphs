@@ -2,8 +2,8 @@ import semProject
 import os
 
 # Define input file paths
-edges_file = os.path.join("input", "twitch_edges.txt")  # Replace with actual file name
-nodes_file = os.path.join("input", "twitch_nodes.txt")  # Replace with actual file name
+edges_file = os.path.join("input", "twitch_edges.txt") 
+nodes_file = os.path.join("input", "twitch_nodes.txt")  
 
 # Check if files exist
 if not (os.path.exists(edges_file) and os.path.exists(nodes_file)):
@@ -12,7 +12,7 @@ if not (os.path.exists(edges_file) and os.path.exists(nodes_file)):
 
 # Load graph 
 graph = semProject.Graph()
-graph.load_from_files(edges_file, nodes_file)  # Replace with actual method
+graph.load_from_files(edges_file, nodes_file)
 
 # Test AttributedDeepwalk
 #print("Testing AttributedDeepwalk...")
@@ -32,7 +32,7 @@ print("KNN Results:", results_knn)
 
 # Test Topo2Vec
 print("Testing Topo2Vec...")
-topo2vec = simProject.Topo2Vec(graph)
+topo2vec = semProject.Topo2Vec(graph)
 topo2vec.configure()  # Configure if needed
 topo2vec.run()
 results_t2v = topo2vec.extract_results()
