@@ -12,7 +12,7 @@ PYBIND11_MODULE(simProject, m) {
 
     // Klasse AttributedDeepwalk
     py::class_<AttributedDeepwalk>(m, "AttributedDeepwalk")
-        .def(py::init<std::shared_ptr<Graph>>())  // Falls du einen Konstruktor mit Graph nutzt
+        .def(py::init<std::shared_ptr<Graph>>())
         .def("run", &AttributedDeepwalk::run, "runsAttributed DeepWalk")
         .def("extract_results", &AttributedDeepwalk::extractResults, "extracs results")
         .def("configure", &AttributedDeepwalk::configure, "configure parameters")
