@@ -2,6 +2,7 @@
 #include <pybind11/stl.h> 
 #include <memory> 
 
+#include "Graph.hpp"
 #include "AttributedDeepwalk.hpp"
 #include "KNN.hpp"
 #include "Topo2Vec.hpp"
@@ -10,6 +11,10 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(semProject, m) {
     m.doc() = "Python Bindings for Attributed DeepWalk, kNN and Topo2Vec";
+
+    py::class_<Graph, std::shared_ptr<Graph>>(m, "Graph")
+        .def(py::init<>())  
+        .def("load_from_files", &Graph::loadFromFiles, "Loads graph from edge and node files.");
 
     py::class_<AttributedDeepwalk>(m, "AttributedDeepwalk")
         .def(py::init<std::shared_ptr<Graph>>(), py::arg("graph"))
