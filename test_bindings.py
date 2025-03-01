@@ -1,9 +1,9 @@
 import semProject  
 import os
 
-# Define input file paths
-edges_file = os.path.join("input", "twitch_edges.txt")  # Replace with actual file name
-nodes_file = os.path.join("input", "twitch_nodes.txt")  # Replace with actual file name
+input_dir = os.path.join("input", "cornell")
+edges_file = os.path.join(input_dir, "cornell_edges.txt")  
+nodes_file = os.path.join(input_dir, "cornell_nodes.txt")  
 
 # Check if files exist
 if not (os.path.exists(edges_file) and os.path.exists(nodes_file)):
