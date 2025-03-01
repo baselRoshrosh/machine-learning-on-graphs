@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <unordered_set>
 #include <queue>
+#include <numeric>
+#include <cmath>
 
 void AttributedDeepwalk::calculateWeightMatrix()
 {
@@ -18,13 +20,108 @@ void AttributedDeepwalk::calculateWeightMatrix()
 
 std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwalk::getAliasTables() const
 {
-    // TODO
+    std::unordered_map<int, std::vector<std::pair<double, size_t>>> aliasTables;
+
+    // create alias table for each node
+    for (int node : graph->getNodes())
+    {
+        // 1: get weights of edges to neighbors
+        std::vector<double> neighborWeights;
+        for (int neighbor : graph->getNeighbors(node))
+        {
+            neighborWeights.push_back(graph->getEdgeWeight(node, neighbor));
+        }
+
+        // 2: normalize to get transition probabilites resembling the edge weight
+        double weightSum = 0;
+        for (double weight : neighborWeights)
+        {
+            weightSum += weight;
+        }
+
+        std::vector<double> neighborProbabilites(neighborWeights.size()); // new vector for clarity, initialized to 0.0s
+        if (weightSum != 0)
+        {
+            for (int i = 0; i < neighborWeights.size(); i++)
+            {
+                neighborProbabilites[i] = neighborWeights[i] / weightSum;
+            }
+        }
+
+        /*
+         * 3: calculate alias table
+         *
+         * following with slight modifications and added comments:
+         * https://gist.github.com/Liam0205/0b5786e9bfc73e75eb8180b5400cd1f8
+         */
+        const size_t numNeighbors = neighborProbabilites.size();
+        std::vector<std::pair<double, size_t>> aliasTable(numNeighbors, {0.0, std::numeric_limits<size_t>::max()});
+        std::queue<size_t>
+            underfull, // where probability table < 1
+            overfull;  // where probability table > 1
+
+        // initializing the alias table with U_i = n*p_i (see Wikipedia)
+        for (size_t i = 0; i != numNeighbors; ++i)
+        {
+            aliasTable[i].first = numNeighbors * neighborProbabilites[i];
+            if (aliasTable[i].first < 1.0)
+            {
+                underfull.push(i);
+            }
+            else
+            {
+                overfull.push(i);
+            }
+        }
+
+        // continue while table entries aren't exactly full
+        while ((!underfull.empty()) && (!overfull.empty()))
+        {   
+            // 1: choose overfull and underfull entry
+            auto underfullEntry = underfull.front(),
+                 overfullEntry = overfull.front();
+            underfull.pop(), overfull.pop();
+
+            // 2: unused space in underfullEntry becomes outcome of overfullEntry
+            aliasTable[underfullEntry].second = overfullEntry;
+
+            // 3: removing allocated space from overfullEntry
+            aliasTable[overfullEntry].first -= (1.0 - aliasTable[underfullEntry].first);
+
+            if (aliasTable[overfullEntry].first < 1.0)
+            {
+                underfull.push(overfullEntry);
+            }
+            else
+            {
+                overfull.push(overfullEntry);
+            }
+        }
+
+        aliasTables[node] = aliasTable;
+    }
 }
 
 double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) const
 {
-    double similarity;
-    // TODO
+    std::vector<double> featuresNode1 = graph->getFeatureById(node1);
+    std::vector<double> featuresNode2 = graph->getFeatureById(node2);
+
+    // calculating cosine-similarity between feature vectors
+    // Compute dot product
+    double dotProduct = std::inner_product(featuresNode1.begin(), featuresNode1.end(), featuresNode2.begin(), 0.0);
+
+    // Compute norms
+    double norm1 = std::sqrt(std::inner_product(featuresNode1.begin(), featuresNode1.end(), featuresNode1.begin(), 0.0));
+    double norm2 = std::sqrt(std::inner_product(featuresNode2.begin(), featuresNode2.end(), featuresNode2.begin(), 0.0));
+
+    // Handle division by zero
+    if (norm1 == 0.0 || norm2 == 0.0)
+    {
+        return 0.0; // Convention: return 0 if any vector is zero
+    }
+
+    double similarity = dotProduct / (norm1 * norm2);
     return std::max(similarity, 0.0);
 }
 
