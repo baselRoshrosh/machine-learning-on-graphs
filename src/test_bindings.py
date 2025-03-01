@@ -1,4 +1,4 @@
-import simProject  
+import semProject  
 import os
 
 # Define input file paths
@@ -11,12 +11,12 @@ if not (os.path.exists(edges_file) and os.path.exists(nodes_file)):
     exit(1)
 
 # Load graph (Assuming you have a Graph class or method to read files)
-graph = simProject.Graph()
+graph = semProject.Graph()
 graph.load_from_files(edges_file, nodes_file)  # Replace with actual method
 
 # Test AttributedDeepwalk
 #print("Testing AttributedDeepwalk...")
-#deepwalk = simProject.AttributedDeepwalk(graph)
+#deepwalk = semProject.AttributedDeepwalk(graph)
 #deepwalk.configure()  # Configure if needed
 #deepwalk.run()
 #results_dw = deepwalk.extract_results()
@@ -24,7 +24,7 @@ graph.load_from_files(edges_file, nodes_file)  # Replace with actual method
 
 # Test KNN
 print("Testing KNN...")
-knn = simProject.KNN(graph)
+knn = semProject.KNN(graph)
 knn.configure()  # Configure if needed
 knn.run()
 results_knn = knn.extract_results()
