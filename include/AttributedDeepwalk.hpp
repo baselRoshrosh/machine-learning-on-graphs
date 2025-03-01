@@ -1,7 +1,7 @@
 #ifndef ATTRIBUTED_DEEPWALK_HPP
 #define ATTRIBUTED_DEEPWALK_HPP
 
-#include "IStrategies.hpp"
+#include "interfaces/IStrategies.hpp"
 
 #include <vector>
 #include <unordered_map>
