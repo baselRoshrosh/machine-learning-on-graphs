@@ -19,6 +19,7 @@ public:
 
 protected:
     // Common parameters for embedding-based strategies:
+
     int embeddingDimensions = 128; ///< size of the embedding vector of each node. Default taken from node2vec
     int numEpochs = 5;             ///< number of gradient descent iterations. Default taken from word2vec
     int windowSize = 5;            ///< how many context nodes aroung a given node should be considered. Default taken from word2vec
@@ -40,27 +41,27 @@ protected:
      * @param[in] subGraphs a list of context graphs, each one based on a given node in the graph
     */
     void skipGram(std::unordered_map<int, std::vector<double>> &embeddings,
-                  const std::vector<std::vector<int>> &subGraphs) {
-        for (int epoch = 0; epoch < numEpochs; ++epoch) {
-            for (const auto &subGraph : subGraphs) {
-                for (size_t i = 0; i < subGraph.size(); ++i) {
-                    int targetNode = subGraph[i];
-                    // For each node in the window around the target:
-                    for (int j = -windowSize; j <= windowSize; ++j) {
-                        if (j == 0 || (int)i + j < 0 || (int)i + j >= (int)subGraph.size())
-                            continue;
-                        int contextNode = subGraph[i + j];
-                        // Positive example: update embeddings with label = 1
-                        updateEmbeddings(embeddings, embeddingDimensions, targetNode, contextNode, 1, learningRate);
-                        // Negative sampling:
-                        std::vector<int> negativeSamples = getNegativeSamples(graph, targetNode, numNegativeSamples);
-                        for (int negativeNode : negativeSamples) {
-                            updateEmbeddings(embeddings, embeddingDimensions, targetNode, negativeNode, 0, learningRate);
+        const std::vector<std::vector<int>> &subGraphs) {
+            for (int epoch = 0; epoch < numEpochs; ++epoch) {
+                for (const auto &subGraph : subGraphs) {
+                    for (size_t i = 0; i < subGraph.size(); ++i) {
+                        int targetNode = subGraph[i];
+                        // For each node in the window around the target:
+                        for (int j = -windowSize; j <= windowSize; ++j) {
+                            if (j == 0 || (int)i + j < 0 || (int)i + j >= (int)subGraph.size())
+                                continue;
+                            int contextNode = subGraph[i + j];
+                            // Positive example: update embeddings with label = 1
+                            updateEmbeddings(embeddings, embeddingDimensions, targetNode, contextNode, 1, learningRate);
+                            // Negative sampling:
+                            std::vector<int> negativeSamples = getNegativeSamples(graph, targetNode, numNegativeSamples);
+                            for (int negativeNode : negativeSamples) {
+                                updateEmbeddings(embeddings, embeddingDimensions, targetNode, negativeNode, 0, learningRate);
+                            }
                         }
                     }
                 }
             }
-        }
     }
 
     /**
