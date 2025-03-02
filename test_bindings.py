@@ -10,9 +10,7 @@ if not (os.path.exists(edges_file) and os.path.exists(nodes_file)):
     print("Error: Input files not found!")
     exit(1)
 
-# Load graph (Assuming you have a Graph class or method to read files)
-graph = semProject.Graph()
-graph.load_from_files(edges_file, nodes_file)  # Replace with actual method
+graph = semProject.Graph(nodes_file, edges_file)
 
 # Test AttributedDeepwalk
 #print("Testing AttributedDeepwalk...")
@@ -32,7 +30,7 @@ print("KNN Results:", results_knn)
 
 # Test Topo2Vec
 print("Testing Topo2Vec...")
-topo2vec = simProject.Topo2Vec(graph)
+topo2vec = semProject.Topo2Vec(graph)
 topo2vec.configure()  # Configure if needed
 topo2vec.run()
 results_t2v = topo2vec.extract_results()
