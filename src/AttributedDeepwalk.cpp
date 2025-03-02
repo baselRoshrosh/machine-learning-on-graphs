@@ -7,6 +7,25 @@
 #include <numeric>
 #include <cmath>
 
+/*
+ * ======= declaration of local functions ======
+ */
+std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
+
+/*
+ * ======= implementation of strategy methods ========== 
+ */
+void AttributedDeepwalk::run() {}
+std::shared_ptr<Graph> AttributedDeepwalk::extractResults() const
+{
+    return graph;
+}
+void AttributedDeepwalk::configure(const std::map<std::string, double> &params) {}
+void AttributedDeepwalk::reset() {}
+
+/*
+ * ======= calculating Alias Tables ============
+ */
 void AttributedDeepwalk::calculateWeightMatrix()
 {
     double weight;
@@ -76,7 +95,7 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
 
         // continue while table entries aren't exactly full
         while ((!underfull.empty()) && (!overfull.empty()))
-        {   
+        {
             // 1: choose overfull and underfull entry
             auto underfullEntry = underfull.front(),
                  overfullEntry = overfull.front();
@@ -100,6 +119,8 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
 
         aliasTables[node] = aliasTable;
     }
+
+    return aliasTables;
 }
 
 double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) const
@@ -135,7 +156,12 @@ double AttributedDeepwalk::measuring_structural_similarity(int node1, int node2)
     std::set<int> unionOfCovers;
 
     std::set_intersection(coverNode1.begin(), coverNode1.end(), coverNode2.begin(), coverNode2.end(), std::inserter(intersectionOfCovers, intersectionOfCovers.begin()));
-    std::set_union(coverNode1.begin(), coverNode1.end(), coverNode2.begin(), coverNode2.end(), std::inserter(intersectionOfCovers, intersectionOfCovers.begin()));
+    std::set_union(coverNode1.begin(), coverNode1.end(), coverNode2.begin(), coverNode2.end(), std::inserter(unionOfCovers, unionOfCovers.begin()));
+
+    if (unionOfCovers.size() == 0) // shouldn't technically occur because cover includes node itself
+    {
+        return 0.0;
+    }
 
     return intersectionOfCovers.size() / unionOfCovers.size();
 }
