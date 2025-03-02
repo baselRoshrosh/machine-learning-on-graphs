@@ -2,11 +2,12 @@
 #define ATTRIBUTED_DEEPWALK_HPP
 
 #include "interfaces/IStrategies.hpp"
+#include "EmbeddingStrategy.hpp"
 
 #include <vector>
 #include <unordered_map>
 
-class AttributedDeepwalk : public IStrategies
+class AttributedDeepwalk : public EmbeddingStrategy
 {
 public:
     /**
