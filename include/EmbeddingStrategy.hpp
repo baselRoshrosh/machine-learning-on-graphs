@@ -26,8 +26,19 @@ protected:
     double learningRate = 0.025;   ///< learning rate for skip-gram
 
     
-
-    // SkipGram implementation:
+    /**
+     *  Performs the skip gram algorithm with negative sampling to create an embedding for each node based on the list of context graphs using SGD.
+     *
+     * @see Topo2Vec paper. DOI:https://doi.org/10.1109/TCSS.2019.2950589
+     * @see Node2Vec paper, on which using skip gram for topo2vec is based. DOI:https://doi.org/10.48550/arXiv.1607.00653
+     * @see Word2Vec paper, on which using skip gram is based in generell. DOI:https://doi.org/10.48550/arXiv.1310.4546
+     * @see Word2Vec explained. DOI:https://doi.org/10.48550/arXiv.1402.3722
+     * @see Word2Vec original code: https://github.com/tmikolov/word2vec/blob/master/word2vec.c
+     * @see Word2Vec commented c implementation: https://github.com/chrisjmccormick/word2vec_commented/blob/master/word2vec.c
+     *
+     * @param[in, out] embeddings <nodeID, embeddingVector> the embeddings to be filled
+     * @param[in] subGraphs a list of context graphs, each one based on a given node in the graph
+    */
     void skipGram(std::unordered_map<int, std::vector<double>> &embeddings,
                   const std::vector<std::vector<int>> &subGraphs) {
         for (int epoch = 0; epoch < numEpochs; ++epoch) {
@@ -52,7 +63,13 @@ protected:
         }
     }
 
-    // Sample a set of vectors:
+    /**
+     * creates a sample of a set of vectors
+     *
+     * @param setOfVectors the given total set of vectors
+     * @param sampleSize the number of vectors in the sample
+     * @return A set of vectors
+     */
     std::vector<std::vector<double>> getSample(const std::vector<std::vector<double>> &setOfVectors, int sampleSize) {
         std::vector<std::vector<double>> sample;
         if (setOfVectors.empty() || sampleSize <= 0)
@@ -66,7 +83,14 @@ protected:
         return sample;
     }
 
-    // Find the k-most similar nodes based on cosine similarity:
+    /**
+     * finds the k-most similar nodes to a given query vector by comparing cosine similarities.
+     *
+     * @param embeddings the embeddings <nodeID, embeddingVector> of a set of nodes.
+     * @param queryVector the embedding vector against which the similarities are computed.
+     * @param kSimilarNodes the number of similar nodes to retrieve.
+     * @return a vector of embedding vectors corresponding to the top-k most similar nodes.
+     */
     std::vector<std::vector<double>> getSimilarNodes(
         const std::unordered_map<int, std::vector<double>> &embeddings,
         const std::vector<double> &queryVector,
@@ -109,7 +133,16 @@ protected:
         return topKSimilar;
     }
 
-    
+    /**
+    * updates Embeddings based on the connection of two nodes
+    *
+    * @param embeddings[in, out] pointer to the embeddings<nodeID, embedding>
+    * @param dimensions[in] how many dimensions an embedding has
+    * @param targetNode[in]
+    * @param contextNode[in]
+    * @param label[in] whether it is a positive (1) or negative (0) example
+    * @param learningRate[in] how large the gradient descent steps should be
+    */
     void updateEmbeddings(std::unordered_map<int, std::vector<double>> &embeddings,
                           int dimensions, int targetNode, int contextNode,
                           double label, double lr) {
@@ -125,6 +158,15 @@ protected:
         }
     }
 
+    /**
+    * gets a number of negative samples for a specified node
+    *
+    * @param graph the full graph
+    * @param excludeNode the node to get negative samples for
+    * @param numSamples how many negative samples should be created
+    *
+    * @return
+    */
     std::vector<int> getNegativeSamples(std::shared_ptr<Graph> graph, int excludeNode, int numSamples) {
         std::vector<int> negativeSamples;
         std::vector<int> nodes = graph->getNodes();
