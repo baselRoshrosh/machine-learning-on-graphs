@@ -27,3 +27,12 @@ CTestTestfile.cmake
 
 # Ignore diff files
 *.diff
+
+# Ignore input folder with node/edge files
+# they should only exist on the machine running the program
+input/
+
+# Ignore macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride

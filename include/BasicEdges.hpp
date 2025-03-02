@@ -1,10 +1,11 @@
 #ifndef BASICEDGES_HPP
 #define BASICEDGES_HPP
 
-#include "IEdges.hpp"
 #include <vector>
 #include <tuple>
 #include <algorithm>
+
+#include "interfaces/IEdges.hpp"
 
 /**
  * @class BasicEdges

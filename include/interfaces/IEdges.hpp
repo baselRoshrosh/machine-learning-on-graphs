@@ -1,8 +1,8 @@
 #ifndef IEDGES_HPP
 #define IEDGES_HPP
 
-#include <vector>
 #include <utility>
+#include <vector>
 
 /**
  * @class IEdges

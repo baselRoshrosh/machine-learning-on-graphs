@@ -1,9 +1,14 @@
 #ifndef TOPO2VEC_HPP
 #define TOPO2VEC_HPP
 
-#include "IStrategies.hpp"
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
 
-class Topo2Vec : public IStrategies
+#include "EmbeddingStrategy.hpp"
+#include "Graph.hpp"
+
+class Topo2Vec : public EmbeddingStrategy
 {
 public:
     /**
@@ -15,7 +20,10 @@ public:
      * @brief Constructor to initialize the strategy with a graph.
      * @param graph A shared pointer to the graph object.
      */
-    Topo2Vec(std::shared_ptr<Graph> graph) : graph(graph) {};
+    Topo2Vec(std::shared_ptr<Graph> graph)
+    {
+        this->graph = graph;
+    };
 
     /**
      * @brief Runs the strategy on the graph.
@@ -39,32 +47,58 @@ public:
      */
     void reset() override;
 
+    virtual ~Topo2Vec() = default;
+
 protected:
-    std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
-    double tau; ///< configurable variable for embedding creation
+    /*
+     * tau is used to cutoff unimportant nodes from the subgraph
+     * and should be in the range of 0.1-0.9 (Figure 3 in the paper).
+     * lower values of tau result in slightly better quality of evaluation,
+     * higher values in smaller subgraphs, meaning less memory and time needed
+     */
+    double tau = 0.5; ///< configurable variable for filtering important structural nodes
+
+
+    
 
     /**
-     * @brief creates a sample of a set of vectors
-     * @param setOfVectors the given total set of vectors
-     * @param sampleSize the number of vectors in the sample
-     * @return A set of vectors
+     * creates embeddings for the nodes following the topo2vec algorithm
+     *
+     * @see Topo2Vec paper. DOI:https://doi.org/10.1109/TCSS.2019.2950589
+     *
+     * @param[in] dimensions how many dimensions an embeddings should have
+     * @return an embedding for each of the nodes <nodeID, embeddingVector> of the graph
      */
-    std::vector<std::vector<double>> getSample(std::vector<std::vector<double>> setOfVectors, int sampleSize);
+    std::unordered_map<int, std::vector<double>> createEmbeddings(int dimensions);
 
     /**
-     * @brief finds the k-most similar nodes by comparing embedding distances
-     * @param embeddings the embeddings of a set of nodes
-     * @param kSimilarNodes the number of similar nodes retrieved
-     * @return a set of the k most similar nodes of the given embeddings
+     * ====== helper methods for createEmbeddings() ==========================
      */
-    std::vector<std::vector<double>> getSimilarNodes(std::vector<std::vector<double>> embeddings, int kSimilarNodes);
 
     /**
-     * @brief creates embeddings for the nodes following the topo2vec algorithm
-     * @param graph the graph on which the embeddings should be created
-     * @return an embedding for each of the nodes of the graph holding [nodeID, value1, value2, ...]
+     * Equals Algorithm 1 of the topo2vec paper.
+     * It uses neighborhood affinity (NA) and subgraph affinity (SA) passing the thresshold tau
+     * to create a context subgraph for each node.
+     *
+     * @see Topo2Vec paper. DOI:https://doi.org/10.1109/TCSS.2019.2950589
+     *
+     * @return a vector containing the nodeIDs of context-subgraphs generated for each node in the graph
      */
-    std::vector<std::vector<double>> createEmbeddings(std::shared_ptr<Graph> graph);
+    std::vector<std::vector<int>> getContextSubgraphs();
+
+    /**
+     * Equals Algorithm 2 if the topo2vec paper, also called SEARCH-procedure. Named differently for clarity
+     *
+     * @see Topo2Vec paper. DOI:https://doi.org/10.1109/TCSS.2019.2950589
+     *
+     * @param[in, out] templist
+     * @param[in, out] visited <nodeID, hasBeenVisited>, stores whether a given node has already been considered
+     * @param[in, out] edgesInSubgraphCount how many edges are in the given subgraph as it is used to calculate the SA-score
+     */
+    void expandSubgraph(std::vector<int> &templist, std::unordered_map<int, bool> &visited, std::unordered_set<int> &subgraphNodes, int &edgesInSubgraphCount);
+
+
+    friend class Topo2VecTest; // grant access to test class
 };
 
 #endif

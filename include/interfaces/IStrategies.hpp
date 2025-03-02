@@ -33,7 +33,7 @@ public:
      * @brief Configures strategy-specific parameters.
      * @param params A map of parameter names and their values.
      */
-    virtual void configure(const std::map<std::string, double>& params) = 0;
+    virtual void configure(const std::map<std::string, double> &params) = 0;
 
     /**
      * @brief Resets the strategy to its initial state.
@@ -43,6 +43,5 @@ public:
 protected:
     std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
 };
-
 
 #endif // ISTRATEGIES_HPP
