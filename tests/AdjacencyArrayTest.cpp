@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "BasicEdges.hpp"
+#include "AdjacencyArrayEdges.hpp"
 
 // Test fixture for BasicEdges
 class AdjacencyArrayTest : public ::testing::Test
@@ -7,16 +7,10 @@ class AdjacencyArrayTest : public ::testing::Test
 protected:
     // Test data
     std::vector<std::pair<int, int>> initialEdges = {{1, 2}, {2, 3}, {3, 4}};
-    BasicEdges edges;
+    AdjacencyArrayEdges edges;
 
     // Set up the test environment
     AdjacencyArrayTest() : edges(initialEdges) {}
-
-    // Tear down after each test (if needed)
-    void TearDown() override
-    {
-        // Cleanup code if necessary
-    }
 };
 
 // Test: Check neighbors retrieval

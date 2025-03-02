@@ -1,34 +1,51 @@
 #include "AdjacencyArrayEdges.hpp"
 
-#include <limits> 
+#include <limits>
+
+/*
+ * =========== constructors ===============
+ */
 
 AdjacencyArrayEdges::AdjacencyArrayEdges(const std::vector<std::pair<int, int>> &initialEdges)
 {
-    std::vector<std::vector<int>> adjacencyList;
-
-    for (auto [source, dest] : initialEdges) {
+    // 1: create adjacency list
+    std::unordered_map<int, std::vector<int>> adjacencyList;
+    for (auto [source, dest] : initialEdges)
+    {
         adjacencyList[source].emplace_back(dest);
     }
 
-    adjacencyArray(initialEdges.size());
-    adjacencyOffsets(adjacencyList.size());
-    
-    int currentOffset = 0;
-    for (int i = 0; i < adjacencyList.size(); i++){
-        adjacencyOffsets[i] = currentOffset;
-        adjacencyA
-    }
+    fillAdjacencyArrayFromList(adjacencyList);
 }
 
-void addEdge(int source, int destination)
+/*
+ * ======= Interface Methoden ===============
+ */
+
+void AdjacencyArrayEdges::addEdge(int source, int destination)
 {
+    if (isEdge(source, destination))
+    {
+        return;
+    }
+
+    adjacencyArray.resize(adjacencyArray.size() + 2);
+    // TODO
 }
 
 std::vector<int> AdjacencyArrayEdges::getNeighbors(int nodeID)
 {
     std::vector<int> neighbors;
 
-    for (int offset = adjacencyOffsets[nodeID]; offset < adjacencyOffsets[nodeID + 1]; offset++)
+    if (nodeID >= adjacencyOffsets.size())
+    {
+        return neighbors; // Return empty vector if nodeID is invalid
+    }
+
+    int startAdjacents = adjacencyOffsets[nodeID];
+    int endAdjacents = (nodeID + 1 < adjacencyOffsets.size()) ? adjacencyOffsets[nodeID + 1] : adjacencyArray.size();
+
+    for (int offset = startAdjacents; offset < endAdjacents; offset++)
     {
         neighbors.push_back(adjacencyArray[offset]);
     }
@@ -38,7 +55,16 @@ std::vector<int> AdjacencyArrayEdges::getNeighbors(int nodeID)
 
 bool AdjacencyArrayEdges::isEdge(int source, int destination)
 {
-    for (int offset = adjacencyOffsets[source]; offset < adjacencyOffsets[source + 1]; offset++)
+    if (source >= adjacencyOffsets.size())
+    {
+        return false; // Source node is invalid
+    }
+
+    // Define start and end indices correctly
+    int startAdjacents = adjacencyOffsets[source];
+    int endAdjacents = (source + 1 < adjacencyOffsets.size()) ? adjacencyOffsets[source + 1] : adjacencyArray.size();
+
+    for (int offset = startAdjacents; offset < endAdjacents; offset++)
     {
         if (adjacencyArray[offset] == destination)
         {
@@ -46,39 +72,82 @@ bool AdjacencyArrayEdges::isEdge(int source, int destination)
         }
     }
 
-    return false
+    return false;
 }
 
 std::vector<std::pair<int, int>> AdjacencyArrayEdges::getEdges() const
 {
     std::vector<std::pair<int, int>> edgesVector;
 
-    for (){}
+    for (int currentNode = 0; currentNode < adjacencyOffsets.size(); currentNode++)
+    {
+        int startAdjacents = adjacencyOffsets[currentNode];
+        int endAdjacents = (currentNode + 1 < adjacencyOffsets.size()) ? adjacencyOffsets[currentNode + 1] : adjacencyArray.size();
+
+        for (int offset = startAdjacents; offset < endAdjacents; offset++)
+        {
+            edgesVector.emplace_back(currentNode, adjacencyArray[offset]); // adjacencyArray[offset] iterates through currentNode's neighbors
+        }
+    }
 
     return edgesVector;
 }
 
 void AdjacencyArrayEdges::setWeight(int source, int destination, double weight)
 {
-    if (destination < source) {
+    if (destination < source)
+    {
         std::swap(source, destination);
     }
 
     weights[{source, destination}] = weight;
 }
 
-double AdjacencyArrayEdges::getWeight(int source, int destination) const {
-    if (destination < source) {
+double AdjacencyArrayEdges::getWeight(int source, int destination) const
+{
+    if (destination < source)
+    {
         std::swap(source, destination);
     }
     auto it = weights.find({source, destination});
-    if (it != weights.end()) {
+    if (it != weights.end())
+    {
         return it->second;
     }
 
-    return std::numeric_limits<double>::quiet_NaN();  // Return NaN if the edge does not exist
+    return std::numeric_limits<double>::quiet_NaN(); // Return NaN if the edge does not exist
 }
 
-int AdjacencyArrayEdges::size() {
+int AdjacencyArrayEdges::size()
+{
     return adjacencyArray.size() / 2;
+}
+
+/*
+ * ========= helper methods ============
+ */
+
+void AdjacencyArrayEdges::fillAdjacencyArrayFromList(std::unordered_map<int, std::vector<int>> adjacencyList)
+{
+    int numAdjacents = 0;
+    for (auto &[node, adjacents] : adjacencyList)
+    {
+        numAdjacents += adjacents.size();
+    }
+
+    adjacencyArray.resize(numAdjacents);
+    adjacencyOffsets.resize(adjacencyList.size());
+
+    int currentOffset = 0;
+    for (int i = 0; i < adjacencyList.size(); i++)
+    {
+        adjacencyOffsets[i] = currentOffset;
+        auto &adjacents = adjacencyList[i];
+
+        for (int j = 0; j < adjacents.size(); j++)
+        {
+            adjacencyArray[currentOffset + j] = adjacents[j];
+        }
+        currentOffset += adjacents.size(); // setting offset to new nodes
+    }
 }

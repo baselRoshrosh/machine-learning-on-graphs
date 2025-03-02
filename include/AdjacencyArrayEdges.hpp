@@ -5,6 +5,17 @@
 
 #include <unordered_map>
 
+// custom defined hash for pairs as they are not naturally supported
+struct pair_hash
+{
+    template <class T1, class T2>
+    std::size_t operator()(const std::pair<T1, T2> &p) const
+    {
+        return std::hash<T1>()(p.first) ^ (std::hash<T2>()(p.second) << 1);
+    }
+}; 
+
+
 class AdjacencyArrayEdges : public IEdges
 {
 public:
@@ -76,10 +87,12 @@ public:
      */
     int size() override;
 
-private:
-    std::vector<int> adjacencyOffsets;                       ///< tracks beginning of adjacency list of node in adjacencyArray
-    std::vector<int> adjacencyArray;                         ///< concatenated adjacency lists
-    std::unordered_map<std::pair<int, int>, double> weights; ///< keeps track of edge weights
+protected:
+    std::vector<int> adjacencyOffsets;                                         ///< tracks beginning of adjacency list of node in adjacencyArray
+    std::vector<int> adjacencyArray;                                           ///< concatenated adjacency lists
+    std::unordered_map<std::pair<int, int>, double, struct pair_hash> weights; ///< keeps track of edge weights
+
+    void fillAdjacencyArrayFromList(std::unordered_map<int, std::vector<int>> adjacencyList);
 };
 
 #endif
