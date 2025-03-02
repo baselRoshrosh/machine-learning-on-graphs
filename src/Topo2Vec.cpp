@@ -306,32 +306,3 @@ void filterAndSort(std::vector<int> &list, std::vector<double> &scores, double t
     }
 }
 
-/**
- * calculates dot product of two vectors. Their order is ambigous
- *
- * @param vec1 first vector of the equation
- * @param vec2 second vector of the equation
- *
- * @return the calculated dot product
- */
-double dotProduct(const std::vector<double> &vec1, const std::vector<double> &vec2)
-{
-    double result = 0.0;
-    for (size_t i = 0; i < vec1.size(); i++)
-    {
-        result += vec1[i] * vec2[i];
-    }
-    return result;
-}
-
-/**
- * calculates sigmoid value for a variable
- *
- * @param x the specified variable
- *
- * @return its sigmoid value
- */
-double sigmoid(double x)
-{
-    return 1.0 / (1.0 + std::exp(-x));
-}
