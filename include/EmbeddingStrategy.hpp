@@ -19,11 +19,11 @@ public:
 
 protected:
     // Common parameters for embedding-based strategies:
-    int embeddingDimensions = 128; ///< dimension size for each embedding vector
-    int numEpochs = 5;             ///< number of gradient descent iterations
-    int windowSize = 5;            ///< context window size
-    int numNegativeSamples = 5;    ///< number of negative samples for skip-gram
-    double learningRate = 0.025;   ///< learning rate for skip-gram
+    int embeddingDimensions = 128; ///< size of the embedding vector of each node. Default taken from node2vec
+    int numEpochs = 5;             ///< number of gradient descent iterations. Default taken from word2vec
+    int windowSize = 5;            ///< how many context nodes aroung a given node should be considered. Default taken from word2vec
+    int numNegativeSamples = 5;    ///< number of randomly chosen negative samples for each positive sample. Default taken from word2vec
+    double learningRate = 0.025;   ///< how fast the gradient descent should operate. Default taken from word2vec, although it gets gradually decreased there
 
     
     /**
