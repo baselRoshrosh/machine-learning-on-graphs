@@ -98,6 +98,17 @@ public:
      * @return the Weight of the specified edge
      */
     double getEdgeWeight(int source, int destination) const;
+
+    /**
+     * @brief Retrieves the label associated with a given node ID.
+     *
+     * This function takes a node ID as input and returns the corresponding label.
+     * If the node ID does not exist, the behavior is undefined.
+     *
+     * @param nodeId The ID of the node whose label is to be retrieved.
+     * @return The label associated with the specified node ID.
+     */
+    int getLabelById(int nodeId);
 };
 
 #endif
