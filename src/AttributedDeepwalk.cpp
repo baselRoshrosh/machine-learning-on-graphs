@@ -117,6 +117,22 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
             }
         }
 
+        // Finalize any remaining entries
+        while (!underfull.empty())
+        {
+            size_t idx = underfull.front();
+            underfull.pop();
+            aliasTable[idx].first = 1.0;
+            aliasTable[idx].second = idx; // Ensure valid index
+        }
+        while (!overfull.empty()) {
+            size_t idx = overfull.front();
+            overfull.pop();
+            aliasTable[idx].first = 1.0;
+            aliasTable[idx].second = idx; // Ensure valid index
+        }
+
+
         aliasTables[node] = aliasTable;
     }
 
@@ -207,3 +223,77 @@ std::set<int> calculateCover(int node, int coverDepth, std::shared_ptr<Graph> gr
 
     return cover;
 }
+
+// Helper function to sample from an alias table
+int sampleFromAliasTable(const std::vector<std::pair<double, size_t>>& aliasTable, std::mt19937& gen) {
+    std::uniform_int_distribution<> int_dis(0, aliasTable.size() - 1);
+    std::uniform_real_distribution<> real_dis(0.0, 1.0);
+    
+    size_t column = int_dis(gen);
+    double coinToss = real_dis(gen);
+    
+    if (coinToss < aliasTable[column].first)
+        return column;
+    else
+        return aliasTable[column].second;
+}
+
+std::vector<int> AttributedDeepwalk::randomWalk(int startNodeID) {
+    std::vector<int> walk;
+    walk.push_back(startNodeID);
+
+    // Compute alias tables on the fly (once per random walk)
+    const auto aliasTables = getAliasTables();
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    // Assuming aliasTables is a member variable of type:
+    // std::unordered_map<int, std::vector<std::pair<double, size_t>>>
+    // that you precomputed with getAliasTables()
+    for (int i = 0; i < walkLength - 1; ++i) {
+        int current = walk.back();
+        std::vector<int> neighbors = graph->getNeighbors(current);
+        if (neighbors.empty())
+            break;
+
+        // Get the alias table corresponding to the current node
+        const auto& aliasTable = aliasTables.at(current);
+        
+        // Sample an index from the alias table (each index corresponds to a neighbor)
+        int neighborIdx = sampleFromAliasTable(aliasTable, gen);
+        int nextNode = neighbors[neighborIdx];
+
+        walk.push_back(nextNode);
+    }
+    
+    return walk;
+}
+
+std::unordered_map<int, std::vector<double>> AttributedDeepwalk::csadw()
+{
+    calculateWeightMatrix();
+
+    std::vector<std::vector<int>> randomWalks;
+    std::vector<int> nodes = graph->getNodes();
+    std::mt19937 gen(std::random_device{}());
+
+    for (int iter = 0; iter < walksPerNode; ++iter)
+    {
+        std::shuffle(nodes.begin(), nodes.end(), gen);
+        for (int node : nodes)
+        {
+            randomWalks.push_back(randomWalk(node));
+        }
+    }
+
+    std::unordered_map<int, std::vector<double>> embeddings;
+    for (int node : graph->getNodes())
+    {
+        embeddings[node] = std::vector<double>(embeddingDimensions, 0.01);
+    }
+
+    skipGram(embeddings, randomWalks);
+    return embeddings;
+}
+

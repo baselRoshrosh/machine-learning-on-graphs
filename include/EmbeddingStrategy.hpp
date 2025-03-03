@@ -168,19 +168,31 @@ protected:
     *
     * @return
     */
-    std::vector<int> getNegativeSamples(std::shared_ptr<Graph> graph, int excludeNode, int numSamples) {
+   std::vector<int> getNegativeSamples(std::shared_ptr<Graph> graph, int excludeNode, int numSamples) {
         std::vector<int> negativeSamples;
+
+        if (!graph) {
+            return negativeSamples;  // Return empty vector to avoid segfault
+        }
+
         std::vector<int> nodes = graph->getNodes();
+        if (nodes.empty()) {
+            return negativeSamples;
+        }
+
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<int> dist(0, nodes.size() - 1);
+
         while (negativeSamples.size() < static_cast<size_t>(numSamples)) {
             int sampledNode = nodes[dist(gen)];
             if (sampledNode != excludeNode)
                 negativeSamples.push_back(sampledNode);
         }
+
         return negativeSamples;
     }
+
 };
 
 #endif // EMBEDDING_STRATEGY_HPP

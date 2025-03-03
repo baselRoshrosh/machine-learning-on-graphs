@@ -55,7 +55,7 @@ protected:
      *
      * @return the embeddings <nodeID, nodeEmbedding> of the nodes
      */
-    std::vector<std::vector<int>> csadw();
+    std::unordered_map<int, std::vector<double>> csadw();
 
     /**
      * Calculates the ADW weight matrix for a given graph.
