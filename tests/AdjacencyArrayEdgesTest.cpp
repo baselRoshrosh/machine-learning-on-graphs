@@ -2,7 +2,7 @@
 #include "AdjacencyArrayEdges.hpp"
 
 // Test fixture for BasicEdges
-class AdjacencyArrayTest : public ::testing::Test
+class AdjacencyArrayEdgesTest : public ::testing::Test
 {
 protected:
     // Test data
@@ -10,11 +10,11 @@ protected:
     AdjacencyArrayEdges edges;
 
     // Set up the test environment
-    AdjacencyArrayTest() : edges(initialEdges) {}
+    AdjacencyArrayEdgesTest() : edges(initialEdges) {}
 };
 
 // Test: Check neighbors retrieval
-TEST_F(AdjacencyArrayTest, GetNeighbors)
+TEST_F(AdjacencyArrayEdgesTest, GetNeighbors)
 {
     // Check neighbors for node 2
     std::vector<int> neighbors = edges.getNeighbors(2);
@@ -32,7 +32,7 @@ TEST_F(AdjacencyArrayTest, GetNeighbors)
 }
 
 // Test: Check edge existence
-TEST_F(AdjacencyArrayTest, IsEdge)
+TEST_F(AdjacencyArrayEdgesTest, IsEdge)
 {
     // Existing edges
     EXPECT_TRUE(edges.isEdge(1, 2));
@@ -48,7 +48,7 @@ TEST_F(AdjacencyArrayTest, IsEdge)
 }
 
 // Test: Retrieve all edges
-TEST_F(AdjacencyArrayTest, GetEdges)
+TEST_F(AdjacencyArrayEdgesTest, GetEdges)
 {
     const auto &actualEdges = edges.getEdges();
     EXPECT_EQ(actualEdges, initialEdges); // Ensure edges match the initialization data
@@ -59,7 +59,8 @@ TEST_F(AdjacencyArrayTest, GetEdges)
 }
 
 // Test case: Test adding an edge to the BasicEdges object
-TEST_F(AdjacencyArrayTest, AddEdge) {
+TEST_F(AdjacencyArrayEdgesTest, AddEdge)
+{
     // Initial edges before adding the new edge
     std::vector<std::pair<int, int>> initialEdges = edges.getEdges();
     size_t initialSize = initialEdges.size();
@@ -77,4 +78,3 @@ TEST_F(AdjacencyArrayTest, AddEdge) {
     // Check that the new edge (3, 4) is in the list of edges
     EXPECT_NE(std::find(currentEdges.begin(), currentEdges.end(), std::make_pair(3, 4)), currentEdges.end());
 }
-

@@ -4,7 +4,7 @@
 #include <cmath> // for std::isnan
 
 // Test fixture for BasicEdges
-class AdjacencyArrayTest : public ::testing::Test
+class BasicEdgesTest : public ::testing::Test
 {
 protected:
     // Test data
@@ -12,17 +12,11 @@ protected:
     BasicEdges edges;
 
     // Set up the test environment
-    AdjacencyArrayTest() : edges(initialEdges) {}
-
-    // Tear down after each test (if needed)
-    void TearDown() override
-    {
-        // Cleanup code if necessary
-    }
+    BasicEdgesTest() : edges(initialEdges) {}
 };
 
 // Test: Check neighbors retrieval
-TEST_F(AdjacencyArrayTest, GetNeighbors)
+TEST_F(BasicEdgesTest, GetNeighbors)
 {
     // Check neighbors for node 2
     std::vector<int> neighbors = edges.getNeighbors(2);
@@ -40,7 +34,7 @@ TEST_F(AdjacencyArrayTest, GetNeighbors)
 }
 
 // Test: Check edge existence
-TEST_F(AdjacencyArrayTest, IsEdge)
+TEST_F(BasicEdgesTest, IsEdge)
 {
     // Existing edges
     EXPECT_TRUE(edges.isEdge(1, 2));
@@ -56,7 +50,7 @@ TEST_F(AdjacencyArrayTest, IsEdge)
 }
 
 // Test: Retrieve all edges
-TEST_F(AdjacencyArrayTest, GetEdges)
+TEST_F(BasicEdgesTest, GetEdges)
 {
     const auto &actualEdges = edges.getEdges();
     EXPECT_EQ(actualEdges, initialEdges); // Ensure edges match the initialization data

@@ -1,7 +1,7 @@
 #ifndef ADJACENCY_ARRAY_EDGES_HPP
 #define ADJACENCY_ARRAY_EDGES_HPP
 
-#include "IEdges.hpp"
+#include "interfaces/IEdges.hpp"
 
 #include <unordered_map>
 
@@ -13,8 +13,7 @@ struct pair_hash
     {
         return std::hash<T1>()(p.first) ^ (std::hash<T2>()(p.second) << 1);
     }
-}; 
-
+};
 
 class AdjacencyArrayEdges : public IEdges
 {
