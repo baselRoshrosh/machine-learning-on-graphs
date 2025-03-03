@@ -29,11 +29,7 @@ void Topo2Vec::run()
 
     for (auto node : graph->getNodes())
     {
-        std::vector<std::vector<double>> embeddingsVector;
-        for (const auto& pair : embeddings) {
-            embeddingsVector.push_back(pair.second);
-        }
-        auto nodesSample = getSample(embeddingsVector, sampleSize);
+        auto nodesSample = getSample(embeddings, sampleSize);
         std::vector<std::vector<double>> similarNodes = getSimilarNodes(embeddings, embeddings[node], k);
     }
 }
@@ -84,21 +80,26 @@ void Topo2Vec::reset()
 /*
  * ======= getSample() ===============
  */
-
-std::vector<std::vector<double>> Topo2Vec::getSample(const std::vector<std::vector<double>> &setOfVectors, int sampleSize)
+std::unordered_map<int, std::vector<double>> Topo2Vec::getSample(
+    const std::unordered_map<int, std::vector<double>> &embeddings,
+    int sampleSize)
 {
-    std::vector<std::vector<double>> sample;
-    if (setOfVectors.empty() || sampleSize <= 0)
+    std::unordered_map<int, std::vector<double>> sample;
+    if (embeddings.empty() || sampleSize <= 0)
     { // Out-of-bounds check
         return sample;
     }
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, setOfVectors.size() - 1);
+    std::uniform_int_distribution<> dis(0, embeddings.size() - 1);
 
     for (int i = 0; i < sampleSize; i++)
     {
-        sample.push_back(setOfVectors[dis(gen)]);
+        if (embeddings.count(dis(gen)))
+        {
+            int key = dis(gen);
+            sample.insert({key, embeddings.at(key)});
+        }
     }
 
     return sample;

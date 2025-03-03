@@ -142,52 +142,52 @@ TEST_F(Topo2VecTest, GetSimilarNodes)
 TEST_F(Topo2VecTest, BasicSampling)
 {
     TestableTopo2Vec topo;
-    std::vector<std::vector<double>> vectors = {
-        {1.0, 2.0}, {3.0, 4.0}, {5.0, 6.0}, {7.0, 8.0}};
+    std::unordered_map<int, std::vector<double>> embeddings = {
+        {1, {1.0, 2.0}}, {2, {3.0, 4.0}}, {3, {5.0, 6.0}}, {4, {7.0, 8.0}}};
 
     int sampleSize = 2;
-    auto sample = topo.getSample(vectors, sampleSize);
+    auto sample = topo.getSample(embeddings, sampleSize);
 
     EXPECT_EQ(sample.size(), sampleSize); // Ensure correct sample size
     for (const auto &vec : sample)
     {
-        EXPECT_TRUE(std::find(vectors.begin(), vectors.end(), vec) != vectors.end());
+        EXPECT_TRUE(std::find(embeddings.begin(), embeddings.end(), vec) != embeddings.end());
     }
 }
 
 // Test 2: Empty Input Test
 TEST_F(Topo2VecTest, EmptyInput)
 {
-    std::vector<std::vector<double>> vectors;
+    std::unordered_map<int, std::vector<double>> embeddings;
 
-    auto sample = topo2vec->getSample(vectors, 3);
+    auto sample = topo2vec->getSample(embeddings, 3);
     EXPECT_TRUE(sample.empty());
 }
 
 // Test 3: Sample Size Larger Than Set
 TEST_F(Topo2VecTest, SampleSizeLargerThanSet)
 {
-    std::vector<std::vector<double>> vectors = {
-        {1.0, 2.0}, {3.0, 4.0}};
+    std::unordered_map<int, std::vector<double>> embeddings = {
+        {1, {1.0, 2.0}}, {2, {3.0, 4.0}}};
 
     int sampleSize = 5; // Requesting more samples than available vectors
-    auto sample = topo2vec->getSample(vectors, sampleSize);
+    auto sample = topo2vec->getSample(embeddings, sampleSize);
 
     EXPECT_EQ(sample.size(), sampleSize); // Function allows duplicates
     for (const auto &vec : sample)
     {
-        EXPECT_TRUE(std::find(vectors.begin(), vectors.end(), vec) != vectors.end());
+        EXPECT_TRUE(std::find(embeddings.begin(), embeddings.end(), vec) != embeddings.end());
     }
 }
 
 // Test 4: Zero and Negative Sample Size Test
 TEST_F(Topo2VecTest, ZeroOrNegativeSampleSize)
 {
-    std::vector<std::vector<double>> vectors = {
-        {1.0, 2.0}, {3.0, 4.0}};
+    std::unordered_map<int, std::vector<double>> embeddings = {
+        {1, {1.0, 2.0}}, {2, {3.0, 4.0}}};
 
-    auto sampleZero = topo2vec->getSample(vectors, 0);
-    auto sampleNegative = topo2vec->getSample(vectors, -3);
+    auto sampleZero = topo2vec->getSample(embeddings, 0);
+    auto sampleNegative = topo2vec->getSample(embeddings, -3);
 
     EXPECT_TRUE(sampleZero.empty());
     EXPECT_TRUE(sampleNegative.empty());

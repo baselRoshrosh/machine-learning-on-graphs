@@ -57,8 +57,8 @@ protected:
     double tau = 0.5; ///< configurable variable for filtering important structural nodes
 
     int embeddingDimensions = 128; ///< size of the embedding vector of each node. Default taken from node2vec
-    int sampleSize = 256;          ///< number of samples to be taken for each node. Default taken from word2vec
-    int k = 5;                     ///< number of similar nodes to be retrieved. Default taken from word2vec
+    int sampleSize = 256;          ///< number of samples to be taken for each node.
+    int k = 5;                     ///< number of similar nodes to be retrieved.
     int numEpochs = 5;             ///< number of gradient descent iterations. Default taken from word2vec
     int windowSize = 5;            ///< how many context nodes aroung a given node should be considered. Default taken from word2vec
     int numNegativeSamples = 5;    ///< number of randomly chosen negative samples for each positive sample. Default taken from word2vec
@@ -67,11 +67,13 @@ protected:
     /**
      * creates a sample of a set of vectors
      *
-     * @param setOfVectors the given total set of vectors
+     * @param embeddings the given total set of vectors (embeddings)
      * @param sampleSize the number of vectors in the sample
      * @return A set of vectors
      */
-    std::vector<std::vector<double>> getSample(const std::vector<std::vector<double>> &setOfVectors, int sampleSize);
+    std::unordered_map<int, std::vector<double>> getSample(
+        const std::unordered_map<int, std::vector<double>> &embeddings,
+        int sampleSize);
 
     /**
      * finds the k-most similar nodes to a given query vector by comparing cosine similarities.
