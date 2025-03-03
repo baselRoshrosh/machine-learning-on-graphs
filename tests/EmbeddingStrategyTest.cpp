@@ -118,9 +118,9 @@ TEST_F(EmbeddingStrategyTest, SampleSizeLargerThanSet)
     std::unordered_map<int, std::vector<double>> embeddings = {
         {1, {1.0, 2.0}}, {2, {3.0, 4.0}}};
 
-    int sampleSize = 5; // duplicates allowed
+    int sampleSize = 5;
     auto sample = embeddingStrategy->getSample(embeddings, sampleSize);
-    EXPECT_EQ(sample.size(), static_cast<size_t>(sampleSize));
+    EXPECT_EQ(sample.size(), std::min(static_cast<size_t>(sampleSize), embeddings.size()));
     for (const auto &vec : sample)
     {
         EXPECT_TRUE(std::find(embeddings.begin(), embeddings.end(), vec) != embeddings.end());

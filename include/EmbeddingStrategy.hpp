@@ -75,7 +75,7 @@ protected:
     /**
      * creates a sample of a set of vectors
      *
-     * @param embeddings the given total set of vectors
+     * @param embeddings the given total set of vectors (embeddings)
      * @param sampleSize the number of vectors in the sample
      * @return A set of vectors
      */
@@ -84,16 +84,21 @@ protected:
         std::unordered_map<int, std::vector<double>> sample;
         if (embeddings.empty() || sampleSize <= 0)
             return sample;
+
+        std::vector<int> keys;
+        for (const auto &pair : embeddings)
+        {
+            keys.push_back(pair.first);
+        }
+
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, embeddings.size() - 1);
-        for (int i = 0; i < sampleSize; i++)
+        std::uniform_int_distribution<> dis(0, keys.size() - 1);
+
+        for (int _ = 0; _ < sampleSize; _++)
         {
-            if (embeddings.count(dis(gen)))
-            {
-                int key = dis(gen);
-                sample.insert({key, embeddings.at(key)});
-            }
+            int randomIndex = dis(gen);
+            sample.insert({keys[randomIndex], embeddings.at(keys[randomIndex])});
         }
         return sample;
     }
