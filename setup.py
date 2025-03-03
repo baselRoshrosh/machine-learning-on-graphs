@@ -7,7 +7,6 @@ from pathlib import Path
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
-
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
     "win32": "Win32",
@@ -15,7 +14,6 @@ PLAT_TO_CMAKE = {
     "win-arm32": "ARM",
     "win-arm64": "ARM64",
 }
-
 
 # A CMakeExtension needs a sourcedir instead of a file list.
 # The name must be the _single_ output extension from the CMake build.
@@ -125,16 +123,17 @@ class CMakeBuild(build_ext):
 
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
-setup(name='semproject', 
-      version='0.10',
-      author="",
-      author_email="",
-      description="",
-      long_description="",
-      ext_modules=[CMakeExtension("semproject._lin_alg")],
-      cmdclass={"build_ext": CMakeBuild},
-      zip_safe=False,
-      extras_require={"test": ["pytest>=6.0"]},
-      packages=['semproject'],
-      python_requires=">=3.8",
+setup(
+    name='semProject',  # Ensure the package name matches the built module
+    version='0.10',
+    author="",
+    author_email="",
+    description="",
+    long_description="",
+    ext_modules=[CMakeExtension("semProject")],  # Ensure the extension name matches the CMake build output
+    cmdclass={"build_ext": CMakeBuild},
+    zip_safe=False,
+    extras_require={"test": ["pytest>=6.0"]},
+    packages=['semProject'],  # Ensure package structure matches
+    python_requires=">=3.8",
 )

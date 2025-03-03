@@ -97,12 +97,12 @@ void BasicEdges::setWeight(int source, int destination, double weight)
 
 // gets weight of an edge in graph
 double BasicEdges::getWeight(int source, int destination) const
-{
+{   
     if (destination < source)
     {
         std::swap(source, destination);
     }
-
+    
     auto it = std::find_if(edges.begin(), edges.end(),
                            [&](const std::tuple<int, int, double> &edge)
                            { return std::get<0>(edge) == source && std::get<1>(edge) == destination; });

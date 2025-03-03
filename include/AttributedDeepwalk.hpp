@@ -2,11 +2,12 @@
 #define ATTRIBUTED_DEEPWALK_HPP
 
 #include "interfaces/IStrategies.hpp"
+#include "EmbeddingStrategy.hpp"
 
 #include <vector>
 #include <unordered_map>
 
-class AttributedDeepwalk : public IStrategies
+class AttributedDeepwalk : public EmbeddingStrategy
 {
 public:
     /**
@@ -73,7 +74,7 @@ protected:
      *
      * @return a map of nodeIDs to their respective alias table
      */
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables();
+    std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables() const;
 
     /**
      * Performs a random walk starting at a given Node
@@ -82,6 +83,29 @@ protected:
      * @return a list of nodeIDs that were passed on the random walk
      */
     std::vector<int> randomWalk(int startNodeID);
+
+    /*
+     *  ========= helper functions ==========
+     */
+
+    /**
+     * Calculates Attribute Similarity. The paper uses Jaccard-coefficient which can't be used for numerical values.
+     * Thus we are using Cosine-Similarity and potentially try Pearson-Coefficient-Similarity
+     *
+     * @param node1 first node to consider for similarity
+     * @param node2 second node to consider for similarity
+     * @return the cosine similarity of the features of the nodes
+     */
+    double measuring_attribute_similarity(int node1, int node2) const;
+
+    /**
+     * Calculates Structural Similarity by calculating the overlap coefficient of the respective nodes
+     *
+     * @param node1 first node to consider for similarity
+     * @param node2 second node to consider for similarity
+     * @return the overlap coefficient of the two nodes
+     */
+    double measuring_structural_similarity(int node1, int node2) const;
 };
 
 #endif
