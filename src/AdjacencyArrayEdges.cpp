@@ -30,7 +30,28 @@ void AdjacencyArrayEdges::addEdge(int source, int destination)
     }
 
     adjacencyArray.resize(adjacencyArray.size() + 2);
-    // TODO
+
+    // add source->dest
+    adjacencyArray.insert(adjacencyArray.begin() + adjacencyOffsets[source], destination);
+
+    if (source + 1 < adjacencyArray.size())
+    {
+        for (int i = source + 1; i < adjacencyArray.size(); i++)
+        {
+            ++adjacencyOffsets[i];
+        }
+    }
+
+    // add dest->source
+    adjacencyArray.insert(adjacencyArray.begin() + adjacencyOffsets[destination], source);
+
+    if (destination + 1 < adjacencyArray.size())
+    {
+        for (int i = destination + 1; i < adjacencyArray.size(); i++)
+        {
+            ++adjacencyOffsets[i];
+        }
+    }
 }
 
 std::vector<int> AdjacencyArrayEdges::getNeighbors(int nodeID)

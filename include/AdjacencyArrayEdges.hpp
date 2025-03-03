@@ -31,7 +31,8 @@ public:
     AdjacencyArrayEdges(const std::vector<std::pair<int, int>> &initialEdges);
 
     /**
-     * @brief Adds a new edge to the edge list.
+     * Adds a new edge to the edge list.
+     * It almost never should be used with adjacency arrays as they should be constructed with a finished edge set
      *
      * @param source The ID of the source node.
      * @param destination The ID of the destination node.
