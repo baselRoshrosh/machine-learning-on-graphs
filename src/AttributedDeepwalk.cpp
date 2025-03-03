@@ -16,18 +16,15 @@ std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
  * ======= implementation of strategy methods ========== 
  */
 void AttributedDeepwalk::run() {
-    // Compute the weight matrix using structural and attribute similarity
-    calculateWeightMatrix();
-    
-    //generate alias tables for efficient sampling
-    auto aliasTables = getAliasTables();
-    
-    //perform CSADW algorithm to obtain random walks
-    std::vector<std::vector<int>> randomWalks = csadw();
-    
-    //train Skip-gram model using the generated random walks
-    std::unordered_map<int, std::vector<double>> embeddings;
-    skipGram(embeddings, randomWalks);
+    std::vector<std::vector<int>> embeddings = csadw();
+
+    for (int node : graph->getNodes()) {
+
+        std::vector<int> sample = getSample(embeddings, node);
+        std::vector<int> nodeList = getSimilarNodes(sample, embeddings);
+        // Placeholder TODO
+        // guessFeatures(node, nodeList);
+    }
 }
 
 
