@@ -127,14 +127,31 @@ double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) 
 {
     std::vector<double> featuresNode1 = graph->getFeatureById(node1);
     std::vector<double> featuresNode2 = graph->getFeatureById(node2);
+    double dotProduct = 0;
+    double norm1 = 0;
+    double norm2 = 0;
 
     // calculating cosine-similarity between feature vectors
-    // Compute dot product
-    double dotProduct = std::inner_product(featuresNode1.begin(), featuresNode1.end(), featuresNode2.begin(), 0.0);
+    // filter as they could have missing features
+    for (size_t i = 0; i < featuresNode1.size(); i++)
+    {
+        double f1 = featuresNode1[i];
+        double f2 = featuresNode2[i];
+
+        // Ignore NaN values
+        if (std::isnan(f1) || std::isnan(f2))
+        {
+            continue;
+        }
+
+        dotProduct += f1 * f2;
+        norm1 += f1 * f1;
+        norm2 += f2 * f2;
+    }
 
     // Compute norms
-    double norm1 = std::sqrt(std::inner_product(featuresNode1.begin(), featuresNode1.end(), featuresNode1.begin(), 0.0));
-    double norm2 = std::sqrt(std::inner_product(featuresNode2.begin(), featuresNode2.end(), featuresNode2.begin(), 0.0));
+    norm1 = std::sqrt(norm1);
+    norm2 = std::sqrt(norm2);
 
     // Handle division by zero
     if (norm1 == 0.0 || norm2 == 0.0)
