@@ -17,11 +17,11 @@ std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
  */
 void AttributedDeepwalk::run() {
 
-    std::vector<std::vector<double>> embeddings = csadw();  // Ensure csadw() returns double
+    std::vector<std::vector<double>> embeddings = csadw();  
 
     for (const auto &node : graph->getNodes()) {
-        std::vector<std::vector<double>> sample = getSample(embeddings, 5); 
-        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample[0], 5); 
+        std::vector<std::vector<double>> sample = getSample(embeddings, walkLength); 
+        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample[0], walkLength); 
 
         //TODO
         //guessFeatures(node, nodeList);
