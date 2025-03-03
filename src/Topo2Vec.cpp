@@ -31,6 +31,7 @@ void Topo2Vec::run()
     {
         auto nodesSample = getSample(embeddings, sampleSize);
         std::vector<std::vector<double>> similarNodes = getSimilarNodes(embeddings, embeddings[node], k);
+        // TODO in issue #41: Guess features based on KNN implementation 
     }
 }
 
