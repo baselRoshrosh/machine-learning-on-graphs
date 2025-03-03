@@ -16,20 +16,26 @@ std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
  * ======= implementation of strategy methods ========== 
  */
 void AttributedDeepwalk::run() {
+    std::vector<std::vector<int>> rawEmbeddings = csadw();  // csadw() returns vector<vector<int>>
 
-    std::vector<std::vector<double>> embeddings = csadw();  
+    // Convert vector<vector<int>> to unordered_map<int, vector<double>>
+    std::unordered_map<int, std::vector<double>> embeddings;
+    for (size_t i = 0; i < rawEmbeddings.size(); ++i) {
+        embeddings[static_cast<int>(i)] = std::vector<double>(rawEmbeddings[i].begin(), rawEmbeddings[i].end());
+    }
 
     for (const auto &node : graph->getNodes()) {
-        std::vector<std::vector<double>> sample = getSample(embeddings, coverDepth); 
+        std::unordered_map<int, std::vector<double>> sample = getSample(embeddings, coverDepth); 
 
-        if (sample.empty()) continue;  //ensuring there is atleast one valid sample
+        if (sample.empty()) continue;  // Ensuring there is at least one valid sample
 
-        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample[0], coverDepth); 
+        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample.begin()->second, coverDepth); 
 
         //TODO
         //guessFeatures(node, nodeList);
     }
 }
+
 
 std::shared_ptr<Graph> AttributedDeepwalk::extractResults() const
 {
