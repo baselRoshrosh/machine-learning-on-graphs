@@ -20,8 +20,11 @@ void AttributedDeepwalk::run() {
     std::vector<std::vector<double>> embeddings = csadw();  
 
     for (const auto &node : graph->getNodes()) {
-        std::vector<std::vector<double>> sample = getSample(embeddings, walkLength); 
-        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample[0], walkLength); 
+        std::vector<std::vector<double>> sample = getSample(embeddings, coverDepth); 
+
+        if (sample.empty()) continue;  //ensuring there is atleast one valid sample
+
+        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample[0], coverDepth); 
 
         //TODO
         //guessFeatures(node, nodeList);
