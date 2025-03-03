@@ -16,17 +16,17 @@ std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
  * ======= implementation of strategy methods ========== 
  */
 void AttributedDeepwalk::run() {
-    std::vector<std::vector<int>> embeddings = csadw();
 
-    for (int node : graph->getNodes()) {
+    std::vector<std::vector<double>> embeddings = csadw();  // Ensure csadw() returns double
 
-        std::vector<int> sample = getSample(embeddings, node);
-        std::vector<int> nodeList = getSimilarNodes(sample, embeddings);
-        // Placeholder TODO
-        // guessFeatures(node, nodeList);
+    for (const auto &node : graph->getNodes()) {
+        std::vector<std::vector<double>> sample = getSample(embeddings, 5); 
+        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample[0], 5); 
+
+        //TODO
+        //guessFeatures(node, nodeList);
     }
 }
-
 
 std::shared_ptr<Graph> AttributedDeepwalk::extractResults() const
 {
