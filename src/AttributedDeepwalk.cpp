@@ -18,7 +18,7 @@ std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
  * ======= implementation of strategy methods ========== 
  */
 void AttributedDeepwalk::run() {
-    std::vector<std::vector<int>> rawEmbeddings = csadw();  // csadw() returns vector<vector<int>>
+    std::unordered_map<int, std::vector<double>> rawEmbeddings = csadw();  // csadw() returns vector<vector<int>>
 
     // Convert vector<vector<int>> to unordered_map<int, vector<double>>
     std::unordered_map<int, std::vector<double>> embeddings;
@@ -64,11 +64,6 @@ void AttributedDeepwalk::reset() {
     walksPerNode = 10;
 }
 
-
-std::vector<std::vector<int>> AttributedDeepwalk::csadw() {
-    // TODO:  placeholder
-    return std::vector<std::vector<int>>();
-}
 /*
  * ======= calculating Alias Tables ============
  */
@@ -194,13 +189,6 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
     }
 
     return aliasTables;
-}
-
-
-std::vector<int> AttributedDeepwalk::randomWalk(int startNodeID) {
-    std::vector<int> walk;     
-    //TODO This is just a placeholder
-    return walk;
 }
 
 double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) const
@@ -353,7 +341,7 @@ std::unordered_map<int, std::vector<double>> AttributedDeepwalk::csadw()
     }
 
     std::unordered_map<int, std::vector<double>> embeddings = EmbeddingStrategy::initializeEmbeddings(graph, embeddingDimensions);
-    
+
     skipGram(embeddings, randomWalks);
     return embeddings;
 }
