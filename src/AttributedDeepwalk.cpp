@@ -80,13 +80,7 @@ void AttributedDeepwalk::calculateWeightMatrix()
 
 void AttributedDeepwalk::computeAliasTables()
 {
-    aliasTables.clear();  // Clear previous alias tables to avoid memory issues
-    aliasTables = getAliasTables();  // Compute alias tables once and store them
-}
-
-std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwalk::getAliasTables() const
-{
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> aliasTables;
+    aliasTables.clear(); //// Clear previous alias tables to avoid memory issues
 
     // create alias table for each node
     for (int node : graph->getNodes())
@@ -187,8 +181,6 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
             aliasTables[node] = {};  // Ensure every node has an entry
         }
     }
-
-    return aliasTables;
 }
 
 double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) const

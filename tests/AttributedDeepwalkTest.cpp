@@ -11,15 +11,19 @@ public:
 
     // expose protected methods
     using AttributedDeepwalk::calculateWeightMatrix;
-    using AttributedDeepwalk::getAliasTables;
+    using AttributedDeepwalk::computeAliasTables;
     using AttributedDeepwalk::measuring_attribute_similarity;
     using AttributedDeepwalk::measuring_structural_similarity;
     using AttributedDeepwalk::randomWalk;
     using AttributedDeepwalk::csadw; // <-- Expose the new csadw() method for testing
 
-
     int getWalkLength() const { return walkLength; }
     int getEmbeddingDimensions() const { return embeddingDimensions; } // from EmbeddingStrategy
+
+    //getter for aliasTables
+    const std::unordered_map<int, std::vector<std::pair<double, size_t>>>& getAliasTables() const {
+        return aliasTables;
+    }
 
 };
 
@@ -49,21 +53,21 @@ TEST_F(AttributedDeepwalkTest, CalculateWeightMatrix)
     EXPECT_GT(weight, 0.0); // Ensure weight is positive
 }
 
-TEST_F(AttributedDeepwalkTest, GetAliasTables)
+TEST_F(AttributedDeepwalkTest, ComputeAliasTables)
 {
-    auto aliasTables = adw->getAliasTables();
+    adw->computeAliasTables();  // Call the function
 
-    // Ensure alias table is created for node 1
+    // Ensure aliasTables is populated
     for (int nodeID : graph->getNodes())
     {
-        ASSERT_TRUE(aliasTables.find(nodeID) != aliasTables.end());
+        ASSERT_TRUE(adw->getAliasTables().find(nodeID) != adw->getAliasTables().end());
     }
 
     // Verify alias table properties
     for (int nodeID : graph->getNodes())
     {
         auto neighbors = graph->getNeighbors(nodeID);
-        auto aliasTable = aliasTables[nodeID];
+        auto aliasTable = adw->getAliasTables().at(nodeID);
 
         EXPECT_EQ(aliasTable.size(), neighbors.size()); // Should match the number of neighbors
     }

@@ -38,14 +38,19 @@ public:
      */
     void reset() override;
 
-    // Declare function to compute alias tables once
+    /**
+     * Calculates an Alias Table for each node given the edge weights of neigbors.
+     *
+     * @see Probability calculation in ADW paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
+     * @see Alias Method: https://en.wikipedia.org/wiki/Alias_method
+     * @see Implementation of Alias Table in c++: https://gist.github.com/Liam0205/0b5786e9bfc73e75eb8180b5400cd1f8
+     */
     void computeAliasTables();
-
-private:
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> aliasTables;
 
 protected:
     std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
+    std::unordered_map<int, std::vector<std::pair<double, size_t>>> aliasTables;
+
 
     double fusionCoefficient = 0.5; ///< tradeoff between structure and feature similarity when calculating weights. Default taken from ADW paper
     double coverDepth = 2;          ///< size of cover of a node when calculating structural similarity. Default taken from ADW paper
@@ -70,17 +75,6 @@ protected:
      * @see The methods for calculating edge weights are listed in the ADW paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
      */
     void calculateWeightMatrix();
-
-    /**
-     * Calculates an Alias Table for each node given the edge weights of neigbors.
-     *
-     * @see Probability calculation in ADW paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
-     * @see Alias Method: https://en.wikipedia.org/wiki/Alias_method
-     * @see Implementation of Alias Table in c++: https://gist.github.com/Liam0205/0b5786e9bfc73e75eb8180b5400cd1f8
-     *
-     * @return a map of nodeIDs to their respective alias table
-     */
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables() const;
 
     /**
      * Performs a random walk starting at a given Node
