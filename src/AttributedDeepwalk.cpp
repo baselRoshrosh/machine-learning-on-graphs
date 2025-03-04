@@ -17,14 +17,58 @@ std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
 /*
  * ======= implementation of strategy methods ========== 
  */
-void AttributedDeepwalk::run() {}
+void AttributedDeepwalk::run() {
+    std::vector<std::vector<int>> rawEmbeddings = csadw();  // csadw() returns vector<vector<int>>
+
+    // Convert vector<vector<int>> to unordered_map<int, vector<double>>
+    std::unordered_map<int, std::vector<double>> embeddings;
+    for (size_t i = 0; i < rawEmbeddings.size(); ++i) {
+        embeddings[static_cast<int>(i)] = std::vector<double>(rawEmbeddings[i].begin(), rawEmbeddings[i].end());
+    }
+
+    for (const auto &node : graph->getNodes()) {
+        std::unordered_map<int, std::vector<double>> sample = getSample(embeddings, coverDepth); 
+
+        if (sample.empty()) continue;  // Ensuring there is at least one valid sample
+
+        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample.begin()->second, coverDepth); 
+
+        //TODO
+        //guessFeatures(node, nodeList);
+    }
+}
+
+
 std::shared_ptr<Graph> AttributedDeepwalk::extractResults() const
 {
     return graph;
 }
-void AttributedDeepwalk::configure(const std::map<std::string, double> &params) {}
-void AttributedDeepwalk::reset() {}
+void AttributedDeepwalk::configure(const std::map<std::string, double>& params) {
+    if (params.find("fusionCoefficient") != params.end()) {
+        fusionCoefficient = params.at("fusionCoefficient");
+    }
+    if (params.find("coverDepth") != params.end()) {
+        coverDepth = static_cast<int>(params.at("coverDepth"));
+    }
+    if (params.find("walkLength") != params.end()) {
+        walkLength = static_cast<int>(params.at("walkLength"));
+    }
+    if (params.find("walksPerNode") != params.end()) {
+        walksPerNode = static_cast<int>(params.at("walksPerNode"));
+    }
+}
+void AttributedDeepwalk::reset() {
+    fusionCoefficient = 0.5;
+    coverDepth = 2;
+    walkLength = 80;
+    walksPerNode = 10;
+}
 
+
+std::vector<std::vector<int>> AttributedDeepwalk::csadw() {
+    // TODO:  placeholder
+    return std::vector<std::vector<int>>();
+}
 /*
  * ======= calculating Alias Tables ============
  */
@@ -150,6 +194,13 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
     }
 
     return aliasTables;
+}
+
+
+std::vector<int> AttributedDeepwalk::randomWalk(int startNodeID) {
+    std::vector<int> walk;     
+    //TODO This is just a placeholder
+    return walk;
 }
 
 double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) const

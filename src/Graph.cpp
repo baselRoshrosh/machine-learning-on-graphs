@@ -166,3 +166,15 @@ double Graph::getEdgeWeight(int source, int destination) const
 {
     return edges->getWeight(source, destination);
 }
+
+int Graph::getLabelById(int nodeId)
+{
+    for (const auto &node : nodes)
+    {
+        if (node.getId() == nodeId)
+        {
+            return node.getLabel();
+        }
+    }
+    return 0;
+}
