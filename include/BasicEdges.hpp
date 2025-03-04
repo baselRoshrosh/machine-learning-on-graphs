@@ -7,6 +7,8 @@
 
 #include "interfaces/IEdges.hpp"
 
+using namespace std;
+
 /**
  * @class BasicEdges
  * @brief A concrete implementation of the IEdges interface.
@@ -28,7 +30,7 @@ public:
      *
      * @param initialEdges A vector of edges to initialize the graph.
      */
-    BasicEdges(const std::vector<std::pair<int, int>> &initialEdges);
+    BasicEdges(const vector<pair<int, int>> &initialEdges);
 
     /**
      * @brief Adds a new edge to the edge list.
@@ -42,9 +44,9 @@ public:
      * @brief Retrieves the neighbors of a given node.
      *
      * @param nodeID The ID of the node whose neighbors are to be retrieved.
-     * @return std::vector<int> A list of neighboring node IDs.
+     * @return vector<int> A list of neighboring node IDs.
      */
-    std::vector<int> getNeighbors(int nodeID) override;
+    vector<int> getNeighbors(int nodeID) override;
 
     /**
      * @brief Checks if an edge exists between two nodes.
@@ -58,9 +60,9 @@ public:
     /**
      * @brief Retrieves all edges in the graph.
      *
-     * @return std::vector<std::pair<int, int>> A list of all edges as node ID pairs.
+     * @return vector<pair<int, int>> A list of all edges as node ID pairs.
      */
-    std::vector<std::pair<int, int>> getEdges() const override;
+    vector<pair<int, int>> getEdges() const override;
 
     /**
      * Allows to set a weight of a specified edge
@@ -87,7 +89,7 @@ public:
     int size() override;
 
 private:
-    std::vector<std::tuple<int, int, double>> edges; ///< Stores all edges as pairs of node IDs.
+    vector<tuple<int, int, double>> edges; ///< Stores all edges as pairs of node IDs.
 };
 
 #endif

@@ -6,12 +6,14 @@
 
 #include "Topo2Vec.hpp"
 
+using namespace std;
+
 // Public Wrapper Class for Testing
 class TestableTopo2Vec : public Topo2Vec
 {
 public:
     TestableTopo2Vec() = default;
-    TestableTopo2Vec(std::shared_ptr<Graph> graph) : Topo2Vec(graph) {}
+    TestableTopo2Vec(shared_ptr<Graph> graph) : Topo2Vec(graph) {}
 
     // expose protected methods
     using Topo2Vec::createEmbeddings;
@@ -22,13 +24,13 @@ public:
 class Topo2VecTest : public ::testing::Test
 {
 protected:
-    std::shared_ptr<Graph> graph;
-    std::unique_ptr<TestableTopo2Vec> topo2vec; // Use a pointer instead of a direct object
+    shared_ptr<Graph> graph;
+    unique_ptr<TestableTopo2Vec> topo2vec; // Use a pointer instead of a direct object
 
     void SetUp() override
     {
-        graph = std::make_shared<Graph>("../input/cornell/cornell_features.txt", "../input/cornell/cornell_edges.txt");
-        topo2vec = std::make_unique<TestableTopo2Vec>(graph); // Initialize properly
+        graph = make_shared<Graph>("../input/cornell/cornell_features.txt", "../input/cornell/cornell_edges.txt");
+        topo2vec = make_unique<TestableTopo2Vec>(graph); // Initialize properly
     }
 };
 
@@ -61,14 +63,14 @@ TEST_F(Topo2VecTest, GetContextSubgraphsTest)
 // Test `expandSubgraph`
 TEST_F(Topo2VecTest, ExpandSubgraphTest)
 {
-    std::vector<int> templist = {104, 121};
-    std::unordered_map<int, bool> visited;
+    vector<int> templist = {104, 121};
+    unordered_map<int, bool> visited;
     for (int nodeID : graph->getNodes())
     {
         visited[nodeID] = false;
     }
 
-    std::unordered_set<int> subgraphNodes({104, 121});
+    unordered_set<int> subgraphNodes({104, 121});
     int edgesCount = 0;
 
     topo2vec->expandSubgraph(templist, visited, subgraphNodes, edgesCount);
