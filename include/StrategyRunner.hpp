@@ -6,6 +6,8 @@
 #include <fstream>
 #include <map>
 
+using namespace std;
+
 /**
  * @brief A class to run a strategy on a given graph.
  *
@@ -35,9 +37,9 @@ private:
     Strategy strategy;
 
 public:
-    StrategyRunner(const std::shared_ptr<Graph> graph) : strategy(graph) {}
+    StrategyRunner(const shared_ptr<Graph> graph) : strategy(graph) {}
 
-    void configure(const std::map<std::string, double> &params)
+    void configure(const map<string, double> &params)
     {
         strategy.configure(params);
     }
@@ -52,7 +54,7 @@ public:
         strategy.reset();
     }
 
-    std::shared_ptr<Graph> extractResults() const
+    shared_ptr<Graph> extractResults() const
     {
         return strategy.extractResults();
     }
@@ -65,16 +67,16 @@ public:
      *
      * @param fileName The name of the file where the interpreted features will be saved.
      */
-    void saveFeatures(const std::shared_ptr<Graph> graph, const std::string &filename) const
+    void saveFeatures(const shared_ptr<Graph> graph, const string &filename) const
     {
-        std::ofstream outFile(filename);
+        ofstream outFile(filename);
         if (!outFile.is_open())
         {
-            std::cerr << "Failed to open file for writing: " << filename << std::endl;
+            cerr << "Failed to open file for writing: " << filename << endl;
             return;
         }
 
-        outFile << "node_id\tfeature\tlabel" << std::endl;
+        outFile << "node_id\tfeature\tlabel" << endl;
 
         for (const auto &nodeId : graph->getNodes())
         {
@@ -88,7 +90,7 @@ public:
                     outFile << ",";
                 }
             }
-            outFile << "\t" << graph->getLabelById(nodeId) << std::endl;
+            outFile << "\t" << graph->getLabelById(nodeId) << endl;
         }
 
         outFile.close();

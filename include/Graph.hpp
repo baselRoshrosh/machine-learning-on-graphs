@@ -9,6 +9,8 @@
 #include "BasicEdges.hpp"
 #include "Node.hpp"
 
+using namespace std;
+
 /**
  * @class Graph
  * @brief Represents an undirected, sparse graph.
@@ -20,8 +22,8 @@
 class Graph
 {
 private:
-    std::vector<Node> nodes;           /// the vector of nodes
-    std::unique_ptr<BasicEdges> edges; /// object holding the pool of edges
+    vector<Node> nodes;           /// the vector of nodes
+    unique_ptr<BasicEdges> edges; /// object holding the pool of edges
 
 public:
     /**
@@ -30,28 +32,28 @@ public:
      * @param nodesFile The file containing node information.
      * @param edgesFile The file containing edge information.
      */
-    Graph(const std::string &nodesFile, const std::string &edgesFile);
+    Graph(const string &nodesFile, const string &edgesFile);
 
     /**
      * @brief Retrieves all nodes in the graph.
      *
-     * @return std::vector<int> A list of all node IDs.
+     * @return vector<int> A list of all node IDs.
      */
-    std::vector<int> getNodes() const;
+    vector<int> getNodes() const;
 
     /**
      * @brief Retrieves all edges in the graph.
      *
-     * @return std::vector<std::pair<int, int>> A list of all edges.
+     * @return vector<pair<int, int>> A list of all edges.
      */
-    std::vector<std::pair<int, int>> getEdges() const;
+    vector<pair<int, int>> getEdges() const;
 
     /**
      * @brief Retrieves neighbors of a specified node.
      *
-     * @return std::vector<int> A list of all neighbor node IDs.
+     * @return vector<int> A list of all neighbor node IDs.
      */
-    std::vector<int> getNeighbors(int nodeId) const;
+    vector<int> getNeighbors(int nodeId) const;
 
     /**
      * @brief Retrieves node count of graph.
@@ -71,16 +73,16 @@ public:
      * @brief Retrieves the feature vector of a node by its ID.
      *
      * @param nodeId The ID of the node.
-     * @return std::vector<double> The feature vector of the node or an empty vector if the node is not found.
+     * @return vector<double> The feature vector of the node or an empty vector if the node is not found.
      */
-    std::vector<double> getFeatureById(int nodeId) const;
+    vector<double> getFeatureById(int nodeId) const;
 
     /**
      * @brief Update the entire feature vector of a node by its ID.
      * @param nodeId The ID of the node whose feature vector is to be updated.
      * @param newFeatures The new feature vector to set for the node.
      */
-    void updateFeatureById(int nodeId, const std::vector<double> &newFeatures);
+    void updateFeatureById(int nodeId, const vector<double> &newFeatures);
 
     /**
      * Allows to set a weight of a specified edge

@@ -2,12 +2,14 @@
 
 #include <limits>
 
+using namespace std;
+
 // Constructor: Initializes the BasicEdges with a set of edges.
-BasicEdges::BasicEdges(const std::vector<std::pair<int, int>> &initialEdges)
+BasicEdges::BasicEdges(const vector<pair<int, int>> &initialEdges)
 {
     for (const auto &edge : initialEdges)
     {
-        edges.emplace_back(edge.first, edge.second, std::numeric_limits<double>::quiet_NaN());
+        edges.emplace_back(edge.first, edge.second, numeric_limits<double>::quiet_NaN());
     }
 }
 
@@ -16,22 +18,22 @@ void BasicEdges::addEdge(int source, int destination)
 {
     if (destination < source)
     {
-        std::swap(source, destination);
+        swap(source, destination);
     }
 
-    edges.emplace_back(source, destination, std::numeric_limits<double>::quiet_NaN());
+    edges.emplace_back(source, destination, numeric_limits<double>::quiet_NaN());
 }
 
 // Retrieves the neighbors of a given node.
-std::vector<int> BasicEdges::getNeighbors(int nodeID)
+vector<int> BasicEdges::getNeighbors(int nodeID)
 {
-    std::vector<int> neighbors;
+    vector<int> neighbors;
     int start, dest;
 
     for (const auto &edge : edges)
     {
-        start = std::get<0>(edge);
-        dest = std::get<1>(edge);
+        start = get<0>(edge);
+        dest = get<1>(edge);
 
         if (start == nodeID)
         {
@@ -51,12 +53,12 @@ bool BasicEdges::isEdge(int source, int destination)
 {
     if (destination < source)
     {
-        std::swap(source, destination);
+        swap(source, destination);
     }
 
     for (const auto &edge : edges)
     {
-        if (std::get<0>(edge) == source && std::get<1>(edge) == destination)
+        if (get<0>(edge) == source && get<1>(edge) == destination)
         {
             return true; // edge is found
         }
@@ -66,13 +68,13 @@ bool BasicEdges::isEdge(int source, int destination)
 }
 
 // Retrieves all edges in the graph.
-std::vector<std::pair<int, int>> BasicEdges::getEdges() const
+vector<pair<int, int>> BasicEdges::getEdges() const
 {
-    std::vector<std::pair<int, int>> edgesWithoutWeights;
+    vector<pair<int, int>> edgesWithoutWeights;
 
     for (const auto &edge : edges)
     {
-        edgesWithoutWeights.emplace_back(std::get<0>(edge), std::get<1>(edge));
+        edgesWithoutWeights.emplace_back(get<0>(edge), get<1>(edge));
     }
 
     return edgesWithoutWeights;
@@ -83,15 +85,15 @@ void BasicEdges::setWeight(int source, int destination, double weight)
 {
     if (destination < source)
     {
-        std::swap(source, destination);
+        swap(source, destination);
     }
 
-    auto it = std::find_if(edges.begin(), edges.end(), [&](const std::tuple<int, int, double> &edge)
-                           { return std::get<0>(edge) == source && std::get<1>(edge) == destination; });
+    auto it = find_if(edges.begin(), edges.end(), [&](const tuple<int, int, double> &edge)
+                           { return get<0>(edge) == source && get<1>(edge) == destination; });
 
     if (it != edges.end())
     {
-        std::get<2>(*it) = weight;
+        get<2>(*it) = weight;
     }
 }
 
@@ -100,19 +102,19 @@ double BasicEdges::getWeight(int source, int destination) const
 {   
     if (destination < source)
     {
-        std::swap(source, destination);
+        swap(source, destination);
     }
     
-    auto it = std::find_if(edges.begin(), edges.end(),
-                           [&](const std::tuple<int, int, double> &edge)
-                           { return std::get<0>(edge) == source && std::get<1>(edge) == destination; });
+    auto it = find_if(edges.begin(), edges.end(),
+                           [&](const tuple<int, int, double> &edge)
+                           { return get<0>(edge) == source && get<1>(edge) == destination; });
 
     if (it != edges.end())
     {
-        return std::get<2>(*it);
+        return get<2>(*it);
     }
 
-    return std::numeric_limits<double>::quiet_NaN(); // return standard value if not found
+    return numeric_limits<double>::quiet_NaN(); // return standard value if not found
 }
 
 // Retrieves number of edges

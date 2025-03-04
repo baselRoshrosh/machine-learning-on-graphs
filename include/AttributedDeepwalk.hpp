@@ -7,6 +7,8 @@
 #include <vector>
 #include <unordered_map>
 
+using namespace std;
+
 class AttributedDeepwalk : public EmbeddingStrategy
 {
 public:
@@ -14,7 +16,7 @@ public:
      * @brief Constructor to initialize the strategy with a graph.
      * @param graph A shared pointer to the graph object.
      */
-    AttributedDeepwalk(std::shared_ptr<Graph> graph) : graph(graph) {};
+    AttributedDeepwalk(shared_ptr<Graph> graph) : graph(graph) {};
 
     /**
      * @brief Runs the strategy on the graph.
@@ -25,13 +27,13 @@ public:
      * @brief Extracts the results after running the strategy.
      * @return A modified graph with missing features filled.
      */
-    std::shared_ptr<Graph> extractResults() const override;
+    shared_ptr<Graph> extractResults() const override;
 
     /**
      * @brief Configures strategy-specific parameters.
      * @param params A map of parameter names and their values.
      */
-    void configure(const std::map<std::string, double> &params) override;
+    void configure(const map<string, double> &params) override;
 
     /**
      * @brief Resets the strategy to its initial state.
@@ -39,7 +41,7 @@ public:
     void reset() override;
 
 protected:
-    std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
+    shared_ptr<Graph> graph; ///< The input graph for the strategy.
 
     double fusionCoefficient = 0.5; ///< tradeoff between structure and feature similarity when calculating weights. Default taken from ADW paper
     double coverDepth = 2;          ///< size of cover of a node when calculating structural similarity. Default taken from ADW paper
@@ -55,7 +57,7 @@ protected:
      *
      * @return the embeddings <nodeID, nodeEmbedding> of the nodes
      */
-    std::vector<std::vector<int>> csadw();
+    vector<vector<int>> csadw();
 
     /**
      * Calculates the ADW weight matrix for a given graph.
@@ -74,7 +76,7 @@ protected:
      *
      * @return a map of nodeIDs to their respective alias table
      */
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> getAliasTables() const;
+    unordered_map<int, vector<pair<double, size_t>>> getAliasTables() const;
 
     /**
      * Performs a random walk starting at a given Node
@@ -82,7 +84,7 @@ protected:
      * @param startNodeID the node from where to start the random walk
      * @return a list of nodeIDs that were passed on the random walk
      */
-    std::vector<int> randomWalk(int startNodeID);
+    vector<int> randomWalk(int startNodeID);
 
     /*
      *  ========= helper functions ==========

@@ -7,29 +7,31 @@
 #include <numeric>
 #include <cmath>
 
+using namespace std;
+
 /*
  * ======= declaration of local functions ======
  */
-std::set<int> calculateCover(int, int, std::shared_ptr<Graph>);
+set<int> calculateCover(int, int, shared_ptr<Graph>);
 
 /*
  * ======= implementation of strategy methods ========== 
  */
 void AttributedDeepwalk::run() {
-    std::vector<std::vector<int>> rawEmbeddings = csadw();  // csadw() returns vector<vector<int>>
+    vector<vector<int>> rawEmbeddings = csadw();  // csadw() returns vector<vector<int>>
 
     // Convert vector<vector<int>> to unordered_map<int, vector<double>>
-    std::unordered_map<int, std::vector<double>> embeddings;
+    unordered_map<int, vector<double>> embeddings;
     for (size_t i = 0; i < rawEmbeddings.size(); ++i) {
-        embeddings[static_cast<int>(i)] = std::vector<double>(rawEmbeddings[i].begin(), rawEmbeddings[i].end());
+        embeddings[static_cast<int>(i)] = vector<double>(rawEmbeddings[i].begin(), rawEmbeddings[i].end());
     }
 
     for (const auto &node : graph->getNodes()) {
-        std::unordered_map<int, std::vector<double>> sample = getSample(embeddings, coverDepth); 
+        unordered_map<int, vector<double>> sample = getSample(embeddings, coverDepth); 
 
         if (sample.empty()) continue;  // Ensuring there is at least one valid sample
 
-        std::vector<std::vector<double>> nodeList = getSimilarNodes(embeddings, sample.begin()->second, coverDepth); 
+        vector<vector<double>> nodeList = getSimilarNodes(embeddings, sample.begin()->second, coverDepth); 
 
         //TODO
         //guessFeatures(node, nodeList);
@@ -37,11 +39,11 @@ void AttributedDeepwalk::run() {
 }
 
 
-std::shared_ptr<Graph> AttributedDeepwalk::extractResults() const
+shared_ptr<Graph> AttributedDeepwalk::extractResults() const
 {
     return graph;
 }
-void AttributedDeepwalk::configure(const std::map<std::string, double>& params) {
+void AttributedDeepwalk::configure(const map<string, double>& params) {
     if (params.find("fusionCoefficient") != params.end()) {
         fusionCoefficient = params.at("fusionCoefficient");
     }
@@ -63,9 +65,9 @@ void AttributedDeepwalk::reset() {
 }
 
 
-std::vector<std::vector<int>> AttributedDeepwalk::csadw() {
+vector<vector<int>> AttributedDeepwalk::csadw() {
     // TODO:  placeholder
-    return std::vector<std::vector<int>>();
+    return vector<vector<int>>();
 }
 /*
  * ======= calculating Alias Tables ============
@@ -81,15 +83,15 @@ void AttributedDeepwalk::calculateWeightMatrix()
     }
 }
 
-std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwalk::getAliasTables() const
+unordered_map<int, vector<pair<double, size_t>>> AttributedDeepwalk::getAliasTables() const
 {
-    std::unordered_map<int, std::vector<std::pair<double, size_t>>> aliasTables;
+    unordered_map<int, vector<pair<double, size_t>>> aliasTables;
 
     // create alias table for each node
     for (int node : graph->getNodes())
     {
         // 1: get weights of edges to neighbors
-        std::vector<double> neighborWeights;
+        vector<double> neighborWeights;
         for (int neighbor : graph->getNeighbors(node))
         {
             neighborWeights.push_back(graph->getEdgeWeight(node, neighbor));
@@ -102,7 +104,7 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
             weightSum += weight;
         }
 
-        std::vector<double> neighborProbabilites(neighborWeights.size()); // new vector for clarity, initialized to 0.0s
+        vector<double> neighborProbabilites(neighborWeights.size()); // new vector for clarity, initialized to 0.0s
         if (weightSum != 0)
         {
             for (int i = 0; i < neighborWeights.size(); i++)
@@ -118,8 +120,8 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
          * https://gist.github.com/Liam0205/0b5786e9bfc73e75eb8180b5400cd1f8
          */
         const size_t numNeighbors = neighborProbabilites.size();
-        std::vector<std::pair<double, size_t>> aliasTable(numNeighbors, {0.0, std::numeric_limits<size_t>::max()});
-        std::queue<size_t>
+        vector<pair<double, size_t>> aliasTable(numNeighbors, {0.0, numeric_limits<size_t>::max()});
+        queue<size_t>
             underfull, // where probability table < 1
             overfull;  // where probability table > 1
 
@@ -168,16 +170,16 @@ std::unordered_map<int, std::vector<std::pair<double, size_t>>> AttributedDeepwa
 }
 
 
-std::vector<int> AttributedDeepwalk::randomWalk(int startNodeID) {
-    std::vector<int> walk;     
+vector<int> AttributedDeepwalk::randomWalk(int startNodeID) {
+    vector<int> walk;     
     //TODO This is just a placeholder
     return walk;
 }
 
 double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) const
 {
-    std::vector<double> featuresNode1 = graph->getFeatureById(node1);
-    std::vector<double> featuresNode2 = graph->getFeatureById(node2);
+    vector<double> featuresNode1 = graph->getFeatureById(node1);
+    vector<double> featuresNode2 = graph->getFeatureById(node2);
     double dotProduct = 0;
     double norm1 = 0;
     double norm2 = 0;
@@ -190,7 +192,7 @@ double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) 
         double f2 = featuresNode2[i];
 
         // Ignore NaN values
-        if (std::isnan(f1) || std::isnan(f2))
+        if (isnan(f1) || isnan(f2))
         {
             continue;
         }
@@ -201,8 +203,8 @@ double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) 
     }
 
     // Compute norms
-    norm1 = std::sqrt(norm1);
-    norm2 = std::sqrt(norm2);
+    norm1 = sqrt(norm1);
+    norm2 = sqrt(norm2);
 
     // Handle division by zero
     if (norm1 == 0.0 || norm2 == 0.0)
@@ -211,20 +213,20 @@ double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) 
     }
 
     double similarity = dotProduct / (norm1 * norm2);
-    return std::max(similarity, 0.0);
+    return max(similarity, 0.0);
 }
 
 double AttributedDeepwalk::measuring_structural_similarity(int node1, int node2) const
 {
-    std::set<int> coverNode1 = calculateCover(node1, coverDepth, graph);
-    std::set<int> coverNode2 = calculateCover(node2, coverDepth, graph);
+    set<int> coverNode1 = calculateCover(node1, coverDepth, graph);
+    set<int> coverNode2 = calculateCover(node2, coverDepth, graph);
 
     // calculate terms
-    std::set<int> intersectionOfCovers;
-    std::set<int> unionOfCovers;
+    set<int> intersectionOfCovers;
+    set<int> unionOfCovers;
 
-    std::set_intersection(coverNode1.begin(), coverNode1.end(), coverNode2.begin(), coverNode2.end(), std::inserter(intersectionOfCovers, intersectionOfCovers.begin()));
-    std::set_union(coverNode1.begin(), coverNode1.end(), coverNode2.begin(), coverNode2.end(), std::inserter(unionOfCovers, unionOfCovers.begin()));
+    set_intersection(coverNode1.begin(), coverNode1.end(), coverNode2.begin(), coverNode2.end(), inserter(intersectionOfCovers, intersectionOfCovers.begin()));
+    set_union(coverNode1.begin(), coverNode1.end(), coverNode2.begin(), coverNode2.end(), inserter(unionOfCovers, unionOfCovers.begin()));
 
     if (unionOfCovers.size() == 0) // shouldn't technically occur because cover includes node itself
     {
@@ -246,10 +248,10 @@ double AttributedDeepwalk::measuring_structural_similarity(int node1, int node2)
  * @param graph the graph containing the node
  * @return the cover of nodes to specified depth for the given node
  */
-std::set<int> calculateCover(int node, int coverDepth, std::shared_ptr<Graph> graph)
+set<int> calculateCover(int node, int coverDepth, shared_ptr<Graph> graph)
 {
-    std::set<int> cover;
-    std::queue<std::pair<int, int>> q;
+    set<int> cover;
+    queue<pair<int, int>> q;
 
     cover.insert(node);
     q.push({node, 0});

@@ -3,6 +3,8 @@
 
 #include <vector>
 
+using namespace std;
+
 /**
  * @class Node
  * @brief Represents a graph node with features and labels.
@@ -24,7 +26,7 @@ public:
      * @param featureVector The feature vector of the node.
      * @param label The label of the node.
      */
-    Node(int id, const std::vector<double> &featureVector, int label);
+    Node(int id, const vector<double> &featureVector, int label);
 
     /**
      * @brief Get the ID of the node.
@@ -36,16 +38,16 @@ public:
     /**
      * @brief Get the feature vector of the node.
      *
-     * @return std::vector<double> The feature vector associated with the node.
+     * @return vector<double> The feature vector associated with the node.
      */
-    std::vector<double> getFeatureVector() const;
+    vector<double> getFeatureVector() const;
 
     /**
      * @brief Sets the feature vector.
      *
      * @param updatedFeatures The new feature vector to be set.
      */
-    void setFeatureVector(const std::vector<double> &updatedFeatures);
+    void setFeatureVector(const vector<double> &updatedFeatures);
 
     /**
      * @brief Get the label of the node.
@@ -56,7 +58,7 @@ public:
 
 protected:
     int id;                       ///< unique node identifier
-    std::vector<double> features; ///< the feature vector of the nodes
+    vector<double> features; ///< the feature vector of the nodes
     int label;                    ///< the label of the node
 };
 
