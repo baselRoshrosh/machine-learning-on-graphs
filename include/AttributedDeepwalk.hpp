@@ -42,12 +42,22 @@ public:
 
 protected:
     shared_ptr<Graph> graph; ///< The input graph for the strategy.
+    unordered_map<int, vector<pair<double, size_t>>> aliasTables;
 
     double fusionCoefficient = 0.5; ///< tradeoff between structure and feature similarity when calculating weights. Default taken from ADW paper
     double coverDepth = 2;          ///< size of cover of a node when calculating structural similarity. Default taken from ADW paper
 
     int walkLength = 80;   ///< how long a random walk should be. Default taken from ADW paper
     int walksPerNode = 10; ///< how many random walks per node should be performed. Default taken from ADW paper
+
+    /**
+     * Calculates an Alias Table for each node given the edge weights of neigbors.
+     *
+     * @see Probability calculation in ADW paper. DOI:https://doi.org/10.1007/s00607-021-00982-2
+     * @see Alias Method: https://en.wikipedia.org/wiki/Alias_method
+     * @see Implementation of Alias Table in c++: https://gist.github.com/Liam0205/0b5786e9bfc73e75eb8180b5400cd1f8
+     */
+    void computeAliasTables();
 
     /**
      * Performs the "Combination of Structural and Attributed DeepWalk" Algorithm.
@@ -57,7 +67,8 @@ protected:
      *
      * @return the embeddings <nodeID, nodeEmbedding> of the nodes
      */
-    vector<vector<int>> csadw();
+    unordered_map<int, vector<double>> csadw();
+
 
     /**
      * Calculates the ADW weight matrix for a given graph.

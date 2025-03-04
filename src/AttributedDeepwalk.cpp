@@ -6,6 +6,8 @@
 #include <queue>
 #include <numeric>
 #include <cmath>
+#include <stdexcept>
+#include <iostream>
 
 using namespace std;
 
@@ -18,7 +20,7 @@ set<int> calculateCover(int, int, shared_ptr<Graph>);
  * ======= implementation of strategy methods ========== 
  */
 void AttributedDeepwalk::run() {
-    vector<vector<int>> rawEmbeddings = csadw();  // csadw() returns vector<vector<int>>
+    unordered_map<int, vector<double>> rawEmbeddings = csadw();
 
     // Convert vector<vector<int>> to unordered_map<int, vector<double>>
     unordered_map<int, vector<double>> embeddings;
@@ -43,6 +45,7 @@ shared_ptr<Graph> AttributedDeepwalk::extractResults() const
 {
     return graph;
 }
+
 void AttributedDeepwalk::configure(const map<string, double>& params) {
     if (params.find("fusionCoefficient") != params.end()) {
         fusionCoefficient = params.at("fusionCoefficient");
@@ -57,6 +60,7 @@ void AttributedDeepwalk::configure(const map<string, double>& params) {
         walksPerNode = static_cast<int>(params.at("walksPerNode"));
     }
 }
+
 void AttributedDeepwalk::reset() {
     fusionCoefficient = 0.5;
     coverDepth = 2;
@@ -64,11 +68,6 @@ void AttributedDeepwalk::reset() {
     walksPerNode = 10;
 }
 
-
-vector<vector<int>> AttributedDeepwalk::csadw() {
-    // TODO:  placeholder
-    return vector<vector<int>>();
-}
 /*
  * ======= calculating Alias Tables ============
  */
@@ -83,9 +82,9 @@ void AttributedDeepwalk::calculateWeightMatrix()
     }
 }
 
-unordered_map<int, vector<pair<double, size_t>>> AttributedDeepwalk::getAliasTables() const
+void AttributedDeepwalk::computeAliasTables()
 {
-    unordered_map<int, vector<pair<double, size_t>>> aliasTables;
+    aliasTables.clear(); //// Clear previous alias tables to avoid memory issues
 
     // create alias table for each node
     for (int node : graph->getNodes())
@@ -163,17 +162,30 @@ unordered_map<int, vector<pair<double, size_t>>> AttributedDeepwalk::getAliasTab
             }
         }
 
+        // Finalize any remaining entries
+        while (!underfull.empty())
+        {
+            size_t idx = underfull.front();
+            underfull.pop();
+            aliasTable[idx].first = 1.0;
+            aliasTable[idx].second = idx; // Ensure valid index
+        }
+        while (!overfull.empty()) {
+            size_t idx = overfull.front();
+            overfull.pop();
+            aliasTable[idx].first = 1.0;
+            aliasTable[idx].second = idx; // Ensure valid index
+        }
+        
+
         aliasTables[node] = aliasTable;
     }
 
-    return aliasTables;
-}
-
-
-vector<int> AttributedDeepwalk::randomWalk(int startNodeID) {
-    vector<int> walk;     
-    //TODO This is just a placeholder
-    return walk;
+    for (int node : graph->getNodes()) {
+        if (aliasTables.find(node) == aliasTables.end()) {
+            aliasTables[node] = {};  // Ensure every node has an entry
+        }
+    }
 }
 
 double AttributedDeepwalk::measuring_attribute_similarity(int node1, int node2) const
@@ -277,3 +289,75 @@ set<int> calculateCover(int node, int coverDepth, shared_ptr<Graph> graph)
 
     return cover;
 }
+
+// Helper function to sample from an alias table
+int sampleFromAliasTable(const vector<pair<double, size_t>>& aliasTable, mt19937& gen) {
+    uniform_int_distribution<> int_dis(0, aliasTable.size() - 1);
+    uniform_real_distribution<> real_dis(0.0, 1.0);
+    
+    size_t column = int_dis(gen);
+    double coinToss = real_dis(gen);
+    
+    if (coinToss < aliasTable[column].first)
+        return column;
+    else
+        return aliasTable[column].second;
+}
+
+vector<int> AttributedDeepwalk::randomWalk(int startNodeID) {
+    vector<int> walk;
+    walk.push_back(startNodeID);
+
+    random_device rd;
+    mt19937 gen(rd());
+
+    for (int i = 0; i < walkLength - 1; ++i) {
+        int current = walk.back();
+        vector<int> neighbors = graph->getNeighbors(current);
+
+        // Stop walk if the node has no neighbors
+        if (neighbors.empty()) break;
+
+        // Ensure alias tables exist for the node
+        if (aliasTables.find(current) == aliasTables.end() || aliasTables[current].empty()) {
+            break;
+        }
+        
+
+        // Sample from precomputed alias table
+        const auto& aliasTable = aliasTables.at(current);
+        int neighborIdx = sampleFromAliasTable(aliasTable, gen);
+        int nextNode = neighbors[neighborIdx];
+
+        walk.push_back(nextNode);
+    }
+
+    return walk;
+}
+
+std::unordered_map<int, std::vector<double>> AttributedDeepwalk::csadw()
+{
+    calculateWeightMatrix();
+
+    computeAliasTables();  //Compute alias tables ONCE before random walks
+
+    vector<vector<int>> randomWalks;
+    vector<int> nodes = graph->getNodes();
+    mt19937 gen(random_device{}());
+
+    for (int iter = 0; iter < walksPerNode; ++iter)
+    {
+        shuffle(nodes.begin(), nodes.end(), gen);
+        for (int node : nodes)
+        {
+            randomWalks.push_back(randomWalk(node));  // Now using precomputed alias tables
+        }
+    }
+
+    unordered_map<int, vector<double>> embeddings = EmbeddingStrategy::initializeEmbeddings(graph, embeddingDimensions);
+
+    skipGram(embeddings, randomWalks);
+    return embeddings;
+}
+
+

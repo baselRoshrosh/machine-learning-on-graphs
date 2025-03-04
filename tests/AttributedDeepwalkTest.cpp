@@ -13,9 +13,20 @@ public:
 
     // expose protected methods
     using AttributedDeepwalk::calculateWeightMatrix;
-    using AttributedDeepwalk::getAliasTables;
+    using AttributedDeepwalk::computeAliasTables;
     using AttributedDeepwalk::measuring_attribute_similarity;
     using AttributedDeepwalk::measuring_structural_similarity;
+    using AttributedDeepwalk::randomWalk;
+    using AttributedDeepwalk::csadw; // <-- Expose the new csadw() method for testing
+
+    int getWalkLength() const { return walkLength; }
+    int getEmbeddingDimensions() const { return embeddingDimensions; } // from EmbeddingStrategy
+
+    //getter for aliasTables
+    const std::unordered_map<int, std::vector<std::pair<double, size_t>>>& getAliasTables() const {
+        return aliasTables;
+    }
+
 };
 
 class AttributedDeepwalkTest : public ::testing::Test
@@ -44,21 +55,21 @@ TEST_F(AttributedDeepwalkTest, CalculateWeightMatrix)
     EXPECT_GT(weight, 0.0); // Ensure weight is positive
 }
 
-TEST_F(AttributedDeepwalkTest, GetAliasTables)
+TEST_F(AttributedDeepwalkTest, ComputeAliasTables)
 {
-    auto aliasTables = adw->getAliasTables();
+    adw->computeAliasTables();  // Call the function
 
-    // Ensure alias table is created for node 1
+    // Ensure aliasTables is populated
     for (int nodeID : graph->getNodes())
     {
-        ASSERT_TRUE(aliasTables.find(nodeID) != aliasTables.end());
+        ASSERT_TRUE(adw->getAliasTables().find(nodeID) != adw->getAliasTables().end());
     }
 
     // Verify alias table properties
     for (int nodeID : graph->getNodes())
     {
         auto neighbors = graph->getNeighbors(nodeID);
-        auto aliasTable = aliasTables[nodeID];
+        auto aliasTable = adw->getAliasTables().at(nodeID);
 
         EXPECT_EQ(aliasTable.size(), neighbors.size()); // Should match the number of neighbors
     }
@@ -84,4 +95,107 @@ TEST_F(AttributedDeepwalkTest, MeasureAttributeSimilarity) {
 
     EXPECT_GT(similarityDifferentNodes, 0.0); // similarity should be bigger than 0
     EXPECT_GT(1.0, similarityDifferentNodes); // but smaller then 1
+}
+
+/*
+ * ======= randomWalk() Tests ===================
+ */
+
+// Test: `randomWalk()` generates a valid sequence
+TEST_F(AttributedDeepwalkTest, RandomWalkGeneratesValidSequence) {
+    int startNode = 1;
+    std::vector<int> walk = adw->randomWalk(startNode);
+
+    // Check if the first node is the start node
+    EXPECT_EQ(walk.front(), startNode);
+
+    // Check if walk length is correct or stops early (if no neighbors)
+    EXPECT_LE(walk.size(), adw->getWalkLength());
+
+    // Ensure all nodes in walk exist in the graph
+    for (int node : walk) {
+        EXPECT_TRUE(std::find(graph->getNodes().begin(), graph->getNodes().end(), node) != graph->getNodes().end());
+    }
+}
+
+// Test: `randomWalk()` stops early if the node has no neighbors
+TEST_F(AttributedDeepwalkTest, RandomWalkStopsIfNoNeighbors) {
+    int isolatedNode = -1; // A node ID that is NOT in the graph
+    std::vector<int> walk = adw->randomWalk(isolatedNode);
+
+    // Walk should only contain the start node since it has no neighbors
+    EXPECT_EQ(walk.size(), 1);
+}
+
+// Test: `randomWalk()` only picks valid neighbors
+TEST_F(AttributedDeepwalkTest, RandomWalkPicksValidNeighbors) {
+    int startNode = 2;
+    std::vector<int> walk = adw->randomWalk(startNode);
+
+    // Check each step only moves to a valid neighbor
+    for (size_t i = 0; i < walk.size() - 1; ++i) {
+        int current = walk[i];
+        int next = walk[i + 1];
+        std::vector<int> neighbors = graph->getNeighbors(current);
+        EXPECT_TRUE(std::find(neighbors.begin(), neighbors.end(), next) != neighbors.end());
+    }
+}
+
+/*
+ * ======= csadw() Test ===================
+ */
+TEST_F(AttributedDeepwalkTest, CSADWGeneratesValidEmbeddings)
+{
+    std::cout << "[DEBUG] Running csadw()..." << std::endl;
+    
+    // Run the method that generates embeddings
+    auto embeddings = adw->csadw();
+
+    std::cout << "[DEBUG] Finished csadw(). Embeddings map size: " << embeddings.size() << std::endl;
+
+    // Check if embeddings map is empty
+    if (embeddings.empty()) {
+        std::cerr << "[ERROR] Embeddings map is unexpectedly empty." << std::endl;
+    }
+    EXPECT_FALSE(embeddings.empty()) << "Embeddings map is unexpectedly empty.";
+
+    int expectedDim = adw->getEmbeddingDimensions();
+
+    for (int node : graph->getNodes())
+    {
+        auto it = embeddings.find(node);
+        
+        if (it == embeddings.end()) {
+            std::cerr << "[ERROR] No embedding found for node " << node << std::endl;
+        } else {
+            std::cout << "[DEBUG] Node " << node << " has embedding size: " << it->second.size() << std::endl;
+        }
+
+        EXPECT_NE(it, embeddings.end()) 
+            << "No embedding found for node " << node << ".";
+
+        if (it != embeddings.end()) {
+            EXPECT_EQ(it->second.size(), static_cast<size_t>(expectedDim))
+                << "Embedding for node " << node << " has incorrect dimension.";
+        }
+    }
+
+    // Check if all embeddings are zero (unexpected)
+    bool allZero = true;
+    for (const auto &pair : embeddings)
+    {
+        for (double val : pair.second)
+        {
+            if (val != 0.0)
+            {
+                allZero = false;
+                break;
+            }
+        }
+        if (!allZero) break;
+    }
+    if (allZero) {
+        std::cerr << "[ERROR] All embeddings are zero, suggesting no training occurred." << std::endl;
+    }
+    EXPECT_FALSE(allZero) << "All embeddings are zero, suggesting no training occurred.";
 }

@@ -75,6 +75,34 @@ protected:
     }
 
     /**
+     * creates a randomized embedding of the given dimension for each node
+     *
+     * @param graph[in] the original graph
+     * @param embeddings[in, out] pointer to the embeddings<nodeID, embedding>
+     * @param dimensions[in] how many dimensions an embedding should have
+     */
+    static unordered_map<int, vector<double>> initializeEmbeddings(
+        shared_ptr<Graph> graph, int dimensions) 
+    {
+        unordered_map<int, vector<double>> embeddings;
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_real_distribution<double> dist(-0.5 / dimensions, 0.5 / dimensions);
+
+        for (int node : graph->getNodes())
+        {
+            vector<double> vec(dimensions);
+            for (double &val : vec)
+            {
+                val = dist(gen);
+            }
+            embeddings[node] = vec;
+        }
+
+        return embeddings;
+    }
+
+    /**
      * creates a sample of a set of vectors
      *
      * @param embeddings the given total set of vectors (embeddings)
@@ -201,19 +229,31 @@ protected:
      */
     vector<int> getNegativeSamples(shared_ptr<Graph> graph, int excludeNode, int numSamples)
     {
-        vector<int> negativeSamples;
-        vector<int> nodes = graph->getNodes();
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<int> dist(0, nodes.size() - 1);
+        std::vector<int> negativeSamples;
+
+        if (!graph) {
+            return negativeSamples;  // Return empty vector to avoid segfault
+        }
+
+        std::vector<int> nodes = graph->getNodes();
+        if (nodes.empty()) {
+            return negativeSamples;
+        }
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<int> dist(0, nodes.size() - 1);
+
         while (negativeSamples.size() < static_cast<size_t>(numSamples))
         {
             int sampledNode = nodes[dist(gen)];
             if (sampledNode != excludeNode)
                 negativeSamples.push_back(sampledNode);
         }
+
         return negativeSamples;
     }
+
 };
 
 #endif // EMBEDDING_STRATEGY_HPP
