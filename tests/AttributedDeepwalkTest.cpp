@@ -2,12 +2,14 @@
 #include "Graph.hpp"
 #include "AttributedDeepwalk.hpp"
 
+using namespace std;
+
 // Public Wrapper Class for Testing
 class TestableAttributedDeepwalk : public AttributedDeepwalk
 {
 public:
     TestableAttributedDeepwalk() = default;
-    TestableAttributedDeepwalk(std::shared_ptr<Graph> graph) : AttributedDeepwalk(graph) {}
+    TestableAttributedDeepwalk(shared_ptr<Graph> graph) : AttributedDeepwalk(graph) {}
 
     // expose protected methods
     using AttributedDeepwalk::calculateWeightMatrix;
@@ -30,13 +32,13 @@ public:
 class AttributedDeepwalkTest : public ::testing::Test
 {
 protected:
-    std::shared_ptr<Graph> graph;
-    std::unique_ptr<TestableAttributedDeepwalk> adw; // Use a pointer instead of a direct object
+    shared_ptr<Graph> graph;
+    unique_ptr<TestableAttributedDeepwalk> adw; // Use a pointer instead of a direct object
 
     void SetUp() override
     {
-        graph = std::make_shared<Graph>("../input/cornell/cornell_features.txt", "../input/cornell/cornell_edges.txt");
-        adw = std::make_unique<TestableAttributedDeepwalk>(graph); // Initialize properly
+        graph = make_shared<Graph>("../input/cornell/cornell_features.txt", "../input/cornell/cornell_edges.txt");
+        adw = make_unique<TestableAttributedDeepwalk>(graph); // Initialize properly
     }
 };
 

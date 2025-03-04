@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <random>
 
+using namespace std;
+
 class EmbeddingStrategy : public IStrategies
 {
 public:
@@ -42,8 +44,8 @@ protected:
      * @param[in, out] embeddings <nodeID, embeddingVector> the embeddings to be filled
      * @param[in] subGraphs a list of context graphs, each one based on a given node in the graph
      */
-    void skipGram(std::unordered_map<int, std::vector<double>> &embeddings,
-                  const std::vector<std::vector<int>> &subGraphs)
+    void skipGram(unordered_map<int, vector<double>> &embeddings,
+                  const vector<vector<int>> &subGraphs)
     {
         for (int epoch = 0; epoch < numEpochs; ++epoch)
         {
@@ -61,7 +63,7 @@ protected:
                         // Positive example: update embeddings with label = 1
                         updateEmbeddings(embeddings, embeddingDimensions, targetNode, contextNode, 1, learningRate);
                         // Negative sampling:
-                        std::vector<int> negativeSamples = getNegativeSamples(graph, targetNode, numNegativeSamples);
+                        vector<int> negativeSamples = getNegativeSamples(graph, targetNode, numNegativeSamples);
                         for (int negativeNode : negativeSamples)
                         {
                             updateEmbeddings(embeddings, embeddingDimensions, targetNode, negativeNode, 0, learningRate);
@@ -79,17 +81,17 @@ protected:
      * @param embeddings[in, out] pointer to the embeddings<nodeID, embedding>
      * @param dimensions[in] how many dimensions an embedding should have
      */
-    static std::unordered_map<int, std::vector<double>> initializeEmbeddings(
-        std::shared_ptr<Graph> graph, int dimensions) 
+    static unordered_map<int, vector<double>> initializeEmbeddings(
+        shared_ptr<Graph> graph, int dimensions) 
     {
-        std::unordered_map<int, std::vector<double>> embeddings;
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<double> dist(-0.5 / dimensions, 0.5 / dimensions);
+        unordered_map<int, vector<double>> embeddings;
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_real_distribution<double> dist(-0.5 / dimensions, 0.5 / dimensions);
 
         for (int node : graph->getNodes())
         {
-            std::vector<double> vec(dimensions);
+            vector<double> vec(dimensions);
             for (double &val : vec)
             {
                 val = dist(gen);
@@ -107,21 +109,21 @@ protected:
      * @param sampleSize the number of vectors in the sample
      * @return A set of vectors
      */
-    std::unordered_map<int, std::vector<double>> getSample(const std::unordered_map<int, std::vector<double>> &embeddings, int sampleSize)
+    unordered_map<int, vector<double>> getSample(const unordered_map<int, vector<double>> &embeddings, int sampleSize)
     {
-        std::unordered_map<int, std::vector<double>> sample;
+        unordered_map<int, vector<double>> sample;
         if (embeddings.empty() || sampleSize <= 0)
             return sample;
 
-        std::vector<int> keys;
+        vector<int> keys;
         for (const auto &pair : embeddings)
         {
             keys.push_back(pair.first);
         }
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, keys.size() - 1);
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<> dis(0, keys.size() - 1);
 
         for (int _ = 0; _ < sampleSize; _++)
         {
@@ -139,21 +141,21 @@ protected:
      * @param kSimilarNodes the number of similar nodes to retrieve.
      * @return a vector of embedding vectors corresponding to the top-k most similar nodes.
      */
-    std::vector<std::vector<double>> getSimilarNodes(
-        const std::unordered_map<int, std::vector<double>> &embeddings,
-        const std::vector<double> &queryVector,
+    vector<vector<double>> getSimilarNodes(
+        const unordered_map<int, vector<double>> &embeddings,
+        const vector<double> &queryVector,
         int kSimilarNodes)
     {
         if (embeddings.empty() || queryVector.empty() || kSimilarNodes <= 0)
             return {};
-        double sumQuery = std::accumulate(queryVector.begin(), queryVector.end(), 0.0,
+        double sumQuery = accumulate(queryVector.begin(), queryVector.end(), 0.0,
                                           [](double acc, double v)
                                           { return acc + v * v; });
-        double normQuery = std::sqrt(sumQuery);
+        double normQuery = sqrt(sumQuery);
         if (normQuery == 0)
             return {};
-        using SimilarityPair = std::pair<double, int>;
-        std::priority_queue<SimilarityPair, std::vector<SimilarityPair>, std::greater<>> minHeap;
+        using SimilarityPair = pair<double, int>;
+        priority_queue<SimilarityPair, vector<SimilarityPair>, greater<>> minHeap;
         for (const auto &[nodeID, embedding] : embeddings)
         {
             if (embedding.size() != queryVector.size() || embedding == queryVector)
@@ -164,7 +166,7 @@ protected:
                 dot += queryVector[i] * embedding[i];
                 sumCandidate += embedding[i] * embedding[i];
             }
-            double normCandidate = std::sqrt(sumCandidate);
+            double normCandidate = sqrt(sumCandidate);
             if (normCandidate == 0)
                 continue;
             double cosineSimilarity = dot / (normQuery * normCandidate);
@@ -178,14 +180,14 @@ protected:
                 minHeap.emplace(cosineSimilarity, nodeID);
             }
         }
-        std::vector<std::vector<double>> topKSimilar;
+        vector<vector<double>> topKSimilar;
         while (!minHeap.empty())
         {
             int nodeID = minHeap.top().second;
             minHeap.pop();
             topKSimilar.push_back(embeddings.at(nodeID));
         }
-        std::reverse(topKSimilar.begin(), topKSimilar.end());
+        reverse(topKSimilar.begin(), topKSimilar.end());
         return topKSimilar;
     }
 
@@ -199,14 +201,14 @@ protected:
      * @param label[in] whether it is a positive (1) or negative (0) example
      * @param learningRate[in] how large the gradient descent steps should be
      */
-    void updateEmbeddings(std::unordered_map<int, std::vector<double>> &embeddings,
+    void updateEmbeddings(unordered_map<int, vector<double>> &embeddings,
                           int dimensions, int targetNode, int contextNode,
                           double label, double lr)
     {
-        std::vector<double> &targetVec = embeddings[targetNode];
-        std::vector<double> &contextVec = embeddings[contextNode];
-        double dot = std::inner_product(targetVec.begin(), targetVec.end(), contextVec.begin(), 0.0);
-        double score = 1.0 / (1.0 + std::exp(-dot)); // sigmoid function
+        vector<double> &targetVec = embeddings[targetNode];
+        vector<double> &contextVec = embeddings[contextNode];
+        double dot = inner_product(targetVec.begin(), targetVec.end(), contextVec.begin(), 0.0);
+        double score = 1.0 / (1.0 + exp(-dot)); // sigmoid function
         double gradient = (label - score) * lr;
         for (int i = 0; i < dimensions; ++i)
         {
@@ -225,7 +227,7 @@ protected:
      *
      * @return
      */
-    std::vector<int> getNegativeSamples(std::shared_ptr<Graph> graph, int excludeNode, int numSamples)
+    vector<int> getNegativeSamples(shared_ptr<Graph> graph, int excludeNode, int numSamples)
     {
         std::vector<int> negativeSamples;
 
@@ -241,6 +243,7 @@ protected:
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<int> dist(0, nodes.size() - 1);
+
         while (negativeSamples.size() < static_cast<size_t>(numSamples))
         {
             int sampledNode = nodes[dist(gen)];

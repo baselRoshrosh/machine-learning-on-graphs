@@ -6,19 +6,21 @@
 #include "Graph.hpp"
 #include "KNN.hpp"
 
+using namespace std;
+
 // Helper function to create temporary test files
-void createTempFile(const std::string &filename, const std::string &content)
+void createTempFile(const string &filename, const string &content)
 {
-    std::ofstream outFile(filename);
+    ofstream outFile(filename);
     outFile << content;
     outFile.close();
 }
 
 // Temporary test files with improved connectivity
-const std::string NODES_FILE = "knn_test_nodes_improved.txt";
-const std::string NODES_FILE_INPUT = "1\t1.0,NAN\t0\n2\t2.0,3.0\t1\n3\t3.0,4.0\t0\n4\tNAN,5.0\t1";
-const std::string EDGE_FILE = "knn_test_edges_improved.txt";
-const std::string EDGE_FILE_INPUT = "1 2\n2 3\n3 4\n1 4"; // Improved connectivity with cycle
+const string NODES_FILE = "knn_test_nodes_improved.txt";
+const string NODES_FILE_INPUT = "1\t1.0,NAN\t0\n2\t2.0,3.0\t1\n3\t3.0,4.0\t0\n4\tNAN,5.0\t1";
+const string EDGE_FILE = "knn_test_edges_improved.txt";
+const string EDGE_FILE_INPUT = "1 2\n2 3\n3 4\n1 4"; // Improved connectivity with cycle
 
 // Fixture class for KNN testing
 class KNNTest : public ::testing::Test
@@ -31,17 +33,17 @@ protected:
         createTempFile(EDGE_FILE, EDGE_FILE_INPUT);
 
         // Initialize Graph using test files
-        graph = std::make_shared<Graph>(NODES_FILE, EDGE_FILE);
+        graph = make_shared<Graph>(NODES_FILE, EDGE_FILE);
     }
 
     void TearDown() override
     {
         graph.reset();
-        std::remove(NODES_FILE.c_str());
-        std::remove(EDGE_FILE.c_str());
+        remove(NODES_FILE.c_str());
+        remove(EDGE_FILE.c_str());
     }
 
-    std::shared_ptr<Graph> graph;
+    shared_ptr<Graph> graph;
 };
 
 // Test if KNN can estimate missing features
@@ -52,17 +54,17 @@ TEST_F(KNNTest, EstimateFeaturesFillsMissingValuesThroughRun)
     knn.run();
 
     // Check if missing values were estimated
-    std::vector<double> features1 = graph->getFeatureById(1);
-    std::vector<double> features4 = graph->getFeatureById(4);
+    vector<double> features1 = graph->getFeatureById(1);
+    vector<double> features4 = graph->getFeatureById(4);
 
     // Ensure missing values are replaced (adjust conditions based on KNN logic)
     for (double feature : features1)
     {
-        ASSERT_FALSE(std::isnan(feature)); // No NaNs should remain
+        ASSERT_FALSE(isnan(feature)); // No NaNs should remain
     }
     for (double feature : features4)
     {
-        ASSERT_FALSE(std::isnan(feature));
+        ASSERT_FALSE(isnan(feature));
     }
 }
 

@@ -1,5 +1,7 @@
 #include "../include/Node.hpp"
 
+using namespace std;
+
 /**
  * @brief Constructs a new Node object.
  *
@@ -7,7 +9,7 @@
  * @param featureVector The feature vector of the node.
  * @param label The label of the node.
  */
-Node::Node(int id, const std::vector<double> &featureVector, int label)
+Node::Node(int id, const vector<double> &featureVector, int label)
     : id(id), features(featureVector), label(label) {}
 
 /**
@@ -23,9 +25,9 @@ int Node::getId() const
 /**
  * @brief Get the feature vector of the node.
  *
- * @return std::vector<double> The feature vector associated with the node.
+ * @return vector<double> The feature vector associated with the node.
  */
-std::vector<double> Node::getFeatureVector() const
+vector<double> Node::getFeatureVector() const
 {
     return features;
 }
@@ -35,7 +37,7 @@ std::vector<double> Node::getFeatureVector() const
  *
  * @param updatedFeatures The new feature vector to be set.
  */
-void Node::setFeatureVector(const std::vector<double> &updatedFeatures)
+void Node::setFeatureVector(const vector<double> &updatedFeatures)
 {
     features = updatedFeatures;
 }

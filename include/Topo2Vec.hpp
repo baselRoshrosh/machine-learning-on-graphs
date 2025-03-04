@@ -8,6 +8,8 @@
 #include "EmbeddingStrategy.hpp"
 #include "Graph.hpp"
 
+using namespace std;
+
 class Topo2Vec : public EmbeddingStrategy
 {
 public:
@@ -20,7 +22,7 @@ public:
      * @brief Constructor to initialize the strategy with a graph.
      * @param graph A shared pointer to the graph object.
      */
-    Topo2Vec(std::shared_ptr<Graph> graph)
+    Topo2Vec(shared_ptr<Graph> graph)
     {
         this->graph = graph;
     };
@@ -34,13 +36,13 @@ public:
      * @brief Extracts the results after running the strategy.
      * @return A modified graph with missing features filled.
      */
-    std::shared_ptr<Graph> extractResults() const override;
+    shared_ptr<Graph> extractResults() const override;
 
     /**
      * @brief Configures strategy-specific parameters.
      * @param params A map of parameter names and their values.
      */
-    void configure(const std::map<std::string, double> &params) override;
+    void configure(const map<string, double> &params) override;
 
     /**
      * @brief Resets the strategy to its initial state.
@@ -69,7 +71,7 @@ protected:
      * @param[in] dimensions how many dimensions an embeddings should have
      * @return an embedding for each of the nodes <nodeID, embeddingVector> of the graph
      */
-    std::unordered_map<int, std::vector<double>> createEmbeddings(int dimensions);
+    unordered_map<int, vector<double>> createEmbeddings(int dimensions);
 
     /**
      * ====== helper methods for createEmbeddings() ==========================
@@ -84,7 +86,7 @@ protected:
      *
      * @return a vector containing the nodeIDs of context-subgraphs generated for each node in the graph
      */
-    std::vector<std::vector<int>> getContextSubgraphs();
+    vector<vector<int>> getContextSubgraphs();
 
     /**
      * Equals Algorithm 2 if the topo2vec paper, also called SEARCH-procedure. Named differently for clarity
@@ -95,7 +97,7 @@ protected:
      * @param[in, out] visited <nodeID, hasBeenVisited>, stores whether a given node has already been considered
      * @param[in, out] edgesInSubgraphCount how many edges are in the given subgraph as it is used to calculate the SA-score
      */
-    void expandSubgraph(std::vector<int> &templist, std::unordered_map<int, bool> &visited, std::unordered_set<int> &subgraphNodes, int &edgesInSubgraphCount);
+    void expandSubgraph(vector<int> &templist, unordered_map<int, bool> &visited, unordered_set<int> &subgraphNodes, int &edgesInSubgraphCount);
 
 
     friend class Topo2VecTest; // grant access to test class

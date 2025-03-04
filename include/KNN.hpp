@@ -12,6 +12,8 @@
 #include "interfaces/IStrategies.hpp"
 #include "Graph.hpp"
 
+using namespace std;
+
 /**
  * @class KNN
  * @brief Implementation of the K-Nearest Neighbors algorithm for feature estimation.
@@ -22,8 +24,8 @@ private:
     int k = 15;
     int maxIterations = 10; // avoid infinite loops, the nax iterations is arbitrary and can be changed
     // Cache for neighbors and path to avoid repeatedly calculating them
-    std::unordered_map<int, std::vector<int>> cachedNeighbors;
-    std::unordered_map<int, std::unordered_map<int, int>> precomputedPaths;
+    unordered_map<int, vector<int>> cachedNeighbors;
+    unordered_map<int, unordered_map<int, int>> precomputedPaths;
 
     /**
      * @brief Cache the neighbors of all nodes in the graph.
@@ -52,7 +54,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    KNN(std::shared_ptr<Graph> g) { graph = g; }
+    KNN(shared_ptr<Graph> g) { graph = g; }
 
     /**
      * @brief Runs the KNN strategy.
@@ -63,13 +65,13 @@ public:
      * @brief Extracts the results after running the strategy.
      * @return A modified graph with missing features filled.
      */
-    std::shared_ptr<Graph> extractResults() const override;
+    shared_ptr<Graph> extractResults() const override;
 
     /**
      * @brief Configures strategy-specific parameters.
      * @param params A map of parameter names and their values.
      */
-    void configure(const std::map<std::string, double> &params) override;
+    void configure(const map<string, double> &params) override;
 
     /**
      * @brief Resets the strategy to its initial state.

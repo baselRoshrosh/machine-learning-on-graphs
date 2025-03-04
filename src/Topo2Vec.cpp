@@ -6,16 +6,18 @@
 #include <queue>
 #include <cmath>
 
+using namespace std;
+
 /*
  * ======= Declaration of local helper functions ===================
  */
 
-double getCandidateParticipation(std::shared_ptr<Graph>, const std::vector<int> &, int);
-void initializeEmbeddings(std::shared_ptr<Graph>, std::unordered_map<int, std::vector<double>> &, int);
-void l2normalize(std::unordered_map<int, std::vector<double>> &);
-int getAverageDegree(std::shared_ptr<Graph>);
-void filterAndSort(std::vector<int> &, std::vector<double> &, double);
-double dotProduct(const std::vector<double> &, const std::vector<double> &);
+double getCandidateParticipation(shared_ptr<Graph>, const vector<int> &, int);
+void initializeEmbeddings(shared_ptr<Graph>, unordered_map<int, vector<double>> &, int);
+void l2normalize(unordered_map<int, vector<double>> &);
+int getAverageDegree(shared_ptr<Graph>);
+void filterAndSort(vector<int> &, vector<double> &, double);
+double dotProduct(const vector<double> &, const vector<double> &);
 double sigmoid(double);
 
 /*
@@ -28,17 +30,17 @@ void Topo2Vec::run()
     for (auto node : graph->getNodes())
     {
         auto nodesSample = getSample(embeddings, sampleSize);
-        std::vector<std::vector<double>> similarNodes = getSimilarNodes(embeddings, embeddings[node], k);
+        vector<vector<double>> similarNodes = getSimilarNodes(embeddings, embeddings[node], k);
         // TODO in issue #41: Guess features based on KNN implementation 
     }
 }
 
-std::shared_ptr<Graph> Topo2Vec::extractResults() const
+shared_ptr<Graph> Topo2Vec::extractResults() const
 {
     return graph;
 }
 
-void Topo2Vec::configure(const std::map<std::string, double> &params)
+void Topo2Vec::configure(const map<string, double> &params)
 {
     if (params.find("tau") != params.end())
     {
@@ -81,13 +83,13 @@ void Topo2Vec::reset()
  * ======= createEmbeddings() with helper functions ======================
  */
 
-std::unordered_map<int, std::vector<double>> Topo2Vec::createEmbeddings(int dimensions)
+unordered_map<int, vector<double>> Topo2Vec::createEmbeddings(int dimensions)
 {
     // 1: initialize random embeddings
-    std::unordered_map<int, std::vector<double>> embeddings = EmbeddingStrategy::initializeEmbeddings(graph, dimensions);
+    unordered_map<int, vector<double>> embeddings = EmbeddingStrategy::initializeEmbeddings(graph, dimensions);
 
     // 2: create a context subgraph for each node
-    std::vector<std::vector<int>> contextSubgraphs = getContextSubgraphs();
+    vector<vector<int>> contextSubgraphs = getContextSubgraphs();
 
     // 3: optimize embeddings based on subgraphs
     skipGram(embeddings, contextSubgraphs);
@@ -96,28 +98,28 @@ std::unordered_map<int, std::vector<double>> Topo2Vec::createEmbeddings(int dime
     return embeddings;
 }
 
-std::vector<std::vector<int>> Topo2Vec::getContextSubgraphs()
+vector<vector<int>> Topo2Vec::getContextSubgraphs()
 {
-    std::vector<std::vector<int>> contextSubgraphs;
+    vector<vector<int>> contextSubgraphs;
 
-    std::vector<int> nodeIDs = graph->getNodes();
+    vector<int> nodeIDs = graph->getNodes();
     int nodeCount = graph->getNodeCount();
     int avgDegree = getAverageDegree(graph);
 
-    std::unordered_map<int, bool> visited(nodeCount);
-    std::vector<int> templist; // named as in the paper
+    unordered_map<int, bool> visited(nodeCount);
+    vector<int> templist; // named as in the paper
 
     // used for calculating denominator of SA score
-    std::unordered_set<int> subgraphNodes; // enables node lookup in O(1)
+    unordered_set<int> subgraphNodes; // enables node lookup in O(1)
     int edgesInSubgraphCount;
 
-    std::vector<double> naScores;
+    vector<double> naScores;
     double naScore;
 
     for (int currentNodeID : nodeIDs)
     {
         // reset variables
-        std::for_each(visited.begin(), visited.end(), [](auto &pair)
+        for_each(visited.begin(), visited.end(), [](auto &pair)
                       { pair.second = false; });
         visited[currentNodeID] = true;
         subgraphNodes.clear();
@@ -163,19 +165,19 @@ std::vector<std::vector<int>> Topo2Vec::getContextSubgraphs()
     return contextSubgraphs;
 }
 
-void Topo2Vec::expandSubgraph(std::vector<int> &templist, std::unordered_map<int, bool> &visited, std::unordered_set<int> &subgraphNodes, int &edgesInSubgraphCount)
+void Topo2Vec::expandSubgraph(vector<int> &templist, unordered_map<int, bool> &visited, unordered_set<int> &subgraphNodes, int &edgesInSubgraphCount)
 {
     // creating a copy of the templist with only unique nodeIDs
-    std::vector<int> returnTemplist(templist);
-    std::vector<int>::iterator it;
-    it = std::unique(returnTemplist.begin(), returnTemplist.end());
-    returnTemplist.resize(std::distance(returnTemplist.begin(), it));
+    vector<int> returnTemplist(templist);
+    vector<int>::iterator it;
+    it = unique(returnTemplist.begin(), returnTemplist.end());
+    returnTemplist.resize(distance(returnTemplist.begin(), it));
 
-    std::vector<int> nodeIDs = graph->getNodes();
+    vector<int> nodeIDs = graph->getNodes();
 
-    std::vector<int> candidateNodeNeighbors;
+    vector<int> candidateNodeNeighbors;
     double naScore, saScore;
-    std::vector<double> naScores, saScores;
+    vector<double> naScores, saScores;
 
     for (int candidateNodeID : templist)
     {
@@ -233,16 +235,16 @@ void Topo2Vec::expandSubgraph(std::vector<int> &templist, std::unordered_map<int
  *
  * @return how many neighbors of the candidateNode are in the subgraph
  */
-double getCandidateParticipation(std::shared_ptr<Graph> graph, const std::vector<int> &templist, int candidateNodeID)
+double getCandidateParticipation(shared_ptr<Graph> graph, const vector<int> &templist, int candidateNodeID)
 {
-    std::vector<int> subgraph(templist);
-    std::vector<int> connectedNodes = graph->getNeighbors(candidateNodeID);
+    vector<int> subgraph(templist);
+    vector<int> connectedNodes = graph->getNeighbors(candidateNodeID);
 
     // calculate intersection of the neighbors of the candidate Node and the subgraph
-    std::vector<int> intersectionSubgraphConnectedNodes;
-    std::sort(subgraph.begin(), subgraph.end());
-    std::sort(connectedNodes.begin(), connectedNodes.end());
-    std::set_intersection(connectedNodes.begin(), connectedNodes.end(), subgraph.begin(), subgraph.end(), std::back_inserter(intersectionSubgraphConnectedNodes));
+    vector<int> intersectionSubgraphConnectedNodes;
+    sort(subgraph.begin(), subgraph.end());
+    sort(connectedNodes.begin(), connectedNodes.end());
+    set_intersection(connectedNodes.begin(), connectedNodes.end(), subgraph.begin(), subgraph.end(), back_inserter(intersectionSubgraphConnectedNodes));
 
     return intersectionSubgraphConnectedNodes.size(); // size of intersections equals candidate participation
 }
@@ -252,7 +254,7 @@ double getCandidateParticipation(std::shared_ptr<Graph> graph, const std::vector
  *
  * @param embeddings[in, out] a map <int, vector<double>> containing embeddings for nodes
  */
-void l2normalize(std::unordered_map<int, std::vector<double>> &embeddings)
+void l2normalize(unordered_map<int, vector<double>> &embeddings)
 {
     for (auto &[nodeID, embedding] : embeddings)
     {
@@ -261,9 +263,9 @@ void l2normalize(std::unordered_map<int, std::vector<double>> &embeddings)
         // caculating norm factor
         for (double value : embedding)
         {
-            norm += std::pow(value, 2);
+            norm += pow(value, 2);
         }
-        norm = std::sqrt(norm);
+        norm = sqrt(norm);
 
         // normalize
         if (norm > 0)
@@ -286,7 +288,7 @@ void l2normalize(std::unordered_map<int, std::vector<double>> &embeddings)
  * @param graph the graph to calculate the avg. degree of
  * @return the avg. degree
  */
-int getAverageDegree(std::shared_ptr<Graph> graph)
+int getAverageDegree(shared_ptr<Graph> graph)
 {
     return graph->getEdgeCount() / graph->getNodeCount();
 }
@@ -299,9 +301,9 @@ int getAverageDegree(std::shared_ptr<Graph> graph)
  * @param threshhold[in]
  * @param edgesCounter[in, out]
  */
-void filterAndSort(std::vector<int> &list, std::vector<double> &scores, double threshhold)
+void filterAndSort(vector<int> &list, vector<double> &scores, double threshhold)
 {
-    std::vector<std::pair<int, double>> idScorePairs;
+    vector<pair<int, double>> idScorePairs;
 
     for (size_t i = 0; i < list.size(); ++i)
     {
@@ -312,8 +314,8 @@ void filterAndSort(std::vector<int> &list, std::vector<double> &scores, double t
     }
 
     // Sort pairs based on score in descending order
-    std::sort(idScorePairs.begin(), idScorePairs.end(),
-              [](const std::pair<int, double> &a, const std::pair<int, double> &b)
+    sort(idScorePairs.begin(), idScorePairs.end(),
+              [](const pair<int, double> &a, const pair<int, double> &b)
               {
                   return a.second > b.second;
               });

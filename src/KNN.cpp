@@ -1,5 +1,7 @@
 #include "KNN.hpp"
 
+using namespace std;
+
 /**
  * @brief Runs the KNN strategy.
  */
@@ -7,7 +9,7 @@ void KNN::run()
 {
     if (!graph)
     {
-        std::cerr << "Error: Graph is not set in KNN strategy." << std::endl;
+        cerr << "Error: Graph is not set in KNN strategy." << endl;
         return;
     }
     estimateFeatures(*graph, k);
@@ -17,7 +19,7 @@ void KNN::run()
  * @brief Extracts the results after running the strategy.
  * @return A modified graph with missing features filled.
  */
-std::shared_ptr<Graph> KNN::extractResults() const
+shared_ptr<Graph> KNN::extractResults() const
 {
     return graph;
 }
@@ -26,7 +28,7 @@ std::shared_ptr<Graph> KNN::extractResults() const
  * @brief Configures strategy-specific parameters.
  * @param params A map of parameter names and their values.
  */
-void KNN::configure(const std::map<std::string, double> &params)
+void KNN::configure(const map<string, double> &params)
 {
     if (params.find("k") != params.end())
     {
@@ -41,8 +43,8 @@ void KNN::configure(const std::map<std::string, double> &params)
         }
         else
         {
-            std::cerr << "Warning: maxIterations must be positive. Keeping the previous value: "
-                      << maxIterations << std::endl;
+            cerr << "Warning: maxIterations must be positive. Keeping the previous value: "
+                      << maxIterations << endl;
         }
     }
 }
@@ -79,15 +81,15 @@ void KNN::calcPaths(const Graph &graph, int k)
 {
     for (const auto &node : graph.getNodes())
     {
-        std::unordered_map<int, int> distances;
-        std::queue<std::pair<int, int>> toVisit;
+        unordered_map<int, int> distances;
+        queue<pair<int, int>> toVisit;
         // tracks how many nodes have been updated with shortest paths
         int shortestFound = 0;
 
         // prepare bfs
         for (const auto &otherNode : graph.getNodes())
         {
-            distances[otherNode] = std::numeric_limits<int>::max();
+            distances[otherNode] = numeric_limits<int>::max();
         }
 
         distances[node] = 0;
@@ -116,7 +118,7 @@ void KNN::calcPaths(const Graph &graph, int k)
         }
 
         // Store the limited precomputed paths for this node
-        precomputedPaths[node] = std::move(distances);
+        precomputedPaths[node] = move(distances);
     }
 }
 
@@ -132,15 +134,15 @@ void KNN::estimateFeatures(Graph &graph, int k)
     calcPaths(graph, k);
 
     // Initialize the set of nodes to process
-    std::vector<int> nodes = graph.getNodes();
+    vector<int> nodes = graph.getNodes();
     // if a node still has a missing feature it gets revisited
-    std::unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
+    unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
     int currentIteration = 0;
 
     while (!nodesToProcess.empty() && currentIteration < maxIterations)
     {
-        std::unordered_set<int> nextIterationNodes;
+        unordered_set<int> nextIterationNodes;
         currentIteration++;
 
         for (const int &node : nodesToProcess)
@@ -149,7 +151,7 @@ void KNN::estimateFeatures(Graph &graph, int k)
 
             // filter and sort neighbors based on their distances
 
-            std::vector<std::pair<int, int>> neighborsSorted;
+            vector<pair<int, int>> neighborsSorted;
             for (const auto &[neighbor, distance] : topoDistance)
             {
                 if (neighbor != node && distance <= k)
@@ -158,22 +160,22 @@ void KNN::estimateFeatures(Graph &graph, int k)
                 }
             }
 
-            std::sort(neighborsSorted.begin(), neighborsSorted.end());
+            sort(neighborsSorted.begin(), neighborsSorted.end());
 
-            std::vector<int> knn;
-            for (size_t i = 0; i < std::min(k, static_cast<int>(neighborsSorted.size())); ++i)
+            vector<int> knn;
+            for (size_t i = 0; i < min(k, static_cast<int>(neighborsSorted.size())); ++i)
             {
                 knn.push_back(neighborsSorted[i].second);
             }
 
-            std::vector<double> nodeFeatures = graph.getFeatureById(node);
+            vector<double> nodeFeatures = graph.getFeatureById(node);
             bool featureIsMissing = false;
             bool featuresUpdated = false;
 
             // estimate missing features and skip the feature if it is not missing
             for (size_t i = 0; i < nodeFeatures.size(); ++i)
             {
-                if (std::isnan(nodeFeatures[i]))
+                if (isnan(nodeFeatures[i]))
                 {
                     double sum = 0.0;
                     int count = 0;
@@ -182,7 +184,7 @@ void KNN::estimateFeatures(Graph &graph, int k)
                     for (int neighborId : knn)
                     {
                         const auto &neighborFeatures = graph.getFeatureById(neighborId);
-                        if (!std::isnan(neighborFeatures[i]))
+                        if (!isnan(neighborFeatures[i]))
                         {
                             sum += neighborFeatures[i];
                             ++count;
@@ -214,11 +216,11 @@ void KNN::estimateFeatures(Graph &graph, int k)
             }
         }
 
-        nodesToProcess = std::move(nextIterationNodes);
+        nodesToProcess = move(nextIterationNodes);
     }
 
     if (currentIteration == maxIterations)
     {
-        std::cerr << "Max iteration depth reached. Could not fill all features." << std::endl;
+        cerr << "Max iteration depth reached. Could not fill all features." << endl;
     }
 }
