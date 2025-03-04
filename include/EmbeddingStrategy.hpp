@@ -65,6 +65,34 @@ protected:
     }
 
     /**
+     * creates a randomized embedding of the given dimension for each node
+     *
+     * @param graph[in] the original graph
+     * @param embeddings[in, out] pointer to the embeddings<nodeID, embedding>
+     * @param dimensions[in] how many dimensions an embedding should have
+     */
+    static std::unordered_map<int, std::vector<double>> initializeEmbeddings(
+        std::shared_ptr<Graph> graph, int dimensions) 
+    {
+        std::unordered_map<int, std::vector<double>> embeddings;
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<double> dist(-0.5 / dimensions, 0.5 / dimensions);
+
+        for (int node : graph->getNodes())
+        {
+            std::vector<double> vec(dimensions);
+            for (double &val : vec)
+            {
+                val = dist(gen);
+            }
+            embeddings[node] = vec;
+        }
+
+        return embeddings;
+    }
+
+    /**
      * creates a sample of a set of vectors
      *
      * @param setOfVectors the given total set of vectors

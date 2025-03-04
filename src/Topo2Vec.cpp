@@ -37,8 +37,7 @@ void Topo2Vec::reset() {}
 std::unordered_map<int, std::vector<double>> Topo2Vec::createEmbeddings(int dimensions)
 {
     // 1: initialize random embeddings
-    std::unordered_map<int, std::vector<double>> embeddings;
-    initializeEmbeddings(graph, embeddings, dimensions);
+    std::unordered_map<int, std::vector<double>> embeddings = EmbeddingStrategy::initializeEmbeddings(graph, dimensions);
 
     // 2: create a context subgraph for each node
     std::vector<std::vector<int>> contextSubgraphs = getContextSubgraphs();
@@ -200,32 +199,6 @@ double getCandidateParticipation(std::shared_ptr<Graph> graph, const std::vector
 
     return intersectionSubgraphConnectedNodes.size(); // size of intersections equals candidate participation
 }
-
-/**
- * creates a randomized embedding of the given dimension for each node
- *
- * @param graph[in] the original graph
- * @param embeddings[in, out] pointer to the embeddings<nodeID, embedding>
- * @param dimensions[in] how many dimensions an embedding should have
- */
-void initializeEmbeddings(std::shared_ptr<Graph> graph, std::unordered_map<int, std::vector<double>> &embeddings, int dimensions)
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dist(-0.5 / dimensions, 0.5 / dimensions);
-
-    for (int node : graph->getNodes())
-    {
-        std::vector<double> vec(dimensions);
-        for (double &val : vec)
-        {
-            val = dist(gen);
-        }
-        embeddings[node] = vec;
-    }
-}
-
-
 
 /**
  * performs l2 normalization in place on the vectors inside an int-vector map.

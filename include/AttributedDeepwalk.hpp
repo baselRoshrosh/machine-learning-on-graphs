@@ -38,6 +38,12 @@ public:
      */
     void reset() override;
 
+    // Declare function to compute alias tables once
+    void computeAliasTables();
+
+private:
+    std::unordered_map<int, std::vector<std::pair<double, size_t>>> aliasTables;
+
 protected:
     std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
 
