@@ -107,7 +107,13 @@ std::vector<std::pair<int, int>> AdjacencyArrayEdges::getEdges() const
 
         for (int offset = startAdjacents; offset < endAdjacents; offset++)
         {
-            edgesVector.emplace_back(currentNode, adjacencyArray[offset]); // adjacencyArray[offset] iterates through currentNode's neighbors
+            int currentNodeNeighbor = adjacencyArray[offset];
+
+            // no edge duplicates
+            if (currentNode < currentNodeNeighbor)
+            {
+                edgesVector.emplace_back(currentNode, adjacencyArray[offset]); // adjacencyArray[offset] iterates through currentNode's neighbors
+            }
         }
     }
 
