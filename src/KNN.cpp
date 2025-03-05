@@ -3,14 +3,6 @@
 using namespace std;
 
 /*
- * ======= Declaration of local helper functions ===================
- */
-
-void cacheNeighbors(const Graph &);
-void calcPaths(const Graph &, int);
-void estimateFeatures(Graph &, int);
-
-/*
  * ======= Implementation of IStrategy Interface methods =============
  */
 void KNN::run()
@@ -56,10 +48,11 @@ void KNN::reset()
 {
     cachedNeighbors.clear();
     precomputedPaths.clear();
+    k = 15;
 }
 
 /*
- * ======= Helper Methods ======================
+ * ======= Strategy Methods ======================
  */
 void KNN::cacheNeighbors(const Graph &graph)
 {
