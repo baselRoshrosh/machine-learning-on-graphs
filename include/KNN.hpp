@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
+#include <algorithm>
 
 #include "interfaces/IStrategies.hpp"
 #include "Graph.hpp"

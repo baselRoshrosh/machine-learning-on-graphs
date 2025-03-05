@@ -1,9 +1,23 @@
 #include "KNN.hpp"
 
+#include <algorithm>
+#include <iterator>
+#include <random>
+#include <queue>
+#include <cmath>
+
 using namespace std;
 
-/**
- * @brief Runs the KNN strategy.
+/*
+ * ======= Declaration of local helper functions ===================
+ */
+
+void cacheNeighbors(const Graph &);
+void calcPaths(const Graph &, int);
+void estimateFeatures(Graph &, int);
+
+/*
+ * ======= Implementation of IStrategy Interface methods =============
  */
 void KNN::run()
 {
@@ -12,22 +26,17 @@ void KNN::run()
         cerr << "Error: Graph is not set in KNN strategy." << endl;
         return;
     }
+    
+    cacheNeighbors(*graph);
+    calcPaths(*graph, k);
     estimateFeatures(*graph, k);
 }
 
-/**
- * @brief Extracts the results after running the strategy.
- * @return A modified graph with missing features filled.
- */
 shared_ptr<Graph> KNN::extractResults() const
 {
     return graph;
 }
 
-/**
- * @brief Configures strategy-specific parameters.
- * @param params A map of parameter names and their values.
- */
 void KNN::configure(const map<string, double> &params)
 {
     if (params.find("k") != params.end())
@@ -44,48 +53,38 @@ void KNN::configure(const map<string, double> &params)
         else
         {
             cerr << "Warning: maxIterations must be positive. Keeping the previous value: "
-                      << maxIterations << endl;
+                 << maxIterations << endl;
         }
     }
 }
 
-/**
- * @brief Resets the strategy to its initial state.
- */
 void KNN::reset()
 {
     cachedNeighbors.clear();
     precomputedPaths.clear();
 }
 
-/**
- * @brief Cache the neighbors of all nodes in the graph.
- *
- * @param graph The graph to process.
+/*
+ * ======= Helper Methods ======================
  */
 void KNN::cacheNeighbors(const Graph &graph)
 {
+    //Each node and its neighbors are stored
     for (const auto &node : graph.getNodes())
     {
         cachedNeighbors[node] = graph.getNeighbors(node);
     }
 }
 
-/**
- * @brief Calculate the shortest paths for all nodes up to a distance of k.
- *
- * @param graph The graph to process.
- * @param k The number of nearest neighbors to consider.
- */
 void KNN::calcPaths(const Graph &graph, int k)
-{
+{   
+    //Calculate the shortest paths for all nodes up to a distance of k.
     for (const auto &node : graph.getNodes())
     {
         unordered_map<int, int> distances;
         queue<pair<int, int>> toVisit;
         // tracks how many nodes have been updated with shortest paths
         int shortestFound = 0;
-
         // prepare bfs
         for (const auto &otherNode : graph.getNodes())
         {
@@ -94,7 +93,6 @@ void KNN::calcPaths(const Graph &graph, int k)
 
         distances[node] = 0;
         toVisit.push({node, 0});
-
         // Perform BFS, but stop if k nearest nodes are found
         while (!toVisit.empty() && shortestFound < k)
         {
@@ -116,31 +114,19 @@ void KNN::calcPaths(const Graph &graph, int k)
                 }
             }
         }
-
-        // Store the limited precomputed paths for this node
         precomputedPaths[node] = move(distances);
     }
 }
 
-/**
- * @brief Estimate missing features for nodes in the graph using k-nearest neighbors.
- *
- * @param graph The graph to process.
- * @param k The number of neighbors to consider.
- */
 void KNN::estimateFeatures(Graph &graph, int k)
 {
-    cacheNeighbors(graph);
-    calcPaths(graph, k);
-
-    // Initialize the set of nodes to process
     vector<int> nodes = graph.getNodes();
-    // if a node still has a missing feature it gets revisited
     unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
 
     int currentIteration = 0;
-
-    while (!nodesToProcess.empty() && currentIteration < maxIterations)
+    //check every node, if a node still has a missing feature it gets checked again
+    //stop if a node got checked to often to avoid infinite loops
+    while (!nodesToProcess.empty() && currentIteration < maxIterations) 
     {
         unordered_set<int> nextIterationNodes;
         currentIteration++;
@@ -148,10 +134,9 @@ void KNN::estimateFeatures(Graph &graph, int k)
         for (const int &node : nodesToProcess)
         {
             const auto &topoDistance = precomputedPaths[node];
-
-            // filter and sort neighbors based on their distances
-
             vector<pair<int, int>> neighborsSorted;
+
+            //filter out the neighbors that are within a distance of 'k'
             for (const auto &[neighbor, distance] : topoDistance)
             {
                 if (neighbor != node && distance <= k)
@@ -161,58 +146,23 @@ void KNN::estimateFeatures(Graph &graph, int k)
             }
 
             sort(neighborsSorted.begin(), neighborsSorted.end());
+            vector<vector<double>> similarNodes;
 
-            vector<int> knn;
+            //collect feature vectors of the closest k-neighbors
             for (size_t i = 0; i < min(k, static_cast<int>(neighborsSorted.size())); ++i)
             {
-                knn.push_back(neighborsSorted[i].second);
+                similarNodes.push_back(graph.getFeatureById(neighborsSorted[i].second));
             }
 
-            vector<double> nodeFeatures = graph.getFeatureById(node);
-            bool featureIsMissing = false;
-            bool featuresUpdated = false;
-
-            // estimate missing features and skip the feature if it is not missing
-            for (size_t i = 0; i < nodeFeatures.size(); ++i)
+            guessFeatures(node, similarNodes);
+            //revisit a node if it still has a missing feature
+            for (double feature : graph.getFeatureById(node))
             {
-                if (isnan(nodeFeatures[i]))
+                if (isnan(feature))
                 {
-                    double sum = 0.0;
-                    int count = 0;
-
-                    // gather all neighbors and replace the missing features with the average of the neighbors
-                    for (int neighborId : knn)
-                    {
-                        const auto &neighborFeatures = graph.getFeatureById(neighborId);
-                        if (!isnan(neighborFeatures[i]))
-                        {
-                            sum += neighborFeatures[i];
-                            ++count;
-                        }
-                    }
-
-                    // only update features if valid neighbors exist that have that feature
-                    if (count > 0)
-                    {
-                        nodeFeatures[i] = sum / count;
-                        featuresUpdated = true;
-                    }
-                    else
-                    {
-                        featureIsMissing = true;
-                    }
+                    nextIterationNodes.insert(node);
+                    break;
                 }
-            }
-
-            if (featuresUpdated)
-            {
-                graph.updateFeatureById(node, nodeFeatures);
-            }
-
-            // queue node to get revisited
-            if (featureIsMissing)
-            {
-                nextIterationNodes.insert(node);
             }
         }
 
