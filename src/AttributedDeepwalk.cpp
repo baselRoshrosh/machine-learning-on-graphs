@@ -35,8 +35,8 @@ void AttributedDeepwalk::run() {
 
         vector<vector<double>> nodeList = getSimilarNodes(embeddings, sample.begin()->second, coverDepth); 
 
-        //TODO
-        //guessFeatures(node, nodeList);
+
+        guessFeatures(node, nodeList);
     }
 }
 

@@ -4,6 +4,8 @@
 #include <utility>
 #include <vector>
 
+using namespace std;  
+
 /**
  * @class IEdges
  * @brief Abstract interface for managing graph edges.
@@ -21,9 +23,9 @@ public:
      * by an edge.
      *
      * @param nodeID The ID of the node whose neighbors are to be retrieved.
-     * @return std::vector<int> A list of neighboring node IDs.
+     * @return vector<int> A list of neighboring node IDs.
      */
-    virtual std::vector<int> getNeighbors(int nodeID) = 0;
+    virtual vector<int> getNeighbors(int nodeID) = 0;
 
     /**
      * @brief Checks if an edge exists between two nodes.
@@ -41,9 +43,9 @@ public:
      *
      * This function returns a vector containing all edges represented as pairs of node IDs.
      *
-     * @return std::vector<std::pair<int, int>> A list of all edges as node ID pairs.
+     * @return vector<pair<int, int>> A list of all edges as node ID pairs.
      */
-    virtual std::vector<std::pair<int, int>> getEdges() const = 0;
+    virtual vector<pair<int, int>> getEdges() const = 0;
 
     /**
      * @brief Returns number of stored edges
