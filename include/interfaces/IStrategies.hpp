@@ -6,6 +6,10 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <cmath> //for nan
+
+using namespace std;  
+
 
 /**
  * @class IStrategies
@@ -27,21 +31,52 @@ public:
      * @brief Extracts the results after running the strategy.
      * @return A modified graph with missing features filled.
      */
-    virtual std::shared_ptr<Graph> extractResults() const = 0;
+    virtual shared_ptr<Graph> extractResults() const = 0;
 
     /**
      * @brief Configures strategy-specific parameters.
      * @param params A map of parameter names and their values.
      */
-    virtual void configure(const std::map<std::string, double> &params) = 0;
+    virtual void configure(const map<string, double> &params) = 0;
 
     /**
      * @brief Resets the strategy to its initial state.
      */
     virtual void reset() = 0;
 
+    void guessFeatures(int nodeId, const vector<int>& nodeList) {
+        if (!graph) return;
+    
+        vector<double> nodeFeatures = graph->getFeatureById(nodeId);
+        bool featuresUpdated = false;
+    
+        for (size_t i = 0; i < nodeFeatures.size(); ++i) {
+            if (isnan(nodeFeatures[i])) {
+                double sum = 0.0;
+                int count = 0;
+    
+                for (int neighborId : nodeList) {
+                    const auto& neighborFeatures = graph->getFeatureById(neighborId);
+                    if (!isnan(neighborFeatures[i])) {
+                        sum += neighborFeatures[i];
+                        ++count;
+                    }
+                }
+    
+                if (count > 0) {
+                    nodeFeatures[i] = sum / count;
+                    featuresUpdated = true;
+                }
+            }
+        }
+    
+        if (featuresUpdated) {
+            graph->updateFeatureById(nodeId, nodeFeatures);
+        }
+    }
+
 protected:
-    std::shared_ptr<Graph> graph; ///< The input graph for the strategy.
+    shared_ptr<Graph> graph; ///< The input graph for the strategy.
 };
 
 #endif // ISTRATEGIES_HPP
