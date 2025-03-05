@@ -1,11 +1,5 @@
 #include "KNN.hpp"
 
-#include <algorithm>
-#include <iterator>
-#include <random>
-#include <queue>
-#include <cmath>
-
 using namespace std;
 
 /*
