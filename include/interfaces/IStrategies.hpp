@@ -44,32 +44,31 @@ public:
      */
     virtual void reset() = 0;
 
-    void guessFeatures(int nodeId, const vector<int>& nodeList) {
+    void guessFeatures(int nodeId, const vector<vector<double>>& nodeList) {
         if (!graph) return;
-    
+
         vector<double> nodeFeatures = graph->getFeatureById(nodeId);
         bool featuresUpdated = false;
-    
+
         for (size_t i = 0; i < nodeFeatures.size(); ++i) {
-            if (isnan(nodeFeatures[i])) {
+            if (isnan(nodeFeatures[i])) {  
                 double sum = 0.0;
                 int count = 0;
-    
-                for (int neighborId : nodeList) {
-                    const auto& neighborFeatures = graph->getFeatureById(neighborId);
-                    if (!isnan(neighborFeatures[i])) {
+
+                for (const auto& neighborFeatures : nodeList) {
+                    if (i < neighborFeatures.size() && !isnan(neighborFeatures[i])) {
                         sum += neighborFeatures[i];
                         ++count;
                     }
                 }
-    
+
                 if (count > 0) {
                     nodeFeatures[i] = sum / count;
                     featuresUpdated = true;
                 }
             }
         }
-    
+
         if (featuresUpdated) {
             graph->updateFeatureById(nodeId, nodeFeatures);
         }
