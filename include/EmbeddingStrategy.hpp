@@ -112,6 +112,8 @@ protected:
     unordered_map<int, vector<double>> getSample(const unordered_map<int, vector<double>> &embeddings, int sampleSize)
     {
         unordered_map<int, vector<double>> sample;
+
+        // filter edge cases
         if (embeddings.empty() || sampleSize <= 0)
             return sample;
 
@@ -125,11 +127,12 @@ protected:
         mt19937 gen(rd());
         uniform_int_distribution<> dis(0, keys.size() - 1);
 
-        for (int _ = 0; _ < sampleSize; _++)
+        while (sample.size() < sampleSize && sample.size() < embeddings.size())
         {
             int randomIndex = dis(gen);
             sample.insert({keys[randomIndex], embeddings.at(keys[randomIndex])});
         }
+
         return sample;
     }
 
