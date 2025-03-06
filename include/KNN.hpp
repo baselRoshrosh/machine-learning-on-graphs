@@ -1,14 +1,9 @@
 #ifndef KNN_HPP
 #define KNN_HPP
 
-#include <iostream>
-#include <cmath>
 #include <vector>
 #include <memory>
 #include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <algorithm>
 
 #include "interfaces/IStrategies.hpp"
 #include "Graph.hpp"
