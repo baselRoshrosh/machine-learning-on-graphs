@@ -1,28 +1,24 @@
 #include <gtest/gtest.h>
-#include "BasicEdges.hpp"
-
-#include <cmath> // for isnan
-
-using namespace std;
+#include "AdjacencyArrayEdges.hpp"
 
 // Test fixture for BasicEdges
-class BasicEdgesTest : public ::testing::Test
+class AdjacencyArrayEdgesTest : public ::testing::Test
 {
 protected:
     // Test data
-    vector<pair<int, int>> initialEdges = {{1, 2}, {2, 3}, {3, 4}};
-    BasicEdges edges;
+    std::vector<std::pair<int, int>> initialEdges = {{1, 2}, {2, 3}, {3, 4}};
+    AdjacencyArrayEdges edges;
 
     // Set up the test environment
-    BasicEdgesTest() : edges(initialEdges) {}
+    AdjacencyArrayEdgesTest() : edges(initialEdges) {}
 };
 
 // Test: Check neighbors retrieval
-TEST_F(BasicEdgesTest, GetNeighbors)
+TEST_F(AdjacencyArrayEdgesTest, GetNeighbors)
 {
     // Check neighbors for node 2
-    vector<int> neighbors = edges.getNeighbors(2);
-    vector<int> expected = {1, 3};
+    std::vector<int> neighbors = edges.getNeighbors(2);
+    std::vector<int> expected = {1, 3};
     EXPECT_EQ(neighbors, expected);
 
     // Check neighbors for node 4
@@ -36,7 +32,7 @@ TEST_F(BasicEdgesTest, GetNeighbors)
 }
 
 // Test: Check edge existence
-TEST_F(BasicEdgesTest, IsEdge)
+TEST_F(AdjacencyArrayEdgesTest, IsEdge)
 {
     // Existing edges
     EXPECT_TRUE(edges.isEdge(1, 2));
@@ -52,7 +48,7 @@ TEST_F(BasicEdgesTest, IsEdge)
 }
 
 // Test: Retrieve all edges
-TEST_F(BasicEdgesTest, GetEdges)
+TEST_F(AdjacencyArrayEdgesTest, GetEdges)
 {
     const auto &actualEdges = edges.getEdges();
     EXPECT_EQ(actualEdges, initialEdges); // Ensure edges match the initialization data
@@ -63,40 +59,22 @@ TEST_F(BasicEdgesTest, GetEdges)
 }
 
 // Test case: Test adding an edge to the BasicEdges object
-TEST_F(BasicEdgesTest, AddEdge)
+TEST_F(AdjacencyArrayEdgesTest, AddEdge)
 {
     // Initial edges before adding the new edge
-    vector<pair<int, int>> initialEdges = edges.getEdges();
+    std::vector<std::pair<int, int>> initialEdges = edges.getEdges();
     size_t initialSize = initialEdges.size();
 
     // Add a new edge (3, 4)
     edges.addEdge(3, 4);
 
     // Retrieve the edges after adding the new one
-    vector<pair<int, int>> currentEdges = edges.getEdges();
+    std::vector<std::pair<int, int>> currentEdges = edges.getEdges();
     size_t currentSize = currentEdges.size();
 
     // Assert that the size of edges increased by 1 (i.e., the new edge was added)
     EXPECT_EQ(currentSize, initialSize + 1);
 
     // Check that the new edge (3, 4) is in the list of edges
-    EXPECT_NE(find(currentEdges.begin(), currentEdges.end(), make_pair(3, 4)), currentEdges.end());
-}
-
-// Test: getting Edge Weight
-TEST_F(BasicEdgesTest, GetEdgeWeight)
-{
-    double weight = edges.getWeight(1, 2);
-
-    EXPECT_TRUE(isnan(weight)); // This will pass if weight is NaN
-}
-
-// Test: setting Edge Weight
-TEST_F(BasicEdgesTest, SetEdgeWeight)
-{
-    double weight = 0.5;
-
-    edges.setWeight(1, 2, weight);
-
-    EXPECT_EQ(edges.getWeight(1, 2), weight);
+    EXPECT_NE(std::find(currentEdges.begin(), currentEdges.end(), std::make_pair(3, 4)), currentEdges.end());
 }
