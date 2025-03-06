@@ -1,10 +1,12 @@
 #include "AdjacencyArrayEdges.hpp"
 
 #include <limits>
+#include <algorithm>
 
 /*
  * =========== constructors ===============
  */
+AdjacencyArrayEdges::~AdjacencyArrayEdges() = default;
 
 AdjacencyArrayEdges::AdjacencyArrayEdges(const std::vector<std::pair<int, int>> &initialEdges)
 {
@@ -12,7 +14,10 @@ AdjacencyArrayEdges::AdjacencyArrayEdges(const std::vector<std::pair<int, int>> 
     std::unordered_map<int, std::vector<int>> adjacencyList;
     for (auto [source, dest] : initialEdges)
     {
-        adjacencyList[source].emplace_back(dest);
+        if (dest < source)
+            std::swap(source, dest);
+        adjacencyList[source].push_back(dest);
+        adjacencyList[dest].push_back(source);
     }
 
     fillAdjacencyArrayFromList(adjacencyList);
@@ -153,28 +158,51 @@ int AdjacencyArrayEdges::size()
 /*
  * ========= helper methods ============
  */
-
-void AdjacencyArrayEdges::fillAdjacencyArrayFromList(std::unordered_map<int, std::vector<int>> adjacencyList)
-{
-    int numAdjacents = 0;
-    for (auto &[node, adjacents] : adjacencyList)
-    {
-        numAdjacents += adjacents.size();
-    }
-
-    adjacencyArray.resize(numAdjacents);
-    adjacencyOffsets.resize(adjacencyList.size());
-
-    int currentOffset = 0;
-    for (int i = 0; i < adjacencyList.size(); i++)
-    {
-        adjacencyOffsets[i] = currentOffset;
-        auto &adjacents = adjacencyList[i];
-
-        for (int j = 0; j < adjacents.size(); j++)
-        {
-            adjacencyArray[currentOffset + j] = adjacents[j];
-        }
-        currentOffset += adjacents.size(); // setting offset to new nodes
-    }
-}
+ void AdjacencyArrayEdges::fillAdjacencyArrayFromList(const std::unordered_map<int, std::vector<int>> &adjacencyList)
+ {
+     // Determine the maximum node id from both keys and neighbor values.
+     int maxNode = 0;
+     for (const auto &entry : adjacencyList)
+     {
+         maxNode = std::max(maxNode, entry.first);
+         for (int neighbor : entry.second)
+         {
+             maxNode = std::max(maxNode, neighbor);
+         }
+     }
+ 
+     // Create a vector of vectors (one for each node id from 0 to maxNode)
+     std::vector<std::vector<int>> fullAdjList(maxNode + 1);
+     
+     // Fill fullAdjList using the provided adjacencyList; nodes not in the map remain empty.
+     for (const auto &entry : adjacencyList)
+     {
+         fullAdjList[entry.first] = entry.second;
+     }
+ 
+     // Calculate total number of adjacency entries.
+     int totalAdj = 0;
+     for (const auto &neighbors : fullAdjList)
+     {
+         totalAdj += neighbors.size();
+     }
+ 
+     // Resize the flat array and offsets vector.
+     adjacencyArray.resize(totalAdj);
+     // Use offsets size = number of nodes + 1 (last element holds the total count)
+     adjacencyOffsets.resize(fullAdjList.size() + 1, 0);
+ 
+     int offset = 0;
+     for (size_t i = 0; i < fullAdjList.size(); i++)
+     {
+         adjacencyOffsets[i] = offset;
+         // Optionally sort each node's neighbor list for consistency.
+         std::sort(fullAdjList[i].begin(), fullAdjList[i].end());
+         for (int neighbor : fullAdjList[i])
+         {
+             adjacencyArray[offset++] = neighbor;
+         }
+     }
+     adjacencyOffsets[fullAdjList.size()] = totalAdj; // End marker
+ }
+ 

@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <algorithm>
 #include "AdjacencyArrayEdges.hpp"
 
 // Test fixture for BasicEdges

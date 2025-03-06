@@ -6,7 +6,8 @@
 #include <string>
 #include <utility>
 
-#include "BasicEdges.hpp"
+#include "interfaces/IEdges.hpp"
+#include "AdjacencyArrayEdges.hpp"
 #include "Node.hpp"
 
 using namespace std;
@@ -23,8 +24,7 @@ class Graph
 {
 private:
     vector<Node> nodes;           /// the vector of nodes
-    unique_ptr<BasicEdges> edges; /// object holding the pool of edges
-
+    unique_ptr<IEdges> edges;   /// object holding the pool of edges (abstract interface)
 public:
     /**
      * @brief Constructs a graph by parsing from txt files.
