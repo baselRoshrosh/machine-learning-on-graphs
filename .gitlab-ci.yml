@@ -3,7 +3,13 @@ image: debian:latest  # Use Debian which includes Git by default
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
+  - eval
   - deploy
+
+variables:
+  REF_FOLDER: "./ref"  # Path to the reference folder
+  INPUT_FOLDER: "./input"  # Path to the input folder
+  OUTPUT_FOLDER: "./output"  # Path to the output folder
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
@@ -24,7 +30,7 @@ build-job:       # This job runs in the build stage, which runs first.
       - build
   only:
     - main
-    - merge_requests #Runs only on merge requests
+    - merge_requests
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
@@ -44,6 +50,32 @@ lint-test-job:   # This job also runs in the test stage.
     - echo "Linting code... (placeholder)"
     - sleep 1
     - echo "No lint issues found."
+  only:
+   - merge_requests
+
+prepare-results-job:
+  stage: eval
+  script:
+    - pip install .
+    - python scripts/run_strategies_for_eval.py
+  dependencies:
+    - build-job
+
+eval-job:
+  stage: eval
+  before_script:
+    - git clone https://gitlab.informatik.hu-berlin.de/brandtfa/wise2425-evaluation.git
+  script:
+    - |
+      for graph in $(ls $REF_FOLDER); do
+        graph_name="${graph%.zip}"
+        for strategy in KNN Topo2Vec AttributedDeepwalk; do
+          echo "Processing graph: $graph_name with strategy: $strategy"
+          python measure-quality.py -i "$graph_name" -rf "$REF_FOLDER/$graph" -ff "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" -if "$INPUT_FOLDER/graph" --txt
+        done
+      done
+  dependencies:
+    - build-job
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
