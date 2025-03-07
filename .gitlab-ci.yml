@@ -60,6 +60,8 @@ prepare-results-job:
     - python scripts/run_strategies_for_eval.py
   dependencies:
     - build-job
+  only:
+    - merge-requests
 
 eval-job:
   stage: eval
@@ -76,6 +78,9 @@ eval-job:
       done
   dependencies:
     - build-job
+    - prepare-results-job
+  only:
+    - merge-requests
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
