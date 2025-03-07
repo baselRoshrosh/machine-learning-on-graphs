@@ -1,4 +1,4 @@
-import semProject  
+import semProject  # run cmake -DBUILD_TESTS=OFF && make && pip install .
 import os
 
 input_dir = os.path.join("input", "cornell")
