@@ -34,8 +34,6 @@ void AdjacencyArrayEdges::addEdge(int source, int destination)
         return;
     }
 
-    adjacencyArray.resize(adjacencyArray.size() + 2);
-
     // add source->dest
     adjacencyArray.insert(adjacencyArray.begin() + adjacencyOffsets[source], destination);
 
