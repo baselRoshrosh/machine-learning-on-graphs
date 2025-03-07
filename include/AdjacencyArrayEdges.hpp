@@ -87,12 +87,14 @@ public:
      */
     int size() override;
 
+    virtual ~AdjacencyArrayEdges();
+
 protected:
     std::vector<int> adjacencyOffsets;                                         ///< tracks beginning of adjacency list of node in adjacencyArray
     std::vector<int> adjacencyArray;                                           ///< concatenated adjacency lists
     std::unordered_map<std::pair<int, int>, double, struct pair_hash> weights; ///< keeps track of edge weights
 
-    void fillAdjacencyArrayFromList(std::unordered_map<int, std::vector<int>> adjacencyList);
+    void fillAdjacencyArrayFromList(const std::unordered_map<int, std::vector<int>> &adjacencyList);
 };
 
 #endif

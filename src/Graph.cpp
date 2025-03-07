@@ -16,11 +16,10 @@ using namespace std;
  * @param nodesFile The file containing node information.
  * @param edgesFile The file containing edge information.
  */
-Graph::Graph(const string &nodesFile, const string &edgesFile) : edges(make_unique<BasicEdges>())
+Graph::Graph(const string &nodesFile, const string &edgesFile)
 {
-    // Initialize the edges using BasicEdges
-
     // Read edge file
+    vector<pair<int, int>> initialEdges; // Vector to hold all edges
     ifstream edgesFileStream(edgesFile);
     if (!edgesFileStream.is_open())
     {
@@ -35,8 +34,8 @@ Graph::Graph(const string &nodesFile, const string &edgesFile) : edges(make_uniq
         int source, destination;
         if (iss >> source >> destination)
         {
-            // Add edge using BasicEdges' addEdge method
-            edges->addEdge(source, destination);
+            // Collect edge by adding it to the vector
+            initialEdges.emplace_back(source, destination);
         }
         else
         {
@@ -44,6 +43,9 @@ Graph::Graph(const string &nodesFile, const string &edgesFile) : edges(make_uniq
         }
     }
     edgesFileStream.close();
+
+    // Construct AdjacencyArrayEdges using the complete edge set
+    edges = make_unique<AdjacencyArrayEdges>(initialEdges);
 
     // read node file
     ifstream nodesFileStream(nodesFile);
@@ -130,7 +132,7 @@ int Graph::getNodeCount() const
 
 int Graph::getEdgeCount() const
 {
-    auto nonConstEdges = const_cast<BasicEdges *>(this->edges.get());
+    auto nonConstEdges = const_cast<IEdges *>(this->edges.get());
     return nonConstEdges->size();
 }
 

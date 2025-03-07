@@ -245,7 +245,8 @@ double AttributedDeepwalk::measuring_structural_similarity(int node1, int node2)
         return 0.0;
     }
 
-    return intersectionOfCovers.size() / unionOfCovers.size();
+    return static_cast<double>(intersectionOfCovers.size()) / unionOfCovers.size();
+
 }
 
 /*
