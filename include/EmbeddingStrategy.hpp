@@ -137,14 +137,15 @@ protected:
     }
 
     /**
-     * finds the k-most similar nodes to a given query vector by comparing cosine similarities.
+     * Finds the k-most similar nodes to a given query vector by comparing cosine similarities.
      *
      * @param embeddings the embeddings <nodeID, embeddingVector> of a set of nodes.
-     * @param queryVector the embedding vector against which the similarities are computed.
+     * @param queryVector the feature vector (or embedding) against which the similarities are computed.
      * @param kSimilarNodes the number of similar nodes to retrieve.
-     * @return a vector of embedding vectors corresponding to the top-k most similar nodes.
+     * @return a vector of feature vectors corresponding to the actual features of the top-k most similar nodes,
+     *         as obtained from the graph.
      */
-    vector<vector<double>> getSimilarNodes(
+    vector<vector<double>> getFeaturesOfSimilarNodes(
         const unordered_map<int, vector<double>> &embeddings,
         const vector<double> &queryVector,
         int kSimilarNodes)
@@ -188,7 +189,7 @@ protected:
         {
             int nodeID = minHeap.top().second;
             minHeap.pop();
-            topKSimilar.push_back(embeddings.at(nodeID));
+            topKSimilar.push_back(graph->getFeatureById(nodeID)); // returns the node's actual features
         }
         reverse(topKSimilar.begin(), topKSimilar.end());
         return topKSimilar;
