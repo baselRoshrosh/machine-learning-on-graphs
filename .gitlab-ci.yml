@@ -60,6 +60,7 @@ prepare-results-job:
     - cmake .. -DBUILD_TESTS=OFF # Python3 and TEST=ON
     - make
   script:
+    - cd $CI_PROJECT_DIR # ensure we are in project root dir
     - pip install .
     - python3 scripts/run_strategies_for_eval.py
   dependencies:
