@@ -8,6 +8,9 @@ CMakeCache.txt
 cmake_install.cmake
 CTestTestfile.cmake
 
+# Ignore build python module
+semProject/*.so
+
 # Ignore Visual Studio files
 *.vcxproj
 *.vcxproj.filters
