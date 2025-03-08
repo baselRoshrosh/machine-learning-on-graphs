@@ -61,6 +61,7 @@ prepare-results-job:
     - make
   script:
     - cd $CI_PROJECT_DIR # ensure we are in project root dir
+    - source venv/bin/activate
     - pip install .
     - python3 scripts/run_strategies_for_eval.py
   dependencies:
@@ -76,6 +77,7 @@ eval-job:
     - python -m ensurepip --upgrade  # Ensure pip is up to date
     - pip install -r $EVAL_SCRIPT_FOLDER/requirements.txt  # Install dependencies
   script:
+    - source venv/bin/activate
     - |
       for graph in $(ls $REF_FOLDER); do
         graph_name="${graph%.zip}"

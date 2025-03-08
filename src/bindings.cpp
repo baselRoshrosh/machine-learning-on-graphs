@@ -24,7 +24,7 @@ PYBIND11_MODULE(semProject, m)
         .def("extract_results", &StrategyRunner<AttributedDeepwalk>::extractResults, "extracts results")
         .def("configure", &StrategyRunner<AttributedDeepwalk>::configure, "configure parameters")
         .def("reset", &StrategyRunner<AttributedDeepwalk>::reset, "resets all configurations")
-        .def("saveFeatures", &StrategyRunner<AttributedDeepwalk>::saveFeatures, "saves Features as in original format");
+        .def("save_features", &StrategyRunner<AttributedDeepwalk>::saveFeatures, "saves features as in original format");
 
     py::class_<StrategyRunner<KNN>>(m, "KNN")
         .def(py::init<shared_ptr<Graph>>(), py::arg("graph"))
@@ -32,7 +32,7 @@ PYBIND11_MODULE(semProject, m)
         .def("extract_results", &StrategyRunner<KNN>::extractResults, "extracts results")
         .def("configure", &StrategyRunner<KNN>::configure, "configure kNN-parameters")
         .def("reset", &StrategyRunner<KNN>::reset, "resets all configurations")
-        .def("saveFeatures", &StrategyRunner<KNN>::saveFeatures, "saves Features as in original format");
+        .def("save_features", &StrategyRunner<KNN>::saveFeatures, "saves features as in original format");
 
     py::class_<StrategyRunner<Topo2Vec>>(m, "Topo2Vec")
         .def(py::init<shared_ptr<Graph>>(), py::arg("graph"))
@@ -40,5 +40,5 @@ PYBIND11_MODULE(semProject, m)
         .def("extract_results", &StrategyRunner<Topo2Vec>::extractResults, "extracts results")
         .def("configure", &StrategyRunner<Topo2Vec>::configure, "configure parameters")
         .def("reset", &StrategyRunner<Topo2Vec>::reset, "resets all configurations")
-        .def("saveFeatures", &StrategyRunner<Topo2Vec>::saveFeatures, "saves Features as in original format");
+        .def("save_features", &StrategyRunner<Topo2Vec>::saveFeatures, "saves features as in original format");
 }
