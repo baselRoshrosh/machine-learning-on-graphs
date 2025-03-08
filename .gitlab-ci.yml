@@ -29,9 +29,6 @@ build-job:       # This job runs in the build stage, which runs first.
   artifacts:
     paths:
       - build
-  only:
-    - main
-    - merge_requests
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
@@ -42,8 +39,6 @@ unit-test-job:   # This job runs in the test stage.
     - ctest --output-on-failure  # Run tests
   dependencies:
     - build-job  # This job depends on the build job
-  only:
-    - merge_requests #Runs only on merge requests
 
 lint-test-job:   # This job also runs in the test stage.
   stage: test    # It can run at the same time as unit-test-job (in parallel).
@@ -51,8 +46,6 @@ lint-test-job:   # This job also runs in the test stage.
     - echo "Linting code... (placeholder)"
     - sleep 1
     - echo "No lint issues found."
-  only:
-   - merge_requests
 
 prepare-results-job:
   stage: eval
@@ -61,8 +54,6 @@ prepare-results-job:
     - python scripts/run_strategies_for_eval.py
   dependencies:
     - build-job
-  only:
-    - merge-requests
 
 eval-job:
   stage: eval
@@ -78,8 +69,6 @@ eval-job:
   dependencies:
     - build-job
     - prepare-results-job
-  only:
-    - merge-requests
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
@@ -93,6 +82,3 @@ deploy-job:      # This job runs in the deploy stage.
       - artifacts/
   dependencies:
     - build-job  # Ensure it gets build artifacts
-  only:
-    - main
-    - merge_requests
