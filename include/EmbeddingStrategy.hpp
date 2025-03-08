@@ -144,7 +144,7 @@ protected:
      * @param kSimilarNodes the number of similar nodes to retrieve.
      * @return a vector of embedding vectors corresponding to the top-k most similar nodes.
      */
-    vector<vector<double>> getSimilarNodes(
+    vector<int> getSimilarNodes(
         const unordered_map<int, vector<double>> &embeddings,
         const vector<double> &queryVector,
         int kSimilarNodes)
@@ -183,12 +183,12 @@ protected:
                 minHeap.emplace(cosineSimilarity, nodeID);
             }
         }
-        vector<vector<double>> topKSimilar;
+        vector<int> topKSimilar;
         while (!minHeap.empty())
         {
             int nodeID = minHeap.top().second;
             minHeap.pop();
-            topKSimilar.push_back(embeddings.at(nodeID));
+            topKSimilar.push_back(nodeID);
         }
         reverse(topKSimilar.begin(), topKSimilar.end());
         return topKSimilar;

@@ -151,10 +151,12 @@ TEST_F(EmbeddingStrategyTest, GetSimilarNodes)
         {4, {0.1, 0.0, 0.3}}};
     vector<double> queryVector = {0.1, 0.2, 0.3};
     auto similarNodes = embeddingStrategy->getSimilarNodes(embeddings, queryVector, 2);
-    // Ensure that none of the returned vectors exactly match the query vector.
-    for (const auto &vec : similarNodes)
+    
+    // Ensure that none of the returned node IDs corresponds to the query node.
+    // Assuming that the query vector corresponds to node 1, we check that node 1 is not returned.
+    for (int nodeID : similarNodes)
     {
-        EXPECT_NE(vec, queryVector);
+        EXPECT_NE(nodeID, 1);
     }
     EXPECT_EQ(similarNodes.size(), 2);
 }

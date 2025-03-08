@@ -44,7 +44,7 @@ public:
      */
     virtual void reset() = 0;
 
-    void guessFeatures(int nodeId, const vector<vector<double>>& similarNodes) {
+    void guessFeatures(int nodeId, const vector<int> &similarNodesIDs) {
         if (!graph) return;
 
         vector<double> nodeFeatures = graph->getFeatureById(nodeId);
@@ -55,7 +55,8 @@ public:
                 double sum = 0.0;
                 int count = 0;
 
-                for (const auto& neighborFeatures : similarNodes) {
+                for (int neighborID : similarNodesIDs) {
+                    vector<double> neighborFeatures = graph->getFeatureById(neighborID);
                     if (i < neighborFeatures.size() && !isnan(neighborFeatures[i])) {
                         sum += neighborFeatures[i];
                         ++count;

@@ -111,6 +111,35 @@ void KNN::calcPaths(const Graph &graph, int k)
     }
 }
 
+// KNN-specific version of guessFeatures that takes feature vectors directly.
+void guessFeaturesKNN(Graph &graph, int nodeId, const vector<vector<double>> &similarNodes) {
+    vector<double> nodeFeatures = graph.getFeatureById(nodeId);
+    bool featuresUpdated = false;
+
+    for (size_t i = 0; i < nodeFeatures.size(); ++i) {
+        if (isnan(nodeFeatures[i])) {
+            double sum = 0.0;
+            int count = 0;
+
+            for (const auto &neighborFeatures : similarNodes) {
+                if (i < neighborFeatures.size() && !isnan(neighborFeatures[i])) {
+                    sum += neighborFeatures[i];
+                    ++count;
+                }
+            }
+
+            if (count > 0) {
+                nodeFeatures[i] = sum / count;
+                featuresUpdated = true;
+            }
+        }
+    }
+
+    if (featuresUpdated) {
+        graph.updateFeatureById(nodeId, nodeFeatures);
+    }
+}
+
 void KNN::estimateFeatures(Graph &graph, int k)
 {
     vector<int> nodes = graph.getNodes();
@@ -147,7 +176,7 @@ void KNN::estimateFeatures(Graph &graph, int k)
                 similarNodes.push_back(graph.getFeatureById(neighborsSorted[i].second));
             }
 
-            guessFeatures(node, similarNodes);
+            guessFeaturesKNN(graph, node, similarNodes);
             //revisit a node if it still has a missing feature
             for (double feature : graph.getFeatureById(node))
             {

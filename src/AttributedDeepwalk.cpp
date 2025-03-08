@@ -33,10 +33,8 @@ void AttributedDeepwalk::run() {
 
         if (sample.empty()) continue;  // Ensuring there is at least one valid sample
 
-        vector<vector<double>> nodeList = getSimilarNodes(embeddings, sample.begin()->second, coverDepth); 
-
-
-        guessFeatures(node, nodeList);
+        vector<int> similarNodeIDs = getSimilarNodes(embeddings, sample.begin()->second, coverDepth);
+        guessFeatures(node, similarNodeIDs);
     }
 }
 
