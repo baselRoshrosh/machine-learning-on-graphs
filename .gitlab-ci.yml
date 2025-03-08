@@ -49,8 +49,10 @@ lint-test-job:   # This job also runs in the test stage.
 
 prepare-results-job:
   stage: eval
+  before_script:
+    - python -m ensurepip --upgrade # pip has to be installed
   script:
-    - pip install .
+    - pip install 
     - python scripts/run_strategies_for_eval.py
   dependencies:
     - build-job
