@@ -11,7 +11,7 @@ CTestTestfile.cmake
 # Ignore build python module
 semProject/*.so
 semProject/__pycache__/
-semProject/semProject.egg-info/
+semProject.egg-info/
 
 # Ignore Visual Studio files
 *.vcxproj

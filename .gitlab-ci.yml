@@ -54,7 +54,7 @@ prepare-results-job:
     - apt-get update && apt-get install -y python3 python3-pip python3-venv
     - python3 -m venv venv  # Create a virtual environment
     - source venv/bin/activate  # Activate the virtual environment
-    - python -m pip install --upgrade pip  # Ensure pip is up to date
+    - python -m ensurepip --upgrade  # Ensure pip is up to date
   script:
     - pip install .
     - python3 scripts/run_strategies_for_eval.py
@@ -68,7 +68,7 @@ eval-job:
     - apt-get update && apt-get install -y python3 python3-pip python3-venv
     - python3 -m venv venv  # Create a virtual environment
     - source venv/bin/activate  # Activate the virtual environment
-    - python -m pip install --upgrade pip  # Ensure pip is up to date
+    - python -m ensurepip --upgrade  # Ensure pip is up to date
     - pip install -r $EVAL_SCRIPT_FOLDER/requirements.txt  # Install dependencies
   script:
     - |
