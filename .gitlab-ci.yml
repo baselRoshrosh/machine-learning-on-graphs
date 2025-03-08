@@ -7,7 +7,8 @@ stages:          # List of stages for jobs, and their order of execution
   - deploy
 
 variables:
-  REF_FOLDER: "./ref"  # Path to the reference folder
+  EVAL_SCRIPT_FOLDER: "./extlibs/eval"
+  REF_FOLDER: "./extlibs/eval/ref"  # Path to the reference folder
   INPUT_FOLDER: "./input"  # Path to the input folder
   OUTPUT_FOLDER: "./output"  # Path to the output folder
 
@@ -65,15 +66,13 @@ prepare-results-job:
 
 eval-job:
   stage: eval
-  before_script:
-    - git clone https://gitlab.informatik.hu-berlin.de/brandtfa/wise2425-evaluation.git
   script:
     - |
       for graph in $(ls $REF_FOLDER); do
         graph_name="${graph%.zip}"
         for strategy in KNN Topo2Vec AttributedDeepwalk; do
           echo "Processing graph: $graph_name with strategy: $strategy"
-          python measure-quality.py -i "$graph_name" -rf "$REF_FOLDER/$graph" -ff "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" -if "$INPUT_FOLDER/graph" --txt
+          python $EVAL_SCRIPT_FOLDER/measure-quality.py -i "$graph_name" -rf "$REF_FOLDER/$graph" -ff "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" -if "$INPUT_FOLDER/graph" --txt
         done
       done
   dependencies:
