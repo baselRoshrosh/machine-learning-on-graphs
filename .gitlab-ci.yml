@@ -52,7 +52,6 @@ prepare-results-job:
   before_script:
     # installing python
     - apt-get update && apt-get install -y python3 python3-pip
-    - python3 -m ensurepip --upgrade
     - python3 -m pip install --upgrade pip
   script:
     - pip install 
@@ -65,7 +64,6 @@ eval-job:
   before_script:
     # installing python
     - apt-get update && apt-get install -y python3 python3-pip
-    - python3 -m ensurepip --upgrade
     - python3 -m pip install --upgrade pip
   script:
     - |
