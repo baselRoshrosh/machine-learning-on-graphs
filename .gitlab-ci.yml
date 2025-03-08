@@ -55,6 +55,9 @@ prepare-results-job:
     - python3 -m venv venv  # Create a virtual environment
     - source venv/bin/activate  # Activate the virtual environment
     - python -m ensurepip --upgrade  # Ensure pip is up to date
+    - mkdir -p build && cd build
+    - cmake .. -DBUILD_TESTS=OFF # Python3 and TEST=ON
+    - make
   script:
     - pip install .
     - python3 scripts/run_strategies_for_eval.py
