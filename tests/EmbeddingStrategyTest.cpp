@@ -27,7 +27,7 @@ public:
 
     // Expose the protected methods for testing.
     using EmbeddingStrategy::getSample;
-    using EmbeddingStrategy::getSimilarNodes;
+    using EmbeddingStrategy::getFeaturesOfSimilarNodes;
     using EmbeddingStrategy::skipGram;
 };
 
@@ -140,9 +140,9 @@ TEST_F(EmbeddingStrategyTest, ZeroOrNegativeSampleSize)
 }
 
 /*
- * ========= getSimilarNodes() Tests ===================
+ * ========= getFeaturesOfSimilarNodes() Tests ===================
  */
-TEST_F(EmbeddingStrategyTest, GetSimilarNodes)
+TEST_F(EmbeddingStrategyTest, GetFeatuesOfSimilarNodes)
 {
     unordered_map<int, vector<double>> embeddings = {
         {1, {0.1, 0.2, 0.3}},
@@ -150,7 +150,7 @@ TEST_F(EmbeddingStrategyTest, GetSimilarNodes)
         {3, {0.3, 0.2, 0.1}},
         {4, {0.1, 0.0, 0.3}}};
     vector<double> queryVector = {0.1, 0.2, 0.3};
-    auto similarNodes = embeddingStrategy->getSimilarNodes(embeddings, queryVector, 2);
+    auto similarNodes = embeddingStrategy->getFeaturesOfSimilarNodes(embeddings, queryVector, 2);
     // Ensure that none of the returned vectors exactly match the query vector.
     for (const auto &vec : similarNodes)
     {

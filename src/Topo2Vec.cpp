@@ -30,7 +30,7 @@ void Topo2Vec::run()
     for (auto node : graph->getNodes())
     {
         auto nodesSample = getSample(embeddings, sampleSize);
-        vector<vector<double>> similarNodes = getSimilarNodes(embeddings, embeddings[node], k);
+        vector<vector<double>> similarNodes = getFeaturesOfSimilarNodes(embeddings, embeddings[node], k);
         guessFeatures(node, similarNodes);
   
     }
