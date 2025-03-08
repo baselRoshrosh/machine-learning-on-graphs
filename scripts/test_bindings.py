@@ -1,4 +1,6 @@
-import semProject  # run cmake -DBUILD_TESTS=OFF && make && pip install .
+# run this in your build folder to ensure the module is usable:
+# cmake -DBUILD_TESTS=OFF && make && cd .. && pip install .
+import semProject 
 import os
 
 input_dir = os.path.join("input", "cornell")

@@ -5,11 +5,11 @@ import zipfile
 import shutil  # for deleting temporary files
 
 # Strategies to perform
-strategies = [sp.KNN(), sp.Topo2Vec(), sp.AttributedDeepwalk()]
-strategie_names = ['KNN', 'Topo2Vec', 'AttributedDeepwalk']
+strategies = [sp.KNN, sp.Topo2Vec, sp.AttributedDeepwalk]
+strategy_names = ['KNN', 'Topo2Vec', 'AttributedDeepwalk']
 
 # Paths
-REF_FOLDER = "./ref"
+REF_FOLDER = "./extlibs/eval/ref"
 INPUT_FOLDER = "./input"
 OUTPUT_FOLDER = "./output"
 TEMP_UNZIP_FOLDER = "./temp_unzip"
@@ -27,14 +27,16 @@ for graph_name in graph_names:
     # etracting graph files
     with zipfile.ZipFile(os.path.join(INPUT_FOLDER, graph_name + ".zip"), 'r') as zip_ref:
         zip_ref.extractall(TEMP_UNZIP_FOLDER)
-    
+        
     # performing strategies
     for i, strategy in enumerate(strategies):
+        print(os.path.join(TEMP_UNZIP_FOLDER, graph_name) + "_features.txt")
         # 1: getting graph
-        graph = sp.Graph(os.path.join(INPUT_FOLDER, graph_name) + "_features.txt", 
-                         os.path.join(INPUT_FOLDER, graph_name) + "_edges.txt")
+        graph = sp.Graph(os.path.join(TEMP_UNZIP_FOLDER, graph_name) + "_features.txt", 
+                         os.path.join(TEMP_UNZIP_FOLDER, graph_name) + "_edges.txt")
 
         # 2: initializing strategies
+        print(f"performing strategy {strategy_names[i]}")
         x = strategy(graph)
         
         # 3: configure
@@ -42,8 +44,8 @@ for graph_name in graph_names:
         # 4: run and extract
         x.run()
         results = x.extract_results()
-        x.save_features(results, os.path.join(OUTPUT_FOLDER, f"{graph_name}_{strategie_names[i]}txt"))
+        x.save_features(results, os.path.join(OUTPUT_FOLDER, f"{graph_name}_{strategy_names[i]}txt"))
         
-     # Clean up by removing unzipped graph files
-    shutil.rmtree(TEMP_UNZIP_FOLDER)
-    os.makedirs(TEMP_UNZIP_FOLDER) # rebuilding temporary dir
+# Clean up by removing unzipped graph files
+shutil.rmtree(TEMP_UNZIP_FOLDER)
+os.makedirs(TEMP_UNZIP_FOLDER) # rebuilding temporary dir

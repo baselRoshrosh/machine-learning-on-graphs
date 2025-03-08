@@ -13,6 +13,10 @@ semProject/*.so
 semProject/__pycache__/
 semProject.egg-info/
 
+# Ignore temporary directories
+temp_unzip/
+output/
+
 # Ignore Visual Studio files
 *.vcxproj
 *.vcxproj.filters
