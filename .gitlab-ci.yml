@@ -56,7 +56,7 @@ prepare-results-job:
     - python3 -m pip install --upgrade pip
   script:
     - pip install 
-    - python scripts/run_strategies_for_eval.py
+    - python3 scripts/run_strategies_for_eval.py
   dependencies:
     - build-job
 
@@ -73,7 +73,7 @@ eval-job:
         graph_name="${graph%.zip}"
         for strategy in KNN Topo2Vec AttributedDeepwalk; do
           echo "Processing graph: $graph_name with strategy: $strategy"
-          python $EVAL_SCRIPT_FOLDER/measure-quality.py -i "$graph_name" -rf "$REF_FOLDER/$graph" -ff "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" -if "$INPUT_FOLDER/graph" --txt
+          python3 $EVAL_SCRIPT_FOLDER/measure-quality.py -i "$graph_name" -rf "$REF_FOLDER/$graph" -ff "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" -if "$INPUT_FOLDER/graph" --txt
         done
       done
   dependencies:
