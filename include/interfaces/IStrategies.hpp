@@ -44,6 +44,14 @@ public:
      */
     virtual void reset() = 0;
 
+    /**
+     * @brief getter for the graph
+     * @return shared pointer to the graph object
+     */
+    shared_ptr<Graph> getGraph() const {
+        return graph;
+    }
+
     void guessFeatures(int nodeId, const vector<vector<double>>& similarNodes) {
         if (!graph) return;
 

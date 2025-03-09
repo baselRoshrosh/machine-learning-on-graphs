@@ -71,6 +71,8 @@ public:
      */
     void saveFeatures(const string &filename) const
     {
+        shared_ptr<Graph> graph = strategy.getGraph();
+
         ofstream outFile(filename);
         if (!outFile.is_open())
         {

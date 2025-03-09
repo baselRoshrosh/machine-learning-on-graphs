@@ -23,7 +23,7 @@ int main()
     cout << "Extracted result" << endl;
     
     cout << "Saving to file..." << endl;
-    knn.saveFeatures(resultGraph, "../results/twitch_features_result.txt");
+    knn.saveFeatures("../results/twitch_features_result.txt");
     
     knn.reset();
     cout << "Reset parameters for knn" << endl;
