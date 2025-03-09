@@ -27,6 +27,7 @@ build-job:
   artifacts:
     paths:
       - build/
+      - semProject/
 
 unit-test-job:
   stage: test
@@ -47,34 +48,19 @@ lint-test-job:
 
 prepare-results-job:
   stage: eval
-  before_script:
-    - apt-get update && apt-get install -y git cmake g++ python3 python3-pip python3-venv
-    - python3 -m venv venv && source venv/bin/activate
-    - python -m ensurepip --upgrade
-    - mkdir -p build && cd build
-    - cmake .. -DBUILD_TESTS=OFF
-    - make
+  dependencies:
+    - build-job
   script:
-    - source venv/bin/activate
     - cd $CI_PROJECT_DIR
     - pip install .
-    - python3 scripts/run_strategies_for_eval.py
+    - python scripts/run_strategies_for_eval.py
   artifacts:
     paths:
       - $OUTPUT_FOLDER/
-      - venv/
-  dependencies:
-    - build-job
 
 eval-job:
   stage: eval
-  before_script:
-    - apt-get update && apt-get install -y python3 python3-pip python3-venv
-    - python3 -m venv venv && source venv/bin/activate
-    - python -m ensurepip --upgrade
-    - pip install -r $EVAL_SCRIPT_FOLDER/requirements.txt
   script:
-    - source venv/bin/activate
     - |
       for graph in $(ls $REF_FOLDER); do
         graph_name="${graph%.zip}"
