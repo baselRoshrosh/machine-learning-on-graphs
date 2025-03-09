@@ -8,19 +8,8 @@
 
 using namespace std;
 
-// Helper function to create temporary test files
-void createTempFile(const string &filename, const string &content)
-{
-    ofstream outFile(filename);
-    outFile << content;
-    outFile.close();
-}
-
-// Temporary test files with improved connectivity
-const string NODES_FILE = "knn_test_nodes_improved.txt";
-const string NODES_FILE_INPUT = "1\t1.0,NAN\t0\n2\t2.0,3.0\t1\n3\t3.0,4.0\t0\n4\tNAN,5.0\t1";
-const string EDGE_FILE = "knn_test_edges_improved.txt";
-const string EDGE_FILE_INPUT = "1 2\n2 3\n3 4\n1 4"; // Improved connectivity with cycle
+const string NODES_FILE = "../input/cornell/cornell_mcar_0.5.txt";
+const string EDGE_FILE = "../input/cornell/cornell_edges.txt";
 
 // Fixture class for KNN testing
 class KNNTest : public ::testing::Test
@@ -28,10 +17,6 @@ class KNNTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        // Create temporary node and edge files
-        createTempFile(NODES_FILE, NODES_FILE_INPUT);
-        createTempFile(EDGE_FILE, EDGE_FILE_INPUT);
-
         // Initialize Graph using test files
         graph = make_shared<Graph>(NODES_FILE, EDGE_FILE);
     }
@@ -39,8 +24,6 @@ protected:
     void TearDown() override
     {
         graph.reset();
-        remove(NODES_FILE.c_str());
-        remove(EDGE_FILE.c_str());
     }
 
     shared_ptr<Graph> graph;
@@ -51,20 +34,27 @@ TEST_F(KNNTest, EstimateFeaturesFillsMissingValuesThroughRun)
 {
     KNN knn(graph);
     knn.configure({{"k", 3}, {"maxIterations", 5}});
-    knn.run();
 
-    // Check if missing values were estimated
-    vector<double> features1 = graph->getFeatureById(1);
-    vector<double> features4 = graph->getFeatureById(4);
-
-    // Ensure missing values are replaced (adjust conditions based on KNN logic)
-    for (double feature : features1)
+    // Check if node 1 had missing values before running KNN
+    vector<double> beforeRun = graph->getFeatureById(1);
+    bool hadMissingValues = false;
+    for (double feature : beforeRun)
     {
-        ASSERT_FALSE(isnan(feature)); // No NaNs should remain
+        if (isnan(feature))
+        {
+            hadMissingValues = true;
+            break;
+        }
     }
-    for (double feature : features4)
+    EXPECT_TRUE(hadMissingValues); // Ensure at least one NaN existed before
+
+    // Run KNN and check again
+    knn.run();
+    vector<double> afterRun = graph->getFeatureById(1);
+
+    for (double feature : afterRun)
     {
-        ASSERT_FALSE(isnan(feature));
+        EXPECT_FALSE(isnan(feature)); // Ensure all missing values are filled
     }
 }
 

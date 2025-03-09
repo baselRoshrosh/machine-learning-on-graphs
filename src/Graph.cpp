@@ -150,6 +150,15 @@ vector<double> Graph::getFeatureById(int nodeId) const
 
 void Graph::updateFeatureById(int nodeId, const vector<double> &newFeatures)
 {
+    // Determine expected feature size from first node
+    size_t expectedFeatureSize = nodes.empty() ? 0 : nodes[0].getFeatureVector().size();
+
+    // Validate feature vector length
+    if (newFeatures.size() != expectedFeatureSize)
+    {
+        throw invalid_argument("Feature vector length mismatch");
+    }
+
     for (auto &node : nodes)
     {
         if (node.getId() == nodeId)

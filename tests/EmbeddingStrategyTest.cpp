@@ -41,7 +41,7 @@ protected:
     // (Here we use the real Cornell files—adjust the paths if needed.)
     void SetUp() override
     {
-        graph = make_shared<Graph>("../input/cornell/cornell_features.txt",
+        graph = make_shared<Graph>("../input/cornell/cornell_mcar_0.5.txt",
                                         "../input/cornell/cornell_edges.txt");
         embeddingStrategy = make_unique<TestableEmbeddingStrategy>(graph);
     }
