@@ -11,11 +11,11 @@ using namespace std;
 /**
  * @brief A class to run a strategy on a given graph.
  *
- * This is a wrapper around a strategy that runs any strategy 
+ * This is a wrapper around a strategy that runs any strategy
  * (KNN, Topo2Vec, or Attributed Deepwalk) on a graph.
  *
  * @tparam Strategy The strategy to run on the graph.
- * 
+ *
  * Example usage:
  * ```cpp
  * StrategieRunner<KNN> knn;
@@ -25,7 +25,7 @@ using namespace std;
  * knn.saveFeatures(graphResult, "knn_results.txt");
  * knn.reset();
  * ```
- * 
+ *
  * @note This template avoids runtime polymorphism for performance and ensures
  * strategy operations are optimized at compile time. Therefore it adheres to the
  * IStrategies interface
@@ -84,7 +84,14 @@ public:
             const auto &features = graph->getFeatureById(nodeId);
             for (size_t i = 0; i < features.size(); ++i)
             {
-                outFile << features[i];
+                if (isnan(features[i]))
+                {
+                    outFile << "#";
+                }
+                else
+                {
+                    outFile << features[i];
+                }
                 if (i != features.size() - 1)
                 {
                     outFile << ",";
