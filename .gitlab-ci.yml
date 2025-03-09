@@ -52,8 +52,9 @@ prepare-results-job:
   dependencies:
     - build-job
   before_script:
-    - pip install --upgrade pip
     - python -m venv prepare-env
+    - source prepare-env/bin/activate
+    - pip install --upgrade pip && deactivate
   script:
     - source prepare-env/bin/activate
     - cd $CI_PROJECT_DIR
