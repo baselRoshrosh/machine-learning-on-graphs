@@ -145,10 +145,13 @@ TEST_F(GraphTest, IsolatedNodes)
 // Test Duplicate edges should not be duplicated
 TEST_F(GraphTest, DuplicateEdges)
 {
-    size_t initialEdgeCount = graph->getEdgeCount();
-
-    int nodeA = 5, nodeB = 15;
     auto edges = graph->getEdges();
+    int nodeA = 57, nodeB = 96;
+    // Check if edge exists
+    EXPECT_TRUE(std::find(edges.begin(), edges.end(), std::make_pair(nodeA, nodeB)) != edges.end()) 
+        << "Edge (" << nodeA << ", " << nodeB << ") should exist in the dataset.";
+
+    
     int count = std::count(edges.begin(), edges.end(), std::make_pair(nodeA, nodeB));
     EXPECT_LE(count, 1) << "Graph should not contain duplicate edges.";
 }

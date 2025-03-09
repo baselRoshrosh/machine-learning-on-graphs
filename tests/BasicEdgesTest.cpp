@@ -71,7 +71,9 @@ TEST_F(BasicEdgesTest, AddEdge)
     size_t initialSize = edges->getEdges().size();
 
     // Pick two nodes that don't already have an edge
-    int node1 = 5, node2 = 10;
+    int node1 = 5, node2 = 100;
+    EXPECT_FALSE(edges->isEdge(node1, node2));
+
     edges->addEdge(node1, node2);
 
     size_t currentSize = edges->getEdges().size();
@@ -101,7 +103,7 @@ TEST_F(BasicEdgesTest, SetEdgeWeight)
 {
     double weight = 0.5;
     int node1 = 173, node2 = 96; // Pick nodes from the dataset
-
+    EXPECT_TRUE(edges->isEdge(node1, node2));
     edges->setWeight(node1, node2, weight);
     EXPECT_EQ(edges->getWeight(node1, node2), weight) << "Weight should be updated.";
 }
