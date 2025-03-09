@@ -1,4 +1,4 @@
-image: debian:latest
+image: ubuntu:latest
 
 stages:
   - build
@@ -62,6 +62,8 @@ prepare-results-job:
 
 eval-job:
   stage: eval
+  dependencies:
+    - prepare-results-job
   script:
     - |
       for graph in $(ls $REF_FOLDER); do
@@ -75,8 +77,6 @@ eval-job:
             -if "$INPUT_FOLDER/graph" --txt
         done
       done
-  dependencies:
-    - prepare-results-job
 
 deploy-job:
   stage: deploy
