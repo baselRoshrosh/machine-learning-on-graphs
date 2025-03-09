@@ -51,7 +51,11 @@ prepare-results-job:
   stage: eval
   dependencies:
     - build-job
+  before_script:
+    - pip install --upgrade pip
+    - python -m venv prepare-env
   script:
+    - source prepare-env/bin/activate
     - cd $CI_PROJECT_DIR
     - pip install .
     - python scripts/run_strategies_for_eval.py
@@ -64,7 +68,11 @@ eval-job:
   stage: eval
   dependencies:
     - prepare-results-job
+  before_script:
+    - pip install --upgrade pip
+    - python -m venv eval-env
   script:
+    - source eval-env/bin/activate
     - |
       for graph in $(ls $REF_FOLDER); do
         graph_name="${graph%.zip}"
