@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <map>
+#include <cmath>
 
 using namespace std;
 
