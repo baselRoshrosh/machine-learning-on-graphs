@@ -108,8 +108,8 @@ eval-job:
           python3 $EVAL_SCRIPT_FOLDER/measure-quality.py \
             -i "$graph_name" \
             -rf $REF_FOLDER \
-            -ff "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" \
-            -if $INPUT_FOLDER --txt | tee -a $RESULTS_FOLDER/${graph_name}_${strategy}_log.txt
+            -ff "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" --txt \
+            -if $INPUT_FOLDER | tee -a $RESULTS_FOLDER/${graph_name}_${strategy}_log.txt
         done
       done
   artifacts:
