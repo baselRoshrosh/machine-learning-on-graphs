@@ -32,7 +32,7 @@ build-job:
       - semProject/
       - extlibs/eval/
 
-unit-test-job:
+cpp-test-job:
   stage: test
   before_script:
     - apt-get update && apt-get install -y cmake g++
@@ -41,6 +41,23 @@ unit-test-job:
     - ctest --output-on-failure
   dependencies:
     - build-job
+
+python-test-job:
+  stage: test
+  image: python
+  before_script:
+    - pip install --upgrade pip
+    - python -m venv pytest-env
+    - source pytest-env/bin/activate
+    - pip install --upgrade pip && deactivate
+    # Set PYTHONPATH dynamically to the directory containing 'semProject'
+    - export PYTHONPATH=$PYTHONPATH:$CI_PROJECT_DIR/pytest-env/lib/python$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')/site-packages
+  script:
+    - source pytest-env/bin/activate
+    - cd $CI_PROJECT_DIR
+    - pip install .
+    - pytest tests/python_tests/
+
 
 lint-test-job:
   stage: test
