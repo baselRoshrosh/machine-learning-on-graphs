@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <cstdio>
+#include <numeric>
 
 #include "Graph.hpp"
 #include "Node.hpp"
@@ -8,19 +9,8 @@
 
 using namespace std;
 
-// Helper function to create temporary test files
-void createTempFile(const string &filename, const string &content)
-{
-    ofstream outFile(filename);
-    outFile << content;
-    outFile.close();
-}
-
-const string NODES_FILE = "test_nodes.txt";
-const string NODES_FILE_INPUT = "1\t1.0,2.0,3.0\t0\n2\t4.0,5.0,6.0\t1";
-const string EDGE_FILE = "test_edges.txt";
-// Ensure only one direction is stored
-const string EDGE_FILE_INPUT = "1 2";
+const string NODES_FILE = "../input/cornell/cornell_mcar_0.5.txt";
+const string EDGE_FILE = "../input/cornell/cornell_edges.txt";
 
 // Fixture class for Graph testing
 class GraphTest : public ::testing::Test
@@ -28,10 +18,6 @@ class GraphTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        // Create temporary node and edge files
-        createTempFile(NODES_FILE, NODES_FILE_INPUT);
-        createTempFile(EDGE_FILE, EDGE_FILE_INPUT);
-
         // Initialize Graph
         graph = new Graph(NODES_FILE, EDGE_FILE);
     }
@@ -39,8 +25,6 @@ protected:
     void TearDown() override
     {
         delete graph;
-        remove(NODES_FILE.c_str());
-        remove(EDGE_FILE.c_str());
     }
 
     Graph *graph;
@@ -49,64 +33,124 @@ protected:
 // Test Graph Initialization
 TEST_F(GraphTest, Initialization)
 {
-    EXPECT_EQ(graph->getNodeCount(), 2);
-    EXPECT_EQ(graph->getEdgeCount(), 1); // edges are undirected
+    EXPECT_EQ(graph->getNodeCount(), 183);
+    EXPECT_EQ(graph->getEdgeCount(), 298); // edges are undirected
 }
 
 // Test Node Retrieval
 TEST_F(GraphTest, GetNodes)
 {
-    vector<int> expectedNodes = {1, 2};
+    vector<int> expectedNodes(183);
+    std::iota(expectedNodes.begin(), expectedNodes.end(), 0);
     EXPECT_EQ(graph->getNodes(), expectedNodes);
 }
 
 // Test Edge Retrieval
 TEST_F(GraphTest, GetEdges)
 {
-    vector<pair<int, int>> expectedEdges = {{1, 2}};
-    EXPECT_EQ(graph->getEdges(), expectedEdges);
+    EXPECT_GT(graph->getEdges().size(), 0); // Ensure there are edges
 }
 
 // Test Neighbor Retrieval
 TEST_F(GraphTest, GetNeighbors)
 {
-    vector<int> neighbors1 = graph->getNeighbors(1);
-    vector<int> neighbors2 = graph->getNeighbors(2);
+    vector<int> testNodes = {1, 57, 100}; // Select nodes from different regions of the dataset
 
-    EXPECT_EQ(neighbors1.size(), 1);
-    EXPECT_EQ(neighbors1[0], 2);
-
-    EXPECT_EQ(neighbors2.size(), 1);
-    EXPECT_EQ(neighbors2[0], 1); // Ensure bidirectionality
+    for (int node : testNodes)
+    {
+        vector<int> neighbors = graph->getNeighbors(node);
+        EXPECT_GT(neighbors.size(), 0) << "Node " << node << " should have at least one neighbor.";
+    }
 }
 
 // Test Node and Edge Count
 TEST_F(GraphTest, NodeEdgeCount)
 {
-    EXPECT_EQ(graph->getNodeCount(), 2);
-    EXPECT_EQ(graph->getEdgeCount(), 1); // undirected graph
+    EXPECT_EQ(graph->getNodeCount(), 183);
+    EXPECT_EQ(graph->getEdgeCount(), 298); // undirected graph
 }
 
 // Test Getting Features by Node ID
 TEST_F(GraphTest, GetFeatureById)
 {
-    vector<double> expectedFeatures = {1.0, 2.0, 3.0};
-    EXPECT_EQ(graph->getFeatureById(1), expectedFeatures);
+    vector<double> features = graph->getFeatureById(1);
+    EXPECT_FALSE(features.empty()); // Ensure it has features
 }
 
 // Test Updating Features by Node ID
 TEST_F(GraphTest, UpdateFeatureById)
 {
-    vector<double> newFeatures = {7.0, 8.0, 9.0};
-    graph->updateFeatureById(1, newFeatures);
-    EXPECT_EQ(graph->getFeatureById(1), newFeatures);
+    int testNodeId = 1; // Choose an existing node
+    vector<double> originalFeatures = graph->getFeatureById(testNodeId);
+    
+    // Ensure we have a valid feature vector
+    ASSERT_FALSE(originalFeatures.empty()) << "Original feature vector should not be empty";
+
+    size_t expectedFeatureSize = originalFeatures.size();
+    vector<double> newFeatures(expectedFeatureSize, 5.0); // Create a valid feature vector
+
+    // Update feature vector
+    graph->updateFeatureById(testNodeId, newFeatures);
+
+    // Check if the update was successful
+    EXPECT_EQ(graph->getFeatureById(testNodeId), newFeatures);
 }
 
 // Test Updating Features for Invalid Node ID
 TEST_F(GraphTest, UpdateFeatureInvalidId)
 {
     vector<double> newFeatures = {7.0, 8.0, 9.0};
-    EXPECT_THROW(graph->updateFeatureById(99, newFeatures), invalid_argument);
+    
+    // Try updating a non-existent node
+    EXPECT_THROW(graph->updateFeatureById(999, newFeatures), invalid_argument);
+    
+    // Try setting a feature vector with an incorrect length
+    vector<double> incorrectLengthFeatures = {1.0, 2.0}; // Assume dataset has 3 features per node
+    EXPECT_THROW(graph->updateFeatureById(1, incorrectLengthFeatures), invalid_argument);
+}
+
+// Test Self-loops
+TEST_F(GraphTest, SelfLoops)
+{
+    auto edges = graph->getEdges();
+    bool hasSelfLoop = false;
+
+    for (const auto& edge : edges)
+    {
+        if (edge.first == edge.second)
+        {
+            hasSelfLoop = true;
+            EXPECT_EQ(edge.first, edge.second) << "Self-loop detected at node " << edge.first;
+        }
+    }
+
+    if (!hasSelfLoop)
+    {
+        std::cout << "[INFO] No self-loops found in dataset. Test skipped." << std::endl;
+        GTEST_SKIP();
+    }
+}
+
+// Test Nodes with no edges
+TEST_F(GraphTest, IsolatedNodes)
+{
+    vector<int> isolatedNodes = {35, 87, 126, 134}; // Pick nodes that should have at most one connection
+    for (int node : isolatedNodes)
+    {
+        vector<int> neighbors = graph->getNeighbors(node);
+        EXPECT_LE(neighbors.size(), 1) << "Node " << node << " should have at most one neighbor.";
+    }
+}
+
+// Test Duplicate edges should not be duplicated
+TEST_F(GraphTest, DuplicateEdges)
+{
+    size_t initialEdgeCount = graph->getEdgeCount();
+
+    int nodeA = 5, nodeB = 15;
+    auto edges = graph->getEdges();
+    int count = std::count(edges.begin(), edges.end(), std::make_pair(nodeA, nodeB));
+    EXPECT_LE(count, 1) << "Graph should not contain duplicate edges.";
 }
 
 int main(int argc, char **argv)

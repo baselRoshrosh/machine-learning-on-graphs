@@ -37,7 +37,7 @@ protected:
 
     void SetUp() override
     {
-        graph = make_shared<Graph>("../input/cornell/cornell_features.txt", "../input/cornell/cornell_edges.txt");
+        graph = make_shared<Graph>("../input/cornell/cornell_mcar_0.5.txt", "../input/cornell/cornell_edges.txt");
         adw = make_unique<TestableAttributedDeepwalk>(graph); // Initialize properly
     }
 };
