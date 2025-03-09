@@ -5,18 +5,18 @@ using namespace std;
 
 TEST(NodeTest, Constructor)
 {
-    Node node(1, {0.5, 1.5, 2.5}, 42);
-    EXPECT_EQ(node.getId(), 1);
-    EXPECT_EQ(node.getFeatureVector(), vector<double>({0.5, 1.5, 2.5}));
-    EXPECT_EQ(node.getLabel(), 42);
+    Node node(91, {0.0, 0.0, 0.0}, 3);
+    EXPECT_EQ(node.getId(), 91);
+    EXPECT_EQ(node.getFeatureVector(), vector<double>({0.0, 0.0, 0.0}));
+    EXPECT_EQ(node.getLabel(), 3);
 }
 
 TEST(NodeTest, Getters)
 {
-    Node node(2, {1.0, 2.0, 3.0}, 7);
-    EXPECT_EQ(node.getId(), 2);
-    EXPECT_EQ(node.getFeatureVector(), vector<double>({1.0, 2.0, 3.0}));
-    EXPECT_EQ(node.getLabel(), 7);
+    Node node(91, {0.0, 0.0, 0.0}, 3);
+    EXPECT_EQ(node.getId(), 91);
+    EXPECT_EQ(node.getFeatureVector(), vector<double>({0.0, 0.0, 0.0}));
+    EXPECT_EQ(node.getLabel(), 3);
 }
 
 TEST(NodeTest, DefaultConstructor)
@@ -27,9 +27,9 @@ TEST(NodeTest, DefaultConstructor)
 
 TEST(NodeTest, SetFeatureVector)
 {
-    Node node(3, {2.0, 4.0, 6.0}, 9);
+    Node node(91, {0.0, 0.0, 0.0}, 3);
 
-    vector<double> newFeatures = {3.3, 6.6, 9.9};
+    vector<double> newFeatures = {1.5, 2.5, 3.5};
     node.setFeatureVector(newFeatures);
 
     EXPECT_EQ(node.getFeatureVector(), newFeatures);
