@@ -6,6 +6,7 @@
 #include <fstream>
 #include <map>
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -68,7 +69,7 @@ public:
      *
      * @param fileName The name of the file where the interpreted features will be saved.
      */
-    void saveFeatures(const shared_ptr<Graph> graph, const string &filename) const
+    void saveFeatures(const string &filename) const
     {
         ofstream outFile(filename);
         if (!outFile.is_open())
