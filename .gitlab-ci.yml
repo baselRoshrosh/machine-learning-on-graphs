@@ -1,4 +1,4 @@
-image: ubuntu:latest
+image: debian:latest
 
 stages:
   - build
@@ -47,11 +47,10 @@ lint-test-job:
     - echo "No lint issues found."
 
 prepare-results-job:
+  image: python
   stage: eval
   dependencies:
     - build-job
-  before_script:
-    - apt-get update && apt-get install -y python3 python3-pip
   script:
     - cd $CI_PROJECT_DIR
     - pip install .
@@ -61,6 +60,7 @@ prepare-results-job:
       - $OUTPUT_FOLDER/
 
 eval-job:
+  image: python
   stage: eval
   dependencies:
     - prepare-results-job
