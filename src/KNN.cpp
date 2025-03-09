@@ -19,7 +19,6 @@ void KNN::run()
         return;
     }
     
-    cacheNeighbors(*graph);
     calcPaths(*graph, k);
     estimateFeatures(*graph, k);
 }
@@ -52,7 +51,6 @@ void KNN::configure(const map<string, double> &params)
 
 void KNN::reset()
 {
-    cachedNeighbors.clear();
     precomputedPaths.clear();
     k = 15;
 }
@@ -60,15 +58,6 @@ void KNN::reset()
 /*
  * ======= Strategy Methods ======================
  */
-void KNN::cacheNeighbors(const Graph &graph)
-{
-    //Each node and its neighbors are stored
-    for (const auto &node : graph.getNodes())
-    {
-        cachedNeighbors[node] = graph.getNeighbors(node);
-    }
-}
-
 void KNN::calcPaths(const Graph &graph, int k)
 {    //Calculate the shortest paths for all nodes up to a distance of k.
     for (const auto &node : graph.getNodes())
@@ -88,7 +77,7 @@ void KNN::calcPaths(const Graph &graph, int k)
             int current = toVisit.front();
             toVisit.pop();
  
-            for (int neighbor : cachedNeighbors[current])
+            for (int neighbor : graph.getNeighbors(current))
             {
                 if (visited.find(neighbor) == visited.end()) 
                 {
@@ -195,4 +184,3 @@ void KNN::estimateFeatures(Graph &graph, int k)
         cerr << "Max iteration depth reached. Could not fill all features." << endl;
     }
 }
-
