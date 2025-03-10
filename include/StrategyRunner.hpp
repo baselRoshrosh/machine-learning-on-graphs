@@ -78,7 +78,7 @@ public:
             return;
         }
 
-        outFile << "node_id\tfeature\tlabel" << endl;
+        // outFile << "node_id\tfeature\tlabel" << endl;
 
         for (const auto &nodeId : graph->getNodes())
         {
@@ -96,7 +96,7 @@ public:
                 }
                 if (i != features.size() - 1)
                 {
-                    outFile << ",";
+                    outFile << ", ";
                 }
             }
             outFile << "\t" << graph->getLabelById(nodeId) << endl;
