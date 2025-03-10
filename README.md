@@ -50,10 +50,10 @@ import semProject
 
 graph = semProject.Graph("path/to/nodes_file.txt", "path/to/edges_file.txt")
 deepwalk = semProject.AttributedDeepwalk(graph)
-deepwalk.configure()  # Configure if needed
+deepwalk.configure(walkLength=20, walksPerNode=10)  # Configure if needed
 deepwalk.run()
 results_dw = deepwalk.extract_results()
-print("AttributedDeepwalk Results:", results_dw)
+saveFeatures(graph, "tmp/adw_results.txt")
 ```
 
 #### kNN
@@ -63,10 +63,10 @@ import semProject
 
 graph = semProject.Graph("path/to/nodes_file.txt", "path/to/edges_file.txt")
 knn = semProject.KNN(graph)
-knn.configure()  # Configure if needed
+knn.configure(walkLength=20, walksPerNode=10)  # Configure if needed
 knn.run()
 results_knn = knn.extract_results()
-print("kNN Results:", results_knn)
+saveFeatures(graph, "tmp/knn_results.txt")
 ```
 
 #### Topo2Vec
@@ -76,10 +76,10 @@ import semProject
 
 graph = semProject.Graph("path/to/nodes_file.txt", "path/to/edges_file.txt")
 topo2vec = semProject.Topo2Vec(graph)
-topo2vec.configure()  # Configure if needed
+topo2vec.configure(walkLength=20, walksPerNode=10)  # Configure if needed
 topo2vec.run()
 results_t2v = topo2vec.extract_results()
-print("Topo2Vec Results:", results_t2v)
+saveFeatures(graph, "tmp/topo2vec_results.txt")
 ```
 
 ## Authors and Acknowledgments
