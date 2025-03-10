@@ -3,6 +3,7 @@ image: debian:latest
 stages:
   - build
   - test
+  - prepare-results
   - eval
   - deploy
 
@@ -56,7 +57,7 @@ lint-test-job:
 
 prepare-results-job:
   image: python
-  stage: eval
+  stage: prepare-results
   dependencies:
     - build-job
   only:
@@ -71,6 +72,7 @@ prepare-results-job:
     - source prepare-env/bin/activate
     - cd $CI_PROJECT_DIR
     - pip install .
+    - echo "running strategies:"
     - python scripts/run_strategies_for_eval.py
   artifacts:
     paths:
