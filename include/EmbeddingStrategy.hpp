@@ -10,6 +10,7 @@
 #include <numeric>
 #include <algorithm>
 #include <random>
+#include <iostream>
 
 using namespace std;
 
@@ -49,8 +50,18 @@ protected:
     {
         for (int epoch = 0; epoch < numEpochs; ++epoch)
         {
+            // Print the current epoch number
+            cout << "Epoch " << epoch + 1 << " / " << numEpochs << std::endl;
+
+            int subGraphsConsidered = 0;
             for (const auto &subGraph : subGraphs)
             {
+                subGraphsConsidered++;
+
+                // Print the number of subgraphs processed so far, overwriting the previous line
+                cout << "\r  Subgraph " << subGraphsConsidered << " / " << subGraphs.size() << " processed";
+                cout.flush(); // Ensure the output is immediately printed
+
                 for (size_t i = 0; i < subGraph.size(); ++i)
                 {
                     int targetNode = subGraph[i];
@@ -82,7 +93,7 @@ protected:
      * @param dimensions[in] how many dimensions an embedding should have
      */
     static unordered_map<int, vector<double>> initializeEmbeddings(
-        shared_ptr<Graph> graph, int dimensions) 
+        shared_ptr<Graph> graph, int dimensions)
     {
         unordered_map<int, vector<double>> embeddings;
         random_device rd;
@@ -153,8 +164,8 @@ protected:
         if (embeddings.empty() || queryVector.empty() || kSimilarNodes <= 0)
             return {};
         double sumQuery = accumulate(queryVector.begin(), queryVector.end(), 0.0,
-                                          [](double acc, double v)
-                                          { return acc + v * v; });
+                                     [](double acc, double v)
+                                     { return acc + v * v; });
         double normQuery = sqrt(sumQuery);
         if (normQuery == 0)
             return {};
@@ -235,12 +246,14 @@ protected:
     {
         std::vector<int> negativeSamples;
 
-        if (!graph) {
-            return negativeSamples;  // Return empty vector to avoid segfault
+        if (!graph)
+        {
+            return negativeSamples; // Return empty vector to avoid segfault
         }
 
         std::vector<int> nodes = graph->getNodes();
-        if (nodes.empty()) {
+        if (nodes.empty())
+        {
             return negativeSamples;
         }
 
@@ -257,7 +270,6 @@ protected:
 
         return negativeSamples;
     }
-
 };
 
 #endif // EMBEDDING_STRATEGY_HPP
