@@ -3,6 +3,8 @@ import os
 import zipfile
 import shutil
 import argparse
+import time
+
 
 # Paths
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -33,13 +35,13 @@ def main(graph_name, strategy_name):
         return
 
 
-    print(f"Unpacking graph: {graph_name}")
+    print(f"Unpacking graph: {graph_name}", flush=True)
     # Extract graph files
     with zipfile.ZipFile(graph_path, 'r') as zip_ref:
         zip_ref.extractall(TEMP_UNZIP_FOLDER)
     
     
-    print(f"Processing with strategy: {strategy_name}")
+    print(f"Processing with strategy: {strategy_name}", flush=True)
     feature_file = os.path.join(TEMP_UNZIP_FOLDER, f"{graph_name}_features.txt")
     edge_file = os.path.join(TEMP_UNZIP_FOLDER, f"{graph_name}_edges.txt")
     
@@ -47,9 +49,15 @@ def main(graph_name, strategy_name):
         print(f"Error: Missing extracted files for graph '{graph_name}'.")
         return
 
+    # measuring execution time
+    start_time = time.perf_counter()
+    
     # Initialize graph and strategy
     graph = sp.Graph(feature_file, edge_file)
     strategy = strategy_map[strategy_name](graph)
+    
+    # configure if needed
+    # strategy.configure(param=value, ...)
     
     # Run strategy
     strategy.run()
@@ -60,6 +68,10 @@ def main(graph_name, strategy_name):
 
     output_path = os.path.join(output_dir, f"{graph_name}_features.txt")
     strategy.save_features(graph, output_path)
+    
+    end_time = time.perf_counter()
+    execution_time = end_time - start_time
+    print(f"Execution time: {execution_time:.4f} seconds")
         
     # Create the zip file in the desired folder
     zip_filename = os.path.join(output_dir, f"{graph_name}.zip")
