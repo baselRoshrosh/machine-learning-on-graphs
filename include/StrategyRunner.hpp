@@ -86,7 +86,12 @@ public:
             const auto &features = graph->getFeatureById(nodeId);
             for (size_t i = 0; i < features.size(); ++i)
             {
-                outFile << features[i];
+                if (isnan(features[i])) {
+                    outFile << "0.0";
+                }
+                else {
+                    outFile << features[i];
+                }
 
                 if (i != features.size() - 1)
                 {
