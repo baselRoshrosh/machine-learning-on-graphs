@@ -8,6 +8,14 @@ CMakeCache.txt
 cmake_install.cmake
 CTestTestfile.cmake
 
+# Ignore build python module
+semProject/*.so
+semProject/__pycache__/
+semProject.egg-info/
+
+# Ignore temporary directories
+temp_unzip/
+
 # Ignore Visual Studio files
 *.vcxproj
 *.vcxproj.filters
@@ -27,10 +35,6 @@ CTestTestfile.cmake
 
 # Ignore diff files
 *.diff
-
-# Ignore input folder with node/edge files
-# they should only exist on the machine running the program
-input/
 
 # Ignore macOS specific files
 .DS_Store

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <map>
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -77,7 +78,7 @@ public:
             return;
         }
 
-        outFile << "node_id\tfeature\tlabel" << endl;
+        // outFile << "node_id\tfeature\tlabel" << endl;
 
         for (const auto &nodeId : graph->getNodes())
         {
@@ -85,17 +86,16 @@ public:
             const auto &features = graph->getFeatureById(nodeId);
             for (size_t i = 0; i < features.size(); ++i)
             {
-                if (isnan(features[i]))
-                {
-                    outFile << "#";
+                if (isnan(features[i])) {
+                    outFile << "0.0";
                 }
-                else
-                {
+                else {
                     outFile << features[i];
                 }
+
                 if (i != features.size() - 1)
                 {
-                    outFile << ",";
+                    outFile << ", ";
                 }
             }
             outFile << "\t" << graph->getLabelById(nodeId) << endl;

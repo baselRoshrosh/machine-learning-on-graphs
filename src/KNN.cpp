@@ -70,40 +70,35 @@ void KNN::cacheNeighbors(const Graph &graph)
 }
 
 void KNN::calcPaths(const Graph &graph, int k)
-{   
-    //Calculate the shortest paths for all nodes up to a distance of k.
+{    //Calculate the shortest paths for all nodes up to a distance of k.
     for (const auto &node : graph.getNodes())
     {
         unordered_map<int, int> distances;
-        queue<pair<int, int>> toVisit;
-        // tracks how many nodes have been updated with shortest paths
-        int shortestFound = 0;
-        // prepare bfs
-        for (const auto &otherNode : graph.getNodes())
-        {
-            distances[otherNode] = numeric_limits<int>::max();
-        }
-
+        queue<int> toVisit;
+        unordered_set<int> visited;
+ 
         distances[node] = 0;
-        toVisit.push({node, 0});
+        toVisit.push(node);
+        visited.insert(node);
+ 
+        int foundNeighbors = 0;
         // Perform BFS, but stop if k nearest nodes are found
-        while (!toVisit.empty() && shortestFound < k)
+        while (!toVisit.empty() && foundNeighbors < k)
         {
-            auto [current, depth] = toVisit.front();
+            int current = toVisit.front();
             toVisit.pop();
-
+ 
             for (int neighbor : cachedNeighbors[current])
             {
-                if (depth + 1 < distances[neighbor])
+                if (visited.find(neighbor) == visited.end()) 
                 {
-                    distances[neighbor] = depth + 1;
-                    toVisit.push({neighbor, depth + 1});
-                    ++shortestFound;
-
-                    if (shortestFound >= k)
-                    {
-                        break;
-                    }
+                    distances[neighbor] = distances[current] + 1;
+                    toVisit.push(neighbor);
+                    visited.insert(neighbor);
+                    foundNeighbors++;
+ 
+                    if (foundNeighbors >= k) 
+                        break; 
                 }
             }
         }
@@ -114,52 +109,85 @@ void KNN::calcPaths(const Graph &graph, int k)
 void KNN::estimateFeatures(Graph &graph, int k)
 {
     vector<int> nodes = graph.getNodes();
-    unordered_set<int> nodesToProcess(nodes.begin(), nodes.end());
+
+    //reserve space for needsProcessing
+    vector<bool> needsProcessing;
+    needsProcessing.reserve(graph.getNodeCount()); 
+    needsProcessing.assign(graph.getNodeCount(), true); 
 
     int currentIteration = 0;
     //check every node, if a node still has a missing feature it gets checked again
     //stop if a node got checked to often to avoid infinite loops
-    while (!nodesToProcess.empty() && currentIteration < maxIterations) 
+    while (currentIteration < maxIterations)
     {
-        unordered_set<int> nextIterationNodes;
+        vector<bool> nextIterationProcessing;
+        nextIterationProcessing.reserve(graph.getNodeCount()); 
+        nextIterationProcessing.assign(graph.getNodeCount(), false); 
+        //track if any node is updated to allow early stopping
+        bool anyNodeProcessed = false; 
+
         currentIteration++;
 
-        for (const int &node : nodesToProcess)
+        for (size_t i = 0; i < nodes.size(); ++i)
         {
+            int node = nodes[i];
+
+            if (!needsProcessing[i])
+                continue; 
+
             const auto &topoDistance = precomputedPaths[node];
-            vector<pair<int, int>> neighborsSorted;
+            priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> minHeap;
 
             //filter out the neighbors that are within a distance of 'k'
             for (const auto &[neighbor, distance] : topoDistance)
             {
                 if (neighbor != node && distance <= k)
                 {
-                    neighborsSorted.emplace_back(distance, neighbor);
+                    minHeap.push({distance, neighbor});
                 }
             }
 
-            sort(neighborsSorted.begin(), neighborsSorted.end());
-            vector<vector<double>> similarNodes;
-
             //collect feature vectors of the closest k-neighbors
-            for (size_t i = 0; i < min(k, static_cast<int>(neighborsSorted.size())); ++i)
+            vector<vector<double>> similarNodes;
+            for (int j = 0; j < k && !minHeap.empty(); ++j)
             {
-                similarNodes.push_back(graph.getFeatureById(neighborsSorted[i].second));
+                similarNodes.push_back(graph.getFeatureById(minHeap.top().second));
+                minHeap.pop();
             }
 
-            guessFeatures(node, similarNodes);
             //revisit a node if it still has a missing feature
+            bool hasMissingFeature = false;
             for (double feature : graph.getFeatureById(node))
             {
                 if (isnan(feature))
                 {
-                    nextIterationNodes.insert(node);
+                    hasMissingFeature = true;
                     break;
+                }
+            }
+
+            if (hasMissingFeature)
+            {
+                guessFeatures(node, similarNodes);
+                anyNodeProcessed = true;
+
+                // Check if missing features remain
+                for (double feature : graph.getFeatureById(node))
+                {
+                    if (isnan(feature))
+                    {
+                        nextIterationProcessing[i] = true; 
+                        break;
+                    }
                 }
             }
         }
 
-        nodesToProcess = move(nextIterationNodes);
+        needsProcessing = move(nextIterationProcessing);
+
+        //if no nodes were updated, exit early
+        if (!anyNodeProcessed)
+            break;
     }
 
     if (currentIteration == maxIterations)
@@ -167,3 +195,4 @@ void KNN::estimateFeatures(Graph &graph, int k)
         cerr << "Max iteration depth reached. Could not fill all features." << endl;
     }
 }
+

@@ -59,6 +59,34 @@ void AttributedDeepwalk::configure(const map<string, double>& params) {
     if (params.find("walksPerNode") != params.end()) {
         walksPerNode = static_cast<int>(params.at("walksPerNode"));
     }
+    if (params.find("embeddingDimensions") != params.end())
+    {
+        embeddingDimensions = static_cast<int>(params.at("embeddingDimensions"));
+    }
+    if (params.find("numEpochs") != params.end())
+    {
+        numEpochs = static_cast<int>(params.at("numEpochs"));
+    }
+    if (params.find("sampleSize") != params.end())
+    {
+        sampleSize = static_cast<int>(params.at("sampleSize"));
+    }
+    if (params.find("k") != params.end())
+    {
+        k = static_cast<int>(params.at("k"));
+    }
+    if (params.find("windowSize") != params.end())
+    {
+        windowSize = static_cast<int>(params.at("windowSize"));
+    }
+    if (params.find("numNegativeSamples") != params.end())
+    {
+        numNegativeSamples = static_cast<int>(params.at("numNegativeSamples"));
+    }
+    if (params.find("learningRate") != params.end())
+    {
+        learningRate = params.at("learningRate");
+    }
 }
 
 void AttributedDeepwalk::reset() {
