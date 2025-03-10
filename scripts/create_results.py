@@ -63,7 +63,7 @@ def main(graph_name, strategy_name):
     strategy.run()
     
     # Save results
-    output_dir = os.path.join(OUTPUT_FOLDER, f"{graph_name}_{strategy_name}")
+    output_dir = os.path.join(OUTPUT_FOLDER, strategy_name)
     os.makedirs(output_dir, exist_ok=True)  # Create the output directory if it doesn't exist
 
     output_path = os.path.join(output_dir, f"{graph_name}_features.txt")
