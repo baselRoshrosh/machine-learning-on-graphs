@@ -36,6 +36,7 @@ To get started with this project, follow the steps below.
 3. Install the Python package:
 
     ```sh
+    cd .. # (back to root dir)
     pip install .
     ```
 
