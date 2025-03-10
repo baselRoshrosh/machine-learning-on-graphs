@@ -59,8 +59,10 @@ protected:
                 subGraphsConsidered++;
 
                 // Print the number of subgraphs processed so far, overwriting the previous line
-                cout << "\r  Subgraph " << subGraphsConsidered << " / " << subGraphs.size() << " processed";
-                cout.flush(); // Ensure the output is immediately printed
+                if (subGraphsConsidered % 100 == 0) {
+                    printf("\r  Subgraph %d / %lu", subGraphsConsidered, subGraphs.size());
+                    fflush(stdout);
+                }
 
                 for (size_t i = 0; i < subGraph.size(); ++i)
                 {
@@ -82,6 +84,9 @@ protected:
                     }
                 }
             }
+            // print final 
+            printf("\r  Subgraph %d / %lu", subGraphsConsidered, subGraphs.size());
+            fflush(stdout);
         }
     }
 

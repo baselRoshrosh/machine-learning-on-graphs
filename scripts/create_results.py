@@ -57,7 +57,7 @@ def main(graph_name, strategy_name):
     strategy = strategy_map[strategy_name](graph)
     
     # configure if needed
-    # strategy.configure(param=value, ...)
+    strategy.configure({"numEpochs": 1})
     
     # Run strategy
     strategy.run()
