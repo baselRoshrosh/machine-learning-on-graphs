@@ -3,7 +3,7 @@ image: debian:latest
 stages:
   - build
   - test
-  - prepare-results
+  # - prepare-results
   - eval
   - deploy
 
@@ -55,28 +55,28 @@ lint-test-job:
     - sleep 1
     - echo "No lint issues found."
 
-prepare-results-job:
-  image: python
-  stage: prepare-results
-  dependencies:
-    - build-job
-  only:
-    - main
-  before_script:
-    - python -m venv prepare-env
-    - source prepare-env/bin/activate
-    - pip install --upgrade pip && deactivate
-    # Set PYTHONPATH dynamically to the directory containing 'semProject'
-    - export PYTHONPATH=$PYTHONPATH:$CI_PROJECT_DIR/prepare-env/lib/python$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')/site-packages
-  script:
-    - source prepare-env/bin/activate
-    - cd $CI_PROJECT_DIR
-    - pip install .
-    - echo "running strategies:"
-    - python scripts/run_strategies_for_eval.py
-  artifacts:
-    paths:
-      - $OUTPUT_FOLDER/
+# prepare-results-job:
+#   image: python
+#   stage: prepare-results
+#   dependencies:
+#     - build-job
+#   only:
+#     - main
+#   before_script:
+#     - python -m venv prepare-env
+#     - source prepare-env/bin/activate
+#     - pip install --upgrade pip && deactivate
+#     # Set PYTHONPATH dynamically to the directory containing 'semProject'
+#     - export PYTHONPATH=$PYTHONPATH:$CI_PROJECT_DIR/prepare-env/lib/python$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')/site-packages
+#   script:
+#     - source prepare-env/bin/activate
+#     - cd $CI_PROJECT_DIR
+#     - pip install .
+#     - echo "running strategies:"
+#     - python scripts/run_strategies_for_eval.py
+#   artifacts:
+#     paths:
+#       - $OUTPUT_FOLDER/
 
 eval-job:
   image: python
@@ -94,7 +94,7 @@ eval-job:
     # - pip install -r $EVAL_SCRIPT_FOLDER/requirements-full.txt # if NN for measuring should be trained
   script:
     - source eval-env/bin/activate
-    - set -e # stop loop if command fails
+    # - set -e # stop loop if command fails
     # evaluate each graph x strategy and store in respective file if the reference folder contains files
     - |
 
@@ -111,7 +111,7 @@ eval-job:
           python3 $EVAL_SCRIPT_FOLDER/measure-quality.py \
             -i "$graph_name" \
             -rf $REF_FOLDER \
-            -ff $OUTPUT_FOLDER --txt \
+            -ff $OUTPUT_FOLDER/$strategy/ \
             -if $INPUT_FOLDER | tee -a $RESULTS_FOLDER/${graph_name}_${strategy}_log.txt
         done
       done
