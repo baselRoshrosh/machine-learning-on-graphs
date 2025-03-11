@@ -110,6 +110,10 @@ eval-job:
       for graph in "$REF_FOLDER"/*; do
         graph_name="$(basename "$graph" .zip)"
         for strategy in KNN Topo2Vec AttributedDeepwalk; do
+          if [ ! -f "$OUTPUT_FOLDER/$strategy/$graph_name.zip" ]; then
+            echo "Skipping $graph_name for strategy $strategy (file not found)"
+            continue
+          fi
           echo "Processing graph: $graph_name with strategy: $strategy"
           python3 $EVAL_SCRIPT_FOLDER/measure-quality.py \
             -i "$graph_name" \

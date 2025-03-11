@@ -16,6 +16,9 @@ semProject.egg-info/
 # Ignore temporary directories
 temp_unzip/
 
+# Ignore specific results
+output/*-*/
+
 # Ignore Visual Studio files
 *.vcxproj
 *.vcxproj.filters
