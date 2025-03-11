@@ -111,7 +111,6 @@ eval-job:
         graph_name="$(basename "$graph" .zip)"
         for strategy in KNN Topo2Vec AttributedDeepwalk; do
           echo "Processing graph: $graph_name with strategy: $strategy"
-          cp "$OUTPUT_FOLDER/${graph_name}_${strategy}.txt" "$OUTPUT_FOLDER/${graph_name}_features.txt"
           python3 $EVAL_SCRIPT_FOLDER/measure-quality.py \
             -i "$graph_name" \
             -rf $REF_FOLDER \
