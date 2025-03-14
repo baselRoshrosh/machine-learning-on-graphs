@@ -19,9 +19,7 @@ class KNN : public IStrategies
 private:
     int k = 15;
     int maxIterations = 10; // avoid infinite loops, the nax iterations is arbitrary and can be changed
-    // Cache for neighbors and path to avoid repeatedly calculating them
-    unordered_map<int, vector<int>> cachedNeighbors;
-    unordered_map<int, unordered_map<int, int>> precomputedPaths;
+    unordered_map<int, vector<int>> precomputedPaths;
 
     /**
      * @brief Cache the neighbors of all nodes in the graph.
