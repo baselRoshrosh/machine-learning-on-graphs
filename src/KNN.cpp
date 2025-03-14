@@ -1,6 +1,5 @@
 #include <queue>
 #include <unordered_set>
-#include <cmath>
 #include <iostream>
 #include <algorithm>
 
@@ -59,94 +58,67 @@ void KNN::reset()
  * ======= Strategy Methods ======================
  */
 void KNN::calcPaths(const Graph &graph, int k)
-{    //Calculate the shortest paths for all nodes up to a distance of k.
+{
+    // Calculate the k-nearest neighbors for each node using BFS
     for (const auto &node : graph.getNodes())
     {
-        unordered_map<int, int> distances;
+        vector<int> neighbors;
         queue<int> toVisit;
         unordered_set<int> visited;
- 
-        distances[node] = 0;
+
         toVisit.push(node);
         visited.insert(node);
- 
-        int foundNeighbors = 0;
-        // Perform BFS, but stop if k nearest nodes are found
-        while (!toVisit.empty() && foundNeighbors < k)
+
+        while (!toVisit.empty() && neighbors.size() < k)
         {
             int current = toVisit.front();
             toVisit.pop();
- 
+
             for (int neighbor : graph.getNeighbors(current))
             {
-                if (visited.find(neighbor) == visited.end()) 
+                if (visited.find(neighbor) == visited.end())
                 {
-                    distances[neighbor] = distances[current] + 1;
                     toVisit.push(neighbor);
                     visited.insert(neighbor);
-                    foundNeighbors++;
- 
-                    if (foundNeighbors >= k) 
-                        break; 
+                    neighbors.push_back(neighbor);
+                    
+                    if (neighbors.size() >= k) 
+                        break;
                 }
             }
         }
-        precomputedPaths[node] = move(distances);
+        precomputedPaths[node] = move(neighbors);
     }
 }
 
 void KNN::estimateFeatures(Graph &graph, int k)
 {
     vector<int> nodes = graph.getNodes();
-
-    //reserve space for needsProcessing
-    vector<bool> needsProcessing;
-    needsProcessing.reserve(graph.getNodeCount()); 
-    needsProcessing.assign(graph.getNodeCount(), true); 
-
+    vector<bool> needsProcessing(graph.getNodeCount(), true);
     int currentIteration = 0;
-    //check every node, if a node still has a missing feature it gets checked again
-    //stop if a node got checked to often to avoid infinite loops
+
     while (currentIteration < maxIterations)
     {
-        vector<bool> nextIterationProcessing;
-        nextIterationProcessing.reserve(graph.getNodeCount()); 
-        nextIterationProcessing.assign(graph.getNodeCount(), false); 
-        //track if any node is updated to allow early stopping
-        bool anyNodeProcessed = false; 
-
+        vector<bool> nextIterationProcessing(graph.getNodeCount(), false);
+        bool anyNodeProcessed = false;
         currentIteration++;
 
         for (size_t i = 0; i < nodes.size(); ++i)
         {
             int node = nodes[i];
+            if (!needsProcessing[i]) continue;
 
-            if (!needsProcessing[i])
-                continue; 
+            const auto &neighbors = precomputedPaths[node];
 
-            const auto &topoDistance = precomputedPaths[node];
-            priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> minHeap;
-
-            //filter out the neighbors that are within a distance of 'k'
-            for (const auto &[neighbor, distance] : topoDistance)
-            {
-                if (neighbor != node && distance <= k)
-                {
-                    minHeap.push({distance, neighbor});
-                }
-            }
-
-            //collect feature vectors of the closest k-neighbors
             vector<vector<double>> similarNodes;
-            for (int j = 0; j < k && !minHeap.empty(); ++j)
+            for (int j = 0; j < min(k, (int)neighbors.size()); ++j)
             {
-                similarNodes.push_back(graph.getFeatureById(minHeap.top().second));
-                minHeap.pop();
+                similarNodes.push_back(graph.getFeatureById(neighbors[j]));
             }
 
-            //revisit a node if it still has a missing feature
             bool hasMissingFeature = false;
-            for (double feature : graph.getFeatureById(node))
+            auto features = graph.getFeatureById(node);
+            for (double feature : features)
             {
                 if (isnan(feature))
                 {
@@ -160,12 +132,12 @@ void KNN::estimateFeatures(Graph &graph, int k)
                 guessFeatures(node, similarNodes);
                 anyNodeProcessed = true;
 
-                // Check if missing features remain
+                // Check again if there are still missing features
                 for (double feature : graph.getFeatureById(node))
                 {
                     if (isnan(feature))
                     {
-                        nextIterationProcessing[i] = true; 
+                        nextIterationProcessing[i] = true;
                         break;
                     }
                 }
@@ -173,10 +145,7 @@ void KNN::estimateFeatures(Graph &graph, int k)
         }
 
         needsProcessing = move(nextIterationProcessing);
-
-        //if no nodes were updated, exit early
-        if (!anyNodeProcessed)
-            break;
+        if (!anyNodeProcessed) break;
     }
 
     if (currentIteration == maxIterations)
