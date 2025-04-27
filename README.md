@@ -126,6 +126,16 @@ Special thanks to Prof. Dr. Frank Brandt for supervision and support.
 
 ---
 
+## Sources
+
+- [Node2Vec: Scalable Feature Learning for Networks](https://dl.acm.org/doi/10.1145/2939672.2939754)
+- [Efficient Estimation of Word Representations in Vector Space (SkipGram/Word2Vec)](https://arxiv.org/abs/1301.3781)
+- [A Modified DeepWalk Method for Link Prediction in Attributed Social Networks](https://link.springer.com/article/10.1007/s00607-021-00982-2)
+- [k-Nearest Neighbor Learning with Graph Neural Networks](https://www.mdpi.com/2227-7390/9/8/830)
+- [Topo2Vec: A Novel Node Embedding Generation Based on Network Topology for Link Prediction]([topo2vec.pdf](https://github.com/user-attachments/files/19931214/topo2vec.pdf)
+
+---
+
 ## License
 
 This project is for educational purposes.  
